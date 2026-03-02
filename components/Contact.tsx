@@ -16,7 +16,7 @@ export default function Contact() {
 
         <div className="max-w-2xl">
           <ScrollReveal delay={0.1}>
-            <h2 className="text-[clamp(40px,6.5vw,80px)] font-bold tracking-tight leading-[0.95] max-md:leading-[1.2] text-[#13181B] mb-8">
+            <h2 className="text-[clamp(40px,6.5vw,80px)] font-bold tracking-tight leading-[0.95] text-[#13181B] mb-8 contact-heading">
               Let&apos;s work<br />
               <span className="italic font-extrabold text-[#FD8973]">together.</span>
             </h2>

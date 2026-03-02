@@ -61,4 +61,10 @@ section {
   .marquee-track {
     animation-duration: 20s !important;
   }
+
+  .hero-name,
+  .about-heading,
+  .contact-heading {
+    line-height: 1.2;
+  }
 }

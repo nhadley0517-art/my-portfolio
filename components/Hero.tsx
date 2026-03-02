@@ -42,13 +42,13 @@ export default function Hero() {
               <div className="min-w-0">
                 <motion.span
                   {...fadeUp(0.22)}
-                  className="block font-extrabold text-[clamp(48px,7.5vw,104px)] leading-[0.88] max-md:leading-[1.2] tracking-[-0.03em] text-[#13181B]"
+                  className="block font-extrabold text-[clamp(48px,7.5vw,104px)] leading-[0.88] tracking-[-0.03em] text-[#13181B] hero-name"
                 >
                   Noah
                 </motion.span>
                 <motion.span
                   {...fadeUp(0.36)}
-                  className="block font-extrabold italic text-[clamp(48px,7.5vw,104px)] leading-[0.88] max-md:leading-[1.2] tracking-[-0.03em] text-[#13181B]"
+                  className="block font-extrabold italic text-[clamp(48px,7.5vw,104px)] leading-[0.88] tracking-[-0.03em] text-[#13181B] hero-name"
                 >
                   Hadley
                 </motion.span>

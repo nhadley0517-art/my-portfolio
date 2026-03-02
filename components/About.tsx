@@ -25,7 +25,7 @@ export default function About() {
           {/* Left: bio + LinkedIn */}
           <ScrollReveal delay={0.1} className="flex flex-col gap-8">
             <div>
-              <h2 className="text-[clamp(32px,4.5vw,54px)] font-bold tracking-tight leading-[1.05] max-md:leading-[1.2] text-[#13181B] mb-8">
+              <h2 className="text-[clamp(32px,4.5vw,54px)] font-bold tracking-tight leading-[1.05] text-[#13181B] mb-8 about-heading">
                 A designer driven by<br />
                 <span className="italic font-light text-[#7D8A93]">curiosity &amp; care.</span>
               </h2>
