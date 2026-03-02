@@ -59,6 +59,6 @@ section {
 
 @media (max-width: 767px) {
   .marquee-track {
-    animation-duration: 30s !important;
+    animation-duration: 20s !important;
   }
 }
