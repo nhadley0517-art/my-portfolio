@@ -1,7 +1,7 @@
 import ScrollReveal from "./ScrollReveal";
 
 const bentoCells = [
-  { src: "/aboutme-1.jpg",  className: "row-span-2" },
+  { src: "/aboutme-1.JPG",  className: "row-span-2" },
   { src: "/aboutme-2.jpeg", className: "" },
   { src: "/aboutme-4.jpeg", className: "" },
   { src: "/aboutme-3.jpeg", className: "col-span-2" },

@@ -19,26 +19,26 @@ export default function Nav() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 h-[72px] flex items-center justify-between">
-        <a href="#" aria-label="Noah Hadley — home">
+        <a href="/" aria-label="Noah Hadley — home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/logo.png" alt="NH" width="44" height="44" style={{ imageRendering: "crisp-edges", display: "block", borderRadius: "10px" }} />
         </a>
 
         <div className="flex items-center gap-8">
           <a
-            href="#work"
+            href="/#work"
             className="text-sm font-medium text-[#7D8A93] hover:text-[#13181B] transition-colors"
           >
             Work
           </a>
           <a
-            href="#about"
+            href="/#about"
             className="text-sm font-medium text-[#7D8A93] hover:text-[#13181B] transition-colors"
           >
             About
           </a>
           <a
-            href="#contact"
+            href="/#contact"
             className="text-sm font-semibold bg-[#13181B] text-[#F0EEEB] px-5 py-2.5 rounded-full hover:bg-[#FD8973] transition-colors"
           >
             Contact
