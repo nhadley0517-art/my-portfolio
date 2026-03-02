@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #F0EEEB;
+  --fg: #13181B;
+  --accent: #FD8973;
+  --accent-secondary: #FFBF65;
+  --navy: #003A6C;
+  --muted: #7D8A93;
+  --border: #DDD8D1;
+  --card: #FFFFFF;
+  --nav-height: 72px;
+  --gradient-dusk: linear-gradient(135deg, #FFBF65 0%, #FD8973 50%, #003A6C 100%);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --font-sans: var(--font-poppins);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-poppins), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+section {
+  scroll-margin-top: var(--nav-height);
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes shipped-glow {
+  0%, 100% { box-shadow: 0 0 0px rgba(34, 197, 94, 0.4); }
+  50%       { box-shadow: 0 0 12px rgba(34, 197, 94, 0.7); }
+}
+
+.badge-shipped {
+  animation: shipped-glow 2s ease-in-out infinite;
+}
