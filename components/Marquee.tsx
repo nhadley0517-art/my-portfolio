@@ -25,6 +25,7 @@ export default function Marquee() {
     <div className="border-t border-b border-[#DDD8D1] py-7 overflow-hidden">
       <div
         className="flex whitespace-nowrap"
+        className="marquee-track"
         style={{ animation: "marquee 75s linear infinite" }}
       >
         <span

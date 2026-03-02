@@ -56,3 +56,9 @@ section {
 .badge-shipped {
   animation: shipped-glow 2s ease-in-out infinite;
 }
+
+@media (max-width: 767px) {
+  .marquee-track {
+    animation-duration: 30s !important;
+  }
+}

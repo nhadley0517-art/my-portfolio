@@ -33,7 +33,7 @@ export default function Contact() {
           <ScrollReveal delay={0.3}>
             <div className="flex flex-wrap gap-4">
               <a
-                href="mailto:noah@email.com"
+                href="mailto:nhadley0517@gmail.com"
                 className="group inline-flex items-center gap-3 bg-[#FD8973] text-white text-sm font-semibold px-7 py-4 rounded-full hover:bg-[#13181B] transition-colors"
               >
                 Say hello
