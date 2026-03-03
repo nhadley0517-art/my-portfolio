@@ -14,8 +14,9 @@ export const metadata: Metadata = {
   description:
     "Portfolio of Noah Hadley, a UX/UI and product designer turning complex problems into experiences that feel effortless.",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [{ url: '/logo.png', type: 'image/png' }],
+    apple: [{ url: '/logo.png' }],
+    shortcut: '/logo.png',
   },
 };
 
