@@ -23,7 +23,7 @@ export default function Contact() {
           </ScrollReveal>
 
           <ScrollReveal delay={0.2}>
-            <p className="text-[#7D8A93] text-lg leading-relaxed font-light mb-12">
+            <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-12">
               I&apos;m currently looking for full-time opportunities. My inbox is
               always open — whether you have a question, a project in mind, or
               just want to say hello.

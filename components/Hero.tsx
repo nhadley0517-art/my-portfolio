@@ -58,7 +58,7 @@ export default function Hero() {
 
           {/* ── Right column: role, tagline, badge, CTA ── */}
           <div className="flex flex-col gap-6 md:pt-4">
-            <motion.p {...fadeUp(0.58, 0.6)} className="text-lg md:text-xl font-semibold text-[#7D8A93] tracking-tight">
+            <motion.p {...fadeUp(0.58, 0.6)} className="text-lg md:text-xl font-semibold text-[#2D3436] tracking-tight">
               UX/UI &amp; Product Designer
             </motion.p>
 

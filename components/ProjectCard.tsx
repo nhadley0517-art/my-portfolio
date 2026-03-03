@@ -99,7 +99,7 @@ export default function ProjectCard({
             <span className="text-sm text-[#7D8A93] shrink-0">{year}</span>
           </div>
 
-          <p className="text-sm text-[#7D8A93] leading-relaxed">{description}</p>
+          <p className="text-sm text-[#2D3436] leading-relaxed">{description}</p>
 
           <div className="flex items-center gap-2 mt-5 text-sm font-semibold text-[#13181B] group-hover:text-[#FD8973] transition-colors">
             View project

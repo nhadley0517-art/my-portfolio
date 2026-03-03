@@ -68,7 +68,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-xl md:text-2xl text-[#7D8A93] font-light mb-10">
+              <p className="text-xl md:text-2xl text-[#2D3436] font-light mb-10">
                 Designing for clarity in healthcare communication
               </p>
             </ScrollReveal>
@@ -113,7 +113,7 @@ export default function Univo() {
 
             <div className="grid md:grid-cols-[1.15fr_0.85fr] gap-12 md:gap-20">
               <ScrollReveal delay={0.1}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   Univo is a mobile app concept created for a student project. It helps adult
                   patients understand their health by turning complex medical records into clear,
                   simple summaries. It highlights diagnoses, medications, next steps, recent
@@ -177,7 +177,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light mb-16 max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-16 max-w-3xl">
                 At the start of this project, I assumed modern patient portals had largely solved
                 usability challenges. After reviewing anonymized visit summaries and existing
                 tools, I realized medical notes are written for clinicians — dense, jargon-heavy,
@@ -213,7 +213,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 To understand how patients engage with their medical records, I reviewed
                 anonymized visit summaries and explored existing patient portals and health apps.
               </p>
@@ -267,7 +267,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
                 This project was completed in four weeks, requiring tight scope control. Instead
                 of redesigning healthcare systems broadly, I focused on one specific gap:
                 post-visit clarity. I also considered real-world constraints: HIPAA and
@@ -316,7 +316,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 Early wireframes focused on a summary-first layout, surfacing the most important
                 information immediately after a visit.
               </p>
@@ -383,7 +383,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The final prototype reflects a balance between clarity and credibility, helping
                 patients understand their medical information without feeling overwhelmed or
                 confused.
@@ -406,7 +406,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The final design met the core objective of improving clarity around medical
                 information. By surfacing diagnoses, medications, and next steps in a
                 summary-first layout, Univo helps patients quickly understand their care without
@@ -421,7 +421,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 If brought to market, Univo would launch as a limited pilot rather than a full
                 hospital system replacement. A realistic rollout would begin with read-only visit
                 summaries, launch within a single provider network, and prioritize clarity over
@@ -457,7 +457,7 @@ export default function Univo() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 This project challenged me to design within emotional and legal context.
                 Healthcare design is not just about usability — it involves trust, compliance,
                 and high-stakes information. I learned to balance clarity with responsibility,

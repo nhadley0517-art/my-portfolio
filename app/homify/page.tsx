@@ -66,7 +66,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-xl md:text-2xl text-[#7D8A93] font-light mb-10">
+              <p className="text-xl md:text-2xl text-[#2D3436] font-light mb-10">
                 A new way to control your home
               </p>
             </ScrollReveal>
@@ -106,7 +106,7 @@ export default function Homify() {
 
             <div className="grid md:grid-cols-[1.15fr_0.85fr] gap-12 md:gap-20">
               <ScrollReveal delay={0.1}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   Smart home systems give users powerful control and insight into their homes,
                   but many platforms feel overwhelming, confusing, and spread across too many
                   places. Users want one simple space to manage lighting, temperature, devices,
@@ -170,7 +170,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light mb-16 max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-16 max-w-3xl">
                 Smart home technology gives people powerful control over their homes, but the
                 experience of managing it is not always intuitive. Users are forced to navigate
                 multiple apps, learn different systems, and constantly work to understand
@@ -207,7 +207,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 To understand how users interact with smart homes, I reviewed existing
                 dashboards, studied competitor platforms, and gathered feedback from active
                 users.
@@ -298,7 +298,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The design process focused on simplifying smart home management while preserving
                 depth and functionality. I explored layout systems, interaction patterns, and
                 visual hierarchy to ensure that essential features stayed clear and approachable.
@@ -365,7 +365,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The final dashboard gives users a clear understanding of their home while making
                 control simple and intuitive. Key features like lighting, temperature, media,
                 and system insights are easy to access, visually organized, and designed to
@@ -389,7 +389,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The first iteration was created in 2024 as a student project. I revisited it
                 a year later and revised the visual design along with how the interface
                 functioned for users — adding an interactive temperature gauge, removing
@@ -412,7 +412,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The design improved clarity, reduced confusion, and helped users feel more
                 comfortable interacting with their smart home systems. It successfully created
                 a structured and understandable dashboard experience.
@@ -424,7 +424,7 @@ export default function Homify() {
                 <h4 className="text-sm font-semibold text-[#FD8973] uppercase tracking-[0.12em] mb-5">
                   Impact on Users
                 </h4>
-                <p className="text-[#7D8A93] text-base leading-relaxed font-light">
+                <p className="text-[#2D3436] text-base leading-relaxed font-light">
                   Users now have a single space to monitor activity, manage devices, and
                   understand what is happening in their home. The experience supports everyday
                   tasks and helps them feel more aware and in control.
@@ -435,7 +435,7 @@ export default function Homify() {
                 <h4 className="text-sm font-semibold text-[#FD8973] uppercase tracking-[0.12em] mb-5">
                   Lessons Learned
                 </h4>
-                <p className="text-[#7D8A93] text-base leading-relaxed font-light">
+                <p className="text-[#2D3436] text-base leading-relaxed font-light">
                   Designing for simplicity requires careful decisions about what to highlight
                   and what to reduce. Clear hierarchy, thoughtful structure, and visual
                   communication play a huge role in user confidence.
@@ -450,7 +450,7 @@ export default function Homify() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
                 Future opportunities include expanding personalization, improving automation
                 features, and offering deeper insights into performance and energy use to
                 support smarter home management.

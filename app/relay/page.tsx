@@ -65,7 +65,7 @@ export default function Relay() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-xl md:text-2xl text-[#7D8A93] font-light mb-10">
+              <p className="text-xl md:text-2xl text-[#2D3436] font-light mb-10">
                 A mission coordination dashboard for field teams operating where connectivity fails
               </p>
             </ScrollReveal>
@@ -110,7 +110,7 @@ export default function Relay() {
 
             <div className="grid md:grid-cols-[1.15fr_0.85fr] gap-12 md:gap-20">
               <ScrollReveal delay={0.1}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   Relay is a mission coordination and communication dashboard designed for field
                   teams operating in disaster zones, rural areas, and remote environments where
                   radios fail and cell service disappears. It gives teams and command staff a
@@ -180,7 +180,7 @@ export default function Relay() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light mb-16 max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-16 max-w-3xl">
                 During emergency or remote missions, teams are often working across fragmented
                 tools — radios, paper notes, separate apps — while under intense pressure with
                 weak or no connectivity. The result is predictable: critical information gets
@@ -219,7 +219,7 @@ export default function Relay() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 I studied existing emergency response workflows, mission dashboards, and
                 real-time mapping tools to understand how the market was handling this problem.
               </p>
@@ -282,7 +282,7 @@ export default function Relay() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 Before starting in Figma, I defined what Relay needed to do to actually work
                 in the field.
               </p>
@@ -317,7 +317,7 @@ export default function Relay() {
 
             <div className="max-w-3xl space-y-7 mb-16">
               <ScrollReveal delay={0.1}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   My earliest concepts explored wire mesh maps and 3D rendered mission zones.
                   They looked distinctive, but I cut them quickly for a practical reason: in a
                   real deployment, you&apos;re not going to have a custom 3D mesh of every
@@ -329,7 +329,7 @@ export default function Relay() {
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   I also explored dense, data-heavy dashboard layouts early on. They felt
                   overwhelming — too much competing for attention at once. I shifted toward a
                   hierarchy-first approach: the map as the primary focus, with supporting panels
@@ -359,7 +359,7 @@ export default function Relay() {
                   <h3 className="text-xl md:text-2xl font-bold text-[#13181B] mb-6">
                     A Key Interaction Decision
                   </h3>
-                  <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                  <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                     One of the most important decisions I made on this project wasn&apos;t visual
                     — it was about where controls live on the screen. Through research into tablet
                     ergonomics and field device usage, I found that first responders in the field
@@ -405,7 +405,7 @@ export default function Relay() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 Relay provides a shared operational view that helps field teams stay aligned in
                 real time across unstable conditions.
               </p>
@@ -468,7 +468,7 @@ export default function Relay() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 Relay achieves its core objective: giving field teams a clear, shared operational
                 picture under conditions where clarity is hardest to maintain. The hierarchy-first
                 layout, satellite-based mapping, and always-visible emergency action reduce the
@@ -505,7 +505,7 @@ export default function Relay() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
                 If I were to develop Relay further, the priority would be field testing with
                 real response teams, improved offline behavior for no-signal environments, and
                 deeper integration with external data sources like satellite systems and weather

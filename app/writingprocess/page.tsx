@@ -75,7 +75,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p className="text-xl md:text-2xl text-[#7D8A93] font-light mb-10">
+              <p className="text-xl md:text-2xl text-[#2D3436] font-light mb-10">
                 Clarifying how students learn to write
               </p>
             </ScrollReveal>
@@ -122,7 +122,7 @@ export default function WritingProcess() {
             <div className="grid md:grid-cols-[1.15fr_0.85fr] gap-12 md:gap-20">
               {/* Left: overview paragraph */}
               <ScrollReveal delay={0.1}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   During my internship at GCE, I was tasked with redesigning an existing
                   student-facing writing resource — a media piece originally built as a single,
                   content-heavy page. While the material itself was strong, the experience had
@@ -198,7 +198,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light mb-16 max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-16 max-w-3xl">
                 To access any specific stage — prewriting, drafting, revision — students had to
                 dig through menus and tabs. The content was all there, but the structure worked
                 against the people it was meant to help.
@@ -239,7 +239,7 @@ export default function WritingProcess() {
 
             <div className="max-w-3xl space-y-7">
               <ScrollReveal delay={0.1}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   Before touching Figma, I reviewed existing student-facing educational platforms
                   and comparable writing resources to understand what effective learning tools had
                   in common. A clear pattern emerged: the tools that worked best combined
@@ -249,7 +249,7 @@ export default function WritingProcess() {
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   I also had informal conversations with students on campus — catching people
                   between classes and asking how they typically used writing resources, what
                   frustrated them, and whether they&apos;d ever turned to outside sources (like
@@ -277,7 +277,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 My first approach focused on improving clarity within the existing one-page model.
                 I introduced a centralized landing page with modal-based access to videos,
                 handouts, and transcripts, so students could view content without losing their
@@ -302,7 +302,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-12">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-12">
                 The visual improvements landed well. But something more fundamental kept
                 surfacing: students still felt overwhelmed by seeing the entire writing process
                 at once. Even with cleaner layout and modals, the single-page model created a
@@ -326,7 +326,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
                 This feedback reframed the problem for me. I had been treating it as a visual
                 design issue. Users were telling me it was a structural one. The one-page format
                 wasn&apos;t failing because it looked cluttered — it was failing because it asked
@@ -345,7 +345,7 @@ export default function WritingProcess() {
 
             <div className="max-w-3xl space-y-8">
               <ScrollReveal delay={0.1}>
-                <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+                <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   In response, the project shifted direction. Rather than refining the one-page
                   experience further, the design restructured the resource into a linear,
                   eight-page learning flow, with each page dedicated to a single stage of the
@@ -375,7 +375,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The final design presents the writing process as a clear, progressive journey
                 across eight dedicated pages.
               </p>
@@ -402,7 +402,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
                 The result removes the cognitive burden of self-assembly. Students no longer need
                 to figure out where they are or what comes next — the experience guides them
                 forward.
@@ -419,7 +419,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 The redesigned experience is currently pending a final presentation to
                 GCU&apos;s writing department before developer handoff and live deployment,
                 expected in 2026. During informal testing, students who used the redesigned flow
@@ -457,7 +457,7 @@ export default function WritingProcess() {
             </div>
 
             <ScrollReveal>
-              <p className="text-[#7D8A93] text-base leading-relaxed font-light max-w-3xl">
+              <p className="text-[#2D3436] text-base leading-relaxed font-light max-w-3xl">
                 This project was completed during my internship at GCE. The redesigned resource
                 is currently in final review before live deployment at Grand Canyon University.
               </p>

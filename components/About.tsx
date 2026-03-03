@@ -27,9 +27,9 @@ export default function About() {
             <div>
               <h2 className="text-[clamp(32px,4.5vw,54px)] font-bold tracking-tight leading-[1.05] text-[#13181B] mb-8 about-heading">
                 A designer driven by<br />
-                <span className="italic font-light text-[#7D8A93]">curiosity &amp; care.</span>
+                <span className="italic font-light text-[#2D3436]">curiosity &amp; care.</span>
               </h2>
-              <p className="text-[#7D8A93] text-lg leading-relaxed font-light">
+              <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                 I&apos;m Noah — a product and UX/UI designer about to graduate and
                 actively looking for my first full-time role. My work is driven by
                 research and iteration, not just aesthetics. When I&apos;m not in
