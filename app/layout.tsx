@@ -13,11 +13,6 @@ export const metadata: Metadata = {
   title: "Noah Hadley — UX/UI & Product Designer",
   description:
     "Portfolio of Noah Hadley, a UX/UI and product designer turning complex problems into experiences that feel effortless.",
-  icons: {
-    icon: [{ url: '/logo.png', type: 'image/png' }],
-    apple: [{ url: '/logo.png' }],
-    shortcut: '/logo.png',
-  },
 };
 
 export default function RootLayout({
