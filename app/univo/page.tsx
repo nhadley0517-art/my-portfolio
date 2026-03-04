@@ -33,7 +33,6 @@ function CaseImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-const HERO_IMAGE = "https://framerusercontent.com/images/FOPiaqBRBpBZ69CAloP6DsIzX8.png";
 const COMPETITOR_IMAGE = "https://framerusercontent.com/images/iGhFqxgbf7vw6gD5UNuViA1G0.png";
 
 const WIREFRAME_IMAGES = [
@@ -90,18 +89,10 @@ export default function Univo() {
                 ))}
               </div>
             </ScrollReveal>
+
+            <video src="/univo-hero.webm" autoPlay muted playsInline style={{width: '100%', borderRadius: '12px', display: 'block', marginTop: '32px'}} />
           </div>
 
-          <ScrollReveal>
-            <div className="px-6 max-w-5xl mx-auto py-10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={HERO_IMAGE}
-                alt="Univo app banner"
-                style={{ width: "100%", height: "auto", display: "block", borderRadius: "12px" }}
-              />
-            </div>
-          </ScrollReveal>
         </section>
 
         {/* ── 01 — OVERVIEW ── */}
@@ -432,7 +423,7 @@ export default function Univo() {
 
             <ScrollReveal>
               <div className="bg-[#13181B] rounded-2xl p-8 mb-6">
-                <p className="text-[#F0EEEB] text-xl md:text-2xl font-semibold leading-snug mb-8">
+                <p className="text-[#F4F4F5] text-xl md:text-2xl font-semibold leading-snug mb-8">
                   This is not just a UI improvement. It is a comprehension improvement.
                 </p>
                 <ul className="space-y-3">
@@ -441,7 +432,7 @@ export default function Univo() {
                     "Patient satisfaction",
                     "Treatment compliance",
                   ].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-[#F0EEEB]/80 text-sm font-medium">
+                    <li key={item} className="flex items-center gap-3 text-[#F4F4F5]/80 text-sm font-medium">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#FD8973] shrink-0" />
                       {item}
                     </li>

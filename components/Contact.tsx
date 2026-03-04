@@ -46,7 +46,7 @@ export default function Contact() {
                 href="https://www.linkedin.com/in/noah-hadley/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-3 border border-[#13181B] text-[#13181B] text-sm font-semibold px-7 py-4 rounded-full hover:bg-[#13181B] hover:text-[#F0EEEB] transition-colors"
+                className="group inline-flex items-center gap-3 border border-[#13181B] text-[#13181B] text-sm font-semibold px-7 py-4 rounded-full hover:bg-[#13181B] hover:text-[#F4F4F5] transition-colors"
               >
                 LinkedIn
                 <span className="group-hover:translate-x-1 transition-transform duration-200">

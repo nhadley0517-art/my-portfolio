@@ -377,10 +377,10 @@ export default function Relay() {
 
               <ScrollReveal delay={0.15}>
                 <div className="bg-[#13181B] rounded-2xl p-8 md:p-10">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#F0EEEB] mb-6">
+                  <h3 className="text-xl md:text-2xl font-bold text-[#F4F4F5] mb-6">
                     The Emergency Alert Button
                   </h3>
-                  <p className="text-[#F0EEEB]/75 text-lg leading-relaxed font-light">
+                  <p className="text-[#F4F4F5]/75 text-lg leading-relaxed font-light">
                     The feature I&apos;m most deliberate about in Relay is the emergency alert
                     button — and deliberately keeping it visible at all times, regardless of
                     what else is on screen. In a real first-response scenario, if something goes
@@ -481,10 +481,10 @@ export default function Relay() {
 
             <ScrollReveal>
               <div className="bg-[#13181B] rounded-2xl p-8 md:p-10 mb-16">
-                <h3 className="text-xl md:text-2xl font-bold text-[#F0EEEB] mb-6">
+                <h3 className="text-xl md:text-2xl font-bold text-[#F4F4F5] mb-6">
                   What I Learned
                 </h3>
-                <p className="text-[#F0EEEB]/75 text-lg leading-relaxed font-light">
+                <p className="text-[#F4F4F5]/75 text-lg leading-relaxed font-light">
                   Designing for extreme contexts taught me that the rules of good UX don&apos;t
                   change under pressure — they become more consequential. Hierarchy, speed, and
                   trust matter more than feature depth or visual novelty. Every decision I made

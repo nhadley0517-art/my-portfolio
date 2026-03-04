@@ -14,7 +14,7 @@ export default function Nav() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#F0EEEB]/95 backdrop-blur-md border-b border-[#DDD8D1]"
+          ? "bg-[#F4F4F5]/95 backdrop-blur-md border-b border-[#DDD8D1]"
           : "bg-transparent"
       }`}
     >
@@ -39,7 +39,7 @@ export default function Nav() {
           </a>
           <a
             href="/#contact"
-            className="text-sm font-semibold bg-[#13181B] text-[#F0EEEB] px-5 py-2.5 rounded-full hover:bg-[#FD8973] transition-colors"
+            className="text-sm font-semibold bg-[#13181B] text-[#F4F4F5] px-5 py-2.5 rounded-full hover:bg-[#FD8973] transition-colors"
           >
             Contact
           </a>

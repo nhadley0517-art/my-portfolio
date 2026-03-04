@@ -69,7 +69,7 @@ export default function Hero() {
             {/* Available badge */}
             <motion.div {...fadeUp(0.82, 0.6)}>
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "10px 20px", borderRadius: "9999px", fontSize: "0.75rem", fontWeight: 600, backgroundColor: "#FD8973", color: "#F0EEEB" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "10px 20px", borderRadius: "9999px", fontSize: "0.75rem", fontWeight: 600, backgroundColor: "#FD8973", color: "#F4F4F5" }}>
                   <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "white", display: "inline-block", flexShrink: 0 }} />
                   Available for full-time roles
                 </span>
@@ -80,7 +80,7 @@ export default function Hero() {
             <motion.div {...fadeUp(0.94, 0.6)}>
               <a
                 href="#work"
-                className="group inline-flex items-center gap-3 bg-[#13181B] text-[#F0EEEB] text-sm font-semibold px-7 py-4 rounded-full hover:bg-[#FD8973] transition-colors"
+                className="group inline-flex items-center gap-3 bg-[#13181B] text-[#F4F4F5] text-sm font-semibold px-7 py-4 rounded-full hover:bg-[#FD8973] transition-colors"
               >
                 View my work
                 <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
