@@ -2,6 +2,18 @@ import type { Metadata } from "next";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import CaseStudyNav from "@/components/CaseStudyNav";
+
+const HOMIFY_SECTIONS = [
+  { id: "overview",       label: "Overview" },
+  { id: "problem",        label: "Problem" },
+  { id: "research",       label: "Research" },
+  { id: "design-goals",   label: "Design Goals" },
+  { id: "wireframes",     label: "Wireframes" },
+  { id: "final-solution", label: "Final Solution" },
+  { id: "before-after",   label: "Before & After" },
+  { id: "outcome",        label: "Outcome" },
+];
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
 
 export const metadata: Metadata = {
@@ -54,6 +66,7 @@ export default function Homify() {
   return (
     <>
       <Nav />
+      <CaseStudyNav sections={HOMIFY_SECTIONS} />
       <main className="pt-[72px]">
 
         {/* ── HERO ── */}
@@ -98,7 +111,7 @@ export default function Homify() {
         </section>
 
         {/* ── 01 — OVERVIEW ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="overview" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>01 — Overview</SectionLabel>
@@ -157,7 +170,7 @@ export default function Homify() {
         </section>
 
         {/* ── 02 — THE PROBLEM ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="problem" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>02 — The Problem</SectionLabel>
@@ -200,7 +213,7 @@ export default function Homify() {
         </section>
 
         {/* ── 03 — RESEARCH & COMPETITOR LANDSCAPE ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="research" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>03 — Research &amp; Competitor Landscape</SectionLabel>
@@ -264,7 +277,7 @@ export default function Homify() {
         </section>
 
         {/* ── 04 — DESIGN GOALS ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="design-goals" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>04 — Design Goals</SectionLabel>
@@ -291,7 +304,7 @@ export default function Homify() {
         </section>
 
         {/* ── 05 — WIREFRAMES ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="wireframes" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>05 — Wireframes</SectionLabel>
@@ -358,7 +371,7 @@ export default function Homify() {
         </section>
 
         {/* ── 06 — FINAL SOLUTION ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="final-solution" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>06 — Final Solution</SectionLabel>
@@ -382,7 +395,7 @@ export default function Homify() {
         </section>
 
         {/* ── 07 — BEFORE & AFTER ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="before-after" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>07 — Before &amp; After</SectionLabel>
@@ -405,7 +418,7 @@ export default function Homify() {
         </section>
 
         {/* ── 08 — OUTCOME & REFLECTION ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="outcome" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>08 — Outcome &amp; Reflection</SectionLabel>

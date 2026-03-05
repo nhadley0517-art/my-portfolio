@@ -3,6 +3,17 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import WritingProcessTabs from "@/components/WritingProcessTabs";
+import CaseStudyNav from "@/components/CaseStudyNav";
+
+const WP_SECTIONS = [
+  { id: "overview",        label: "Overview" },
+  { id: "problem",         label: "Problem" },
+  { id: "research",        label: "Research" },
+  { id: "first-iteration", label: "First Iteration" },
+  { id: "the-pivot",       label: "The Pivot" },
+  { id: "final-solution",  label: "Final Solution" },
+  { id: "outcome",         label: "Outcome" },
+];
 
 export const metadata: Metadata = {
   title: "Writing Process Redesign — Noah Hadley",
@@ -52,6 +63,7 @@ export default function WritingProcess() {
   return (
     <>
       <Nav />
+      <CaseStudyNav sections={WP_SECTIONS} />
       <main className="pt-[72px]">
 
         {/* ── HERO ── */}
@@ -113,7 +125,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 01 — OVERVIEW ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="overview" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>01 — Overview</SectionLabel>
@@ -123,16 +135,14 @@ export default function WritingProcess() {
               {/* Left: overview paragraph */}
               <ScrollReveal delay={0.1}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                  During my internship at GCE, I was tasked with redesigning an existing
-                  student-facing writing resource — a media piece originally built as a single,
-                  content-heavy page. While the material itself was strong, the experience had
-                  aged poorly. Instructional content was buried in menus, students were expected
-                  to self-assemble the writing process, and the interface prioritized
+                  During my internship at GCE, I redesigned a student-facing writing resource
+                  — originally built as a single, content-heavy page. The material was strong,
+                  but the experience had aged: instructional content was buried in menus, students
+                  had to self-assemble the writing process, and the interface prioritized
                   comprehensiveness over clarity. My goal was to improve how students discover,
                   navigate, and absorb writing instruction — while aligning the redesigned
-                  experience with GCU&apos;s UI and accessibility standards. This wasn&apos;t a
-                  speculative project. It is currently in the final stages before developer
-                  handoff and live deployment.
+                  experience with GCU&apos;s UI and accessibility standards — and it&apos;s now
+                  in the final stages before live deployment.
                 </p>
               </ScrollReveal>
 
@@ -185,7 +195,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 02 — THE PROBLEM ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="problem" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>02 — The Problem</SectionLabel>
@@ -231,7 +241,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 03 — RESEARCH & EARLY INSIGHTS ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="research" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>03 — Research &amp; Early Insights</SectionLabel>
@@ -240,22 +250,20 @@ export default function WritingProcess() {
             <div className="max-w-3xl space-y-7">
               <ScrollReveal delay={0.1}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                  Before touching Figma, I reviewed existing student-facing educational platforms
-                  and comparable writing resources to understand what effective learning tools had
-                  in common. A clear pattern emerged: the tools that worked best combined
-                  sequential structure with just-in-time content — giving students exactly what
-                  they needed at each stage, rather than everything all at once.
+                  Before touching Figma, I reviewed student-facing educational platforms and
+                  comparable writing resources. A clear pattern emerged: the tools that worked
+                  best combined sequential structure with just-in-time content — giving students
+                  what they needed at each stage, not everything at once.
                 </p>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                  I also had informal conversations with students on campus — catching people
-                  between classes and asking how they typically used writing resources, what
-                  frustrated them, and whether they&apos;d ever turned to outside sources (like
-                  Google or YouTube) instead of official tools. Their answers were consistent:
-                  the official resources felt overwhelming, so most students either skimmed and
-                  gave up, or bypassed them entirely.
+                  I also spoke with students between classes — asking how they used writing
+                  resources, what frustrated them, and whether they&apos;d turned to outside
+                  sources (like Google or YouTube) instead of official tools. The answers were
+                  consistent: official resources felt overwhelming, so most students either
+                  skimmed and gave up, or bypassed them entirely.
                 </p>
               </ScrollReveal>
 
@@ -270,7 +278,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 04 — FIRST ITERATION ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="first-iteration" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>04 — First Iteration</SectionLabel>
@@ -278,14 +286,13 @@ export default function WritingProcess() {
 
             <ScrollReveal delay={0.1}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
-                My first approach focused on improving clarity within the existing one-page model.
-                I introduced a centralized landing page with modal-based access to videos,
+                My first approach focused on improving clarity within the existing one-page
+                model — introducing a centralized landing page with modal-based access to videos,
                 handouts, and transcripts, so students could view content without losing their
-                place on the page. The goals for this version were to reduce visual clutter,
-                improve scannability, and surface key resources more prominently. I intentionally
-                kept the overall architecture intact — I wanted to test whether better visual
-                organization alone could solve the problem before proposing a more significant
-                structural change.
+                place. The goals were to reduce visual clutter, improve scannability, and surface
+                key resources more prominently. I intentionally kept the architecture intact to
+                test whether better visual organization alone could solve the problem before
+                proposing a more significant structural change.
               </p>
             </ScrollReveal>
 
@@ -327,17 +334,17 @@ export default function WritingProcess() {
 
             <ScrollReveal>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
-                This feedback reframed the problem for me. I had been treating it as a visual
-                design issue. Users were telling me it was a structural one. The one-page format
-                wasn&apos;t failing because it looked cluttered — it was failing because it asked
-                students to hold the entire writing process in their head at once.
+                This feedback reframed the problem for me. I&apos;d been treating it as a visual
+                design issue, but users were telling me it was a structural one. The one-page
+                format wasn&apos;t failing because it looked cluttered — it was failing because
+                it asked students to hold the entire writing process in their head at once.
               </p>
             </ScrollReveal>
           </div>
         </section>
 
         {/* ── 05 — THE PIVOT ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="the-pivot" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>05 — The Pivot</SectionLabel>
@@ -346,15 +353,13 @@ export default function WritingProcess() {
             <div className="max-w-3xl space-y-8">
               <ScrollReveal delay={0.1}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                  In response, the project shifted direction. Rather than refining the one-page
-                  experience further, the design restructured the resource into a linear,
-                  eight-page learning flow, with each page dedicated to a single stage of the
-                  writing process. This pivot reframed the entire product. Instead of a reference
-                  tool students navigate on their own terms, it became a guided instructional
-                  experience — one that meets students at the beginning of their writing process
-                  and walks them through it step by step. Videos and resources now appear inline,
-                  at exactly the stage where they&apos;re relevant, rather than tucked into a
-                  modal or a menu.
+                  Rather than refining the one-page experience further, the project restructured
+                  the resource into a linear, eight-page learning flow — each page dedicated to
+                  a single stage of the writing process. This pivot reframed the entire product:
+                  instead of a reference tool students navigate on their own terms, it became a
+                  guided instructional experience that walks them through it step by step. Videos
+                  and resources now appear inline, at exactly the stage where they&apos;re
+                  relevant, rather than tucked into a modal or a menu.
                 </p>
               </ScrollReveal>
 
@@ -368,7 +373,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 06 — FINAL SOLUTION ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="final-solution" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>06 — Final Solution</SectionLabel>
@@ -412,7 +417,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 07 — OUTCOME & STAKEHOLDER RESPONSE ── */}
-        <section className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
+        <section id="outcome" className="px-6 py-20 md:py-28 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>07 — Outcome &amp; Stakeholder Response</SectionLabel>
