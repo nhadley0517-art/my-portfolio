@@ -77,20 +77,22 @@ export default function No2() {
       <CaseStudyNav sections={NO2_SECTIONS} accentColor={ACCENT} />
       <main className="pt-[72px]">
         <style>{`
-          @media (max-width: 767px) {
-            /* iframe scale-to-fit trick */
+          @media (max-width: 768px) {
+            /* iframe scale-to-fit trick — scale 0.38, fixed 900px width */
             .n2-ifr { overflow: hidden; border-radius: 12px; }
-            .n2-ifr iframe { transform: scale(0.75); transform-origin: top left; width: 133.33% !important; }
-            /* scaled container heights (original × 0.75) */
-            .n2-ifr-585 { height: 585px; }
-            .n2-ifr-615 { height: 615px; }
-            .n2-ifr-510 { height: 510px; }
-            .n2-ifr-435 { height: 435px; }
-            .n2-ifr-540 { height: 540px; }
+            .n2-ifr iframe { width: 900px !important; transform: scale(0.38); transform-origin: top left; }
+            /* wrapper heights = original iframe height × 0.38 */
+            .n2-ifr-585 { height: 296px; }  /* 780 × 0.38 */
+            .n2-ifr-615 { height: 312px; }  /* 820 × 0.38 */
+            .n2-ifr-510 { height: 258px; }  /* 680 × 0.38 */
+            .n2-ifr-435 { height: 220px; }  /* 580 × 0.38 */
+            .n2-ifr-540 { height: 274px; }  /* 720 × 0.38 */
             /* hero iframe */
             .n2-hero-iframe { height: 280px !important; }
             /* feature video wrapper */
             .n2-feat-vid { max-width: 100% !important; }
+            /* first iterations side-by-side */
+            .n2-iter-img { max-width: 100% !important; }
           }
         `}</style>
 
@@ -276,12 +278,12 @@ export default function No2() {
                 </ScrollReveal>
                 <ScrollReveal>
                   <p style={{ fontSize: "11px", fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "16px" }}>First iterations</p>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div style={{ maxWidth: "280px", margin: "0 auto" }}>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="n2-iter-img" style={{ maxWidth: "280px", margin: "0 auto" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="/home-screen-first-iteration.png" alt="Home screen first iteration" style={{ width: "100%", borderRadius: "16px", display: "block" }} />
                     </div>
-                    <div style={{ maxWidth: "280px", margin: "0 auto" }}>
+                    <div className="n2-iter-img" style={{ maxWidth: "280px", margin: "0 auto" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src="/calendar-screen-first-iteration.png" alt="Calendar screen first iteration" style={{ width: "100%", borderRadius: "16px", display: "block" }} />
                     </div>
