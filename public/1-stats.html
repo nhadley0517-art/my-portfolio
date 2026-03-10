@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRC Stats</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F0EFEC;
+    font-family: 'Poppins', sans-serif;
+    padding: 48px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .card {
+    border-radius: 20px;
+    padding: 32px 28px 28px;
+  }
+
+  .card-dark  { background: #1C1C1E; }
+  .card-green { background: #7EB77F; }
+  .card-white { background: #FFFFFF; }
+  .card-chart { grid-column: 1 / 3; background: #1C1C1E; padding: 32px 32px 28px; }
+  .card-stats { grid-column: 3 / 4; background: #1C1C1E; padding: 0; }
+
+  .stat-num {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 14px;
+  }
+  .card-dark  .stat-num { color: white; }
+  .card-green .stat-num { color: white; }
+  .card-white .stat-num { color: #E05252; }
+
+  .in5 { display: inline-flex; align-items: baseline; }
+  .in5 .big { font-size: 64px; font-weight: 900; color: white; letter-spacing: -0.04em; }
+  .in5 .sm  { font-size: 36px; font-weight: 800; color: white; letter-spacing: -0.02em; }
+
+  .stat-desc {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .card-dark  .stat-desc { color: rgba(255,255,255,0.7); }
+  .card-green .stat-desc { color: rgba(255,255,255,0.75); }
+  .card-white .stat-desc { color: #1C1C1E; }
+
+  .stat-source {
+    font-size: 10.5px;
+    font-weight: 400;
+  }
+  .card-dark  .stat-source { color: rgba(255,255,255,0.28); }
+  .card-green .stat-source { color: rgba(255,255,255,0.45); }
+  .card-white .stat-source { color: rgba(0,0,0,0.25); }
+
+  /* Chart */
+  .chart-title { font-size: 14px; font-weight: 600; color: white; margin-bottom: 4px; }
+  .chart-sub   { font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 24px; }
+
+  .chart-area {
+    position: relative;
+    height: 130px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar-fill {
+    width: 100%;
+    border-radius: 5px 5px 0 0;
+    flex-shrink: 0;
+  }
+
+  .bar-lbl {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    font-weight: 500;
+    margin-top: 7px;
+    white-space: nowrap;
+  }
+
+  .trend-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(224,82,82,0.12);
+    border: 1px solid rgba(224,82,82,0.2);
+    border-radius: 20px;
+    padding: 6px 14px;
+    margin-top: 18px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #E05252;
+  }
+  .trend-dot { width: 7px; height: 7px; border-radius: 50%; background: #E05252; }
+
+  /* Stats card */
+  .stat-block { padding: 28px 24px; }
+  .stat-block + .stat-block { border-top: 1px solid rgba(255,255,255,0.07); }
+
+  .big-pct {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: white;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .pct-desc {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .pct-source { font-size: 10px; color: rgba(255,255,255,0.22); }
+  .pct-pill {
+    display: inline-block;
+    background: rgba(255,255,255,0.07);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.45);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="grid">
+
+  <div class="card card-dark">
+    <div class="stat-num">#1</div>
+    <div class="stat-desc">Cancer killer of adults under 50 in the U.S.</div>
+    <div class="stat-source">American Cancer Society, 2026</div>
+  </div>
+
+  <div class="card card-green">
+    <div style="margin-bottom:14px;">
+      <div class="in5"><span class="big">1</span><span class="sm">in 5</span></div>
+    </div>
+    <div class="stat-desc">Colorectal cancer diagnoses are now in adults under 55</div>
+    <div class="stat-source">ACS / Yale Medicine</div>
+  </div>
+
+  <div class="card card-white">
+    <div class="stat-num">2×</div>
+    <div class="stat-desc">More likely to develop CRC if born in the 1990s vs. 1950s</div>
+    <div class="stat-source">American College of Surgeons, 2024</div>
+  </div>
+
+  <div class="card card-chart">
+    <div class="chart-title">CRC Incidence Rate — Adults Under 50</div>
+    <div class="chart-sub">Per 100,000 people · 1992–2022</div>
+    <div class="chart-area">
+      <div class="bar-col"><div class="bar-fill" style="height:36px;background:#4A4A4A;"></div><div class="bar-lbl">'92</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:46px;background:#4A4A4A;"></div><div class="bar-lbl">'95</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:54px;background:#4A4A4A;"></div><div class="bar-lbl">'00</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:60px;background:#4A4A4A;"></div><div class="bar-lbl">'04</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:70px;background:#3D7A5F;"></div><div class="bar-lbl">'08</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:82px;background:#3D7A5F;"></div><div class="bar-lbl">'12</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:92px;background:#C0524A;"></div><div class="bar-lbl">'16</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:104px;background:#C0524A;"></div><div class="bar-lbl">'20</div></div>
+      <div class="bar-col"><div class="bar-fill" style="height:120px;background:#E05252;"></div><div class="bar-lbl">'22</div></div>
+    </div>
+    <div class="trend-pill"><div class="trend-dot"></div> +3% per year in ages 20–49</div>
+  </div>
+
+  <div class="card card-stats">
+    <div class="stat-block">
+      <div class="big-pct">15%</div>
+      <div class="pct-desc">Increase in diagnoses among 18–50 year olds since 2004</div>
+      <div class="pct-source">National Cancer Database</div>
+    </div>
+    <div class="stat-block">
+      <div class="big-pct">75%</div>
+      <div class="pct-desc">Of CRC cases in under-50s are advanced stage at diagnosis</div>
+      <div class="pct-pill">Late detection = harder to treat</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

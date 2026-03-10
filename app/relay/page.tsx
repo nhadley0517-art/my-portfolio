@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-12">
-      <span className="text-xs font-semibold text-[#FD8973] uppercase tracking-[0.2em] whitespace-nowrap">
+      <span className="text-xs font-semibold uppercase tracking-[0.2em] whitespace-nowrap" style={{ color: ACCENT }}>
         {children}
       </span>
       <div className="h-px flex-1 bg-[#DDD8D1]" />
@@ -44,6 +44,8 @@ function CaseImage({ src, alt }: { src: string; alt: string }) {
     </ScrollReveal>
   );
 }
+
+const ACCENT = "#E53935";
 
 const HERO_IMAGE = "https://framerusercontent.com/images/OpIQOvWMlQ6KeOXJriYn9pAUUfo.png";
 const COMPETITOR_IMAGE = "https://framerusercontent.com/images/pg3QcVMTWwXSd3He9299kvaf2eA.jpg";
@@ -65,7 +67,7 @@ export default function Relay() {
   return (
     <>
       <Nav />
-      <CaseStudyNav sections={RELAY_SECTIONS} />
+      <CaseStudyNav sections={RELAY_SECTIONS} accentColor={ACCENT} />
       <main className="pt-[72px]">
 
         {/* ── HERO ── */}
@@ -149,7 +151,7 @@ export default function Relay() {
                         "Need fast access to safety-critical information",
                       ].map((item) => (
                         <li key={item} className="flex items-start gap-3 text-[#13181B] text-sm font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FD8973] mt-1.5 shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: ACCENT }} />
                           {item}
                         </li>
                       ))}
@@ -213,7 +215,7 @@ export default function Relay() {
                   "Situational awareness broke down across units during critical moments",
                 ].map((issue, i) => (
                   <div key={i} className="bg-white rounded-2xl border border-[#DDD8D1] p-6">
-                    <span className="text-xs font-semibold text-[#FD8973] mb-3 block">
+                    <span className="text-xs font-semibold mb-3 block" style={{ color: ACCENT }}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <p className="text-[#13181B] text-sm font-medium leading-relaxed">{issue}</p>
@@ -277,7 +279,7 @@ export default function Relay() {
                 ].map((card, i) => (
                   <ScrollReveal key={card.title} delay={i * 0.1}>
                     <div className="bg-white rounded-2xl border border-[#DDD8D1] p-6 h-full">
-                      <h4 className="text-sm font-semibold text-[#FD8973] mb-3">{card.title}</h4>
+                      <h4 className="text-sm font-semibold mb-3" style={{ color: ACCENT }}>{card.title}</h4>
                       <p className="text-[#13181B] text-sm font-medium leading-relaxed">{card.body}</p>
                     </div>
                   </ScrollReveal>
@@ -310,7 +312,7 @@ export default function Relay() {
                   "Make emergency actions impossible to miss, regardless of screen state",
                 ].map((goal, i) => (
                   <div key={i} className="bg-white rounded-2xl border border-[#DDD8D1] p-6">
-                    <span className="text-xs font-semibold text-[#FD8973] mb-3 block">
+                    <span className="text-xs font-semibold mb-3 block" style={{ color: ACCENT }}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <p className="text-[#13181B] text-sm font-medium leading-relaxed">{goal}</p>
@@ -446,7 +448,7 @@ export default function Relay() {
                 ].map((card, i) => (
                   <ScrollReveal key={card.title} delay={i * 0.1}>
                     <div className="bg-white rounded-2xl border border-[#DDD8D1] p-6 h-full">
-                      <h4 className="text-sm font-semibold text-[#FD8973] mb-3">{card.title}</h4>
+                      <h4 className="text-sm font-semibold mb-3" style={{ color: ACCENT }}>{card.title}</h4>
                       <p className="text-[#13181B] text-sm font-medium leading-relaxed">{card.body}</p>
                     </div>
                   </ScrollReveal>
@@ -540,7 +542,7 @@ export default function Relay() {
             </a>
             <a
               href="/homify"
-              className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#FD8973] transition-colors"
+              className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#E53935] transition-colors"
             >
               Homify
               <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>

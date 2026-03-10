@@ -5,7 +5,8 @@ import { motion } from "framer-motion";
 
 interface ProjectCardProps {
   slug: string;
-  thumbnail: string;
+  thumbnail?: string;
+  thumbnailNode?: React.ReactNode;
   title: string;
   year: string;
   tags: string[];
@@ -17,6 +18,7 @@ interface ProjectCardProps {
 export default function ProjectCard({
   slug,
   thumbnail,
+  thumbnailNode,
   title,
   year,
   tags,
@@ -46,22 +48,26 @@ export default function ProjectCard({
         className="group block bg-white rounded-2xl overflow-hidden border border-[#DDD8D1] hover:border-[#FD8973]/40 transition-colors duration-300"
       >
         {/* Thumbnail */}
-        {mobileThumbnail ? (
-          <picture>
-            <source media="(max-width: 767px)" srcSet={mobileThumbnail} />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={thumbnail}
-              alt={title}
-              style={{
-                width: "100%",
-                height: "280px",
-                objectFit: "cover",
-                objectPosition: "center",
-                display: "block",
-              }}
-            />
-          </picture>
+        {thumbnailNode ? (
+          thumbnailNode
+        ) : mobileThumbnail ? (
+          <div style={{ height: "280px", overflow: "hidden" }}>
+            <picture>
+              <source media="(max-width: 767px)" srcSet={mobileThumbnail} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={thumbnail}
+                alt={title}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  display: "block",
+                }}
+              />
+            </picture>
+          </div>
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -69,9 +75,7 @@ export default function ProjectCard({
             alt={title}
             style={{
               width: "100%",
-              height: "280px",
-              objectFit: "cover",
-              objectPosition: "center",
+              height: "auto",
               display: "block",
             }}
           />

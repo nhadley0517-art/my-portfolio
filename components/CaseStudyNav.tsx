@@ -9,10 +9,12 @@ interface Section {
 
 interface CaseStudyNavProps {
   sections: Section[];
+  accentColor?: string;
 }
 
-export default function CaseStudyNav({ sections }: CaseStudyNavProps) {
+export default function CaseStudyNav({ sections, accentColor }: CaseStudyNavProps) {
   const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
+  const accent = accentColor ?? "#FD8973";
 
   useEffect(() => {
     const onScroll = () => {
@@ -54,9 +56,10 @@ export default function CaseStudyNav({ sections }: CaseStudyNavProps) {
             onClick={() => scrollTo(id)}
             className={`flex items-center pl-3 py-1.5 text-left text-[13px] whitespace-nowrap transition-colors duration-150 border-l-2 ${
               isActive
-                ? "border-[#FD8973] text-[#13181B] font-bold"
+                ? "text-[#13181B] font-bold"
                 : "border-transparent text-[#9CA3AF] font-normal hover:text-[#6B7280]"
             }`}
+            style={isActive ? { borderColor: accent } : undefined}
             aria-label={`Go to ${label}`}
           >
             {label}

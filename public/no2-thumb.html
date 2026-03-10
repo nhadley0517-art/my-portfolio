@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #1C1C1E;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      height: 200%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(126, 183, 127, 0.13) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .logo {
+      position: absolute;
+      top: 5%;
+      left: 4%;
+      width: 9%;
+      max-width: 44px;
+      min-width: 28px;
+      aspect-ratio: 1;
+      z-index: 10;
+    }
+
+    .logo svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .phones {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3%;
+      height: 100%;
+      padding: 5% 6%;
+    }
+
+    .phone {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+      flex-shrink: 0;
+    }
+
+    .phone-center {
+      height: 88%;
+      width: auto;
+      aspect-ratio: 9 / 19.5;
+    }
+
+    .phone-side {
+      height: 74%;
+      width: auto;
+      aspect-ratio: 9 / 19.5;
+    }
+
+    .phone-left {
+      transform: rotate(-1deg) translateY(8%);
+    }
+
+    .phone-right {
+      transform: rotate(1deg) translateY(8%);
+    }
+
+    .phone video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="glow"></div>
+
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 246">
+        <rect width="246" height="246" rx="43.88" ry="43.88" fill="#1c1c1d"/>
+        <circle cx="47.78" cy="164.32" r="11.44" fill="#7eb880"/>
+        <path fill="#fff" d="M185.66,93.37h0c0-12.77-8.71-23.12-19.46-23.12h-92.25c-1.69,0-3.05,1.45-3.05,3.23v38.2c0,1.78,1.37,3.23,3.05,3.23h43.14c3.67,0,4.22,5.61.62,6.39l-31.14,6.82c-9.08,1.99-15.67,11.4-15.67,22.37h0c0,13.91,10.65,25.18,23.78,25.18h87.93c1.69,0,3.05-1.45,3.05-3.23v-38.2c0-1.78-1.37-3.23-3.05-3.23h-30.49c-10.65,0-19.28,13.59-19.28,24.52v-20.64c0-1.28.71-2.43,1.81-2.95l38.54-18.12c.64-.25,1.26-.55,1.87-.88l.25-.12h-.05c6.14-3.45,10.39-10.85,10.39-19.45Z"/>
+      </svg>
+    </div>
+
+    <div class="phones">
+      <div class="phone phone-side phone-left">
+        <video src="/calendar-screen.mp4" autoplay loop muted playsinline></video>
+      </div>
+      <div class="phone phone-center">
+        <video src="/home-screen.mp4" autoplay loop muted playsinline></video>
+      </div>
+      <div class="phone phone-side phone-right">
+        <video src="/insights-screen.mp4" autoplay loop muted playsinline></video>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

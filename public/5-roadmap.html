@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No. 2 — Roadmap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F8F7F4;
+    font-family: 'Poppins', sans-serif;
+    padding: 56px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #7EB77F;
+    margin-bottom: 10px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1C1C1E;
+    margin-bottom: 40px;
+  }
+
+  .phases {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    position: relative;
+  }
+
+  .phases::before {
+    content: '';
+    position: absolute;
+    top: 26px;
+    left: calc(16.66% + 26px);
+    right: calc(16.66% + 26px);
+    height: 2px;
+    background: linear-gradient(to right, #7EB77F 33%, #E5E7EB 33%);
+    z-index: 0;
+  }
+
+  .phase { display: flex; flex-direction: column; align-items: flex-start; }
+
+  .phase-dot {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    position: relative; z-index: 1; flex-shrink: 0;
+  }
+
+  .phase-dot.active  { background: #1C1C1E; }
+  .phase-dot.pending { background: #F8F7F4; border: 2px solid #E5E7EB; }
+
+  /* Custom SVG check for active */
+  .check { stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+
+  /* Clock hands for pending */
+  .clock { stroke: #D1D5DB; stroke-width: 2; stroke-linecap: round; fill: none; }
+
+  .phase-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border: 1px solid #F0F0EE;
+  }
+
+  .active-phase .phase-card {
+    border-color: rgba(126,183,127,0.3);
+    background: #FAFFFE;
+  }
+
+  .phase-num {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .active-phase .phase-num { color: #7EB77F; }
+  .phase:not(.active-phase) .phase-num { color: #C4C4C4; }
+
+  .phase-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 14px;
+  }
+
+  .active-phase .phase-title { color: #1C1C1E; }
+  .phase:not(.active-phase) .phase-title { color: #B0B7C3; }
+
+  .phase-items { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+
+  .phase-items li {
+    font-size: 12px; font-weight: 400; line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 7px;
+  }
+
+  .active-phase .phase-items li { color: #4B5563; }
+  .phase:not(.active-phase) .phase-items li { color: #C4C4C4; }
+
+  .phase-items li::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; margin-top: 6px; flex-shrink: 0;
+  }
+
+  .active-phase .phase-items li::before { background: #7EB77F; }
+  .phase:not(.active-phase) .phase-items li::before { background: #E5E7EB; }
+
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #E8F5E9; color: #3D7A5F;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px; margin-bottom: 14px;
+  }
+
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #7EB77F;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+</style>
+</head>
+<body>
+
+  <p class="section-label">What's next</p>
+  <h2 class="section-title">This is just phase one.</h2>
+
+  <div class="phases">
+
+    <div class="phase active-phase">
+      <div class="phase-dot active">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <circle cx="11" cy="11" r="11" fill="#7EB77F"/>
+          <polyline class="check" points="6,11.5 9.5,15 16,8"/>
+        </svg>
+      </div>
+      <div class="phase-card">
+        <div class="live-badge"><div class="live-dot"></div> In progress</div>
+        <div class="phase-num">Phase 01</div>
+        <div class="phase-title">Launch</div>
+        <ul class="phase-items">
+          <li>App Store deployment</li>
+          <li>Core logging experience</li>
+          <li>Rule-based insights</li>
+          <li>Privacy-first architecture</li>
+          <li>Case study & portfolio</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot pending">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <circle cx="11" cy="11" r="9" class="clock"/>
+          <line x1="11" y1="7" x2="11" y2="11" class="clock"/>
+          <line x1="11" y1="11" x2="14" y2="13.5" class="clock"/>
+        </svg>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 02</div>
+        <div class="phase-title">Intelligence</div>
+        <ul class="phase-items">
+          <li>AI-powered insights</li>
+          <li>Food & mood tracking</li>
+          <li>Correlation detection</li>
+          <li>Doctor report export</li>
+          <li>Premium subscription</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot pending">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <circle cx="11" cy="11" r="9" class="clock"/>
+          <line x1="11" y1="7" x2="11" y2="11" class="clock"/>
+          <line x1="11" y1="11" x2="14" y2="13.5" class="clock"/>
+        </svg>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">Phase 03</div>
+        <div class="phase-title">Clinical</div>
+        <ul class="phase-items">
+          <li>Full AI health model</li>
+          <li>Personalized health advice</li>
+          <li>Condition-specific tracking</li>
+          <li>Provider tools</li>
+          <li>Research partnerships</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

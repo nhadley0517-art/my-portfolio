@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No. 2 — Privacy Flow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1C1C1E;
+    font-family: 'Poppins', sans-serif;
+    padding: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  /* Phone */
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+
+  .phone {
+    width: 130px;
+    height: 250px;
+    background: #2A2A2C;
+    border-radius: 28px;
+    border: 2px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    padding-top: 16px;
+  }
+
+  .notch {
+    width: 44px; height: 12px;
+    background: #1C1C1E;
+    border-radius: 0 0 10px 10px;
+    margin: 0 auto 14px;
+  }
+
+  .phone-content { padding: 0 12px; }
+
+  .p-rings {
+    display: flex; gap: 8px;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .p-lines { display: flex; flex-direction: column; gap: 6px; }
+
+  .p-line {
+    height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .p-line.g { background: rgba(126,183,127,0.45); width: 80%; }
+  .p-line.s { width: 55%; }
+  .p-line.m { width: 70%; }
+
+  .phone-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* Nodes */
+  .nodes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .node {
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 190px;
+  }
+
+  .node.allowed {
+    background: rgba(126,183,127,0.08);
+    border: 1px solid rgba(126,183,127,0.2);
+  }
+
+  .node.blocked {
+    background: rgba(224,82,82,0.06);
+    border: 1px solid rgba(224,82,82,0.15);
+    opacity: 0.7;
+    position: relative;
+  }
+
+  .node-icon { font-size: 18px; flex-shrink: 0; }
+
+  .node-name {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .node.allowed .node-name { color: rgba(255,255,255,0.85); }
+  .node.blocked .node-name { color: rgba(255,255,255,0.35); }
+
+  .x-badge {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 18px; height: 18px;
+    background: #E05252;
+    border-radius: 50%;
+    font-size: 9px;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Connectors */
+  .connectors {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    padding: 0 16px;
+  }
+
+  .conn-line {
+    height: 1px;
+    width: 60px;
+    border-top: 1.5px dashed;
+  }
+
+  .conn-line.green { border-color: rgba(126,183,127,0.4); }
+  .conn-line.red   { border-color: rgba(224,82,82,0.25); }
+
+  /* Stat pills at bottom */
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .stat-pill {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stat-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: #7EB77F;
+  }
+
+  .stat-lbl {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+  }
+</style>
+</head>
+<body>
+<div style="display:flex; flex-direction:column; align-items:center; width:100%;">
+  <div class="diagram">
+
+    <!-- Left nodes: what lives on device -->
+    <div class="nodes">
+      <div class="node allowed">
+        <span class="node-icon">📊</span>
+        <span class="node-name">Log Entry</span>
+      </div>
+      <div class="node allowed">
+        <span class="node-icon">⚙️</span>
+        <span class="node-name">Insight Engine</span>
+      </div>
+      <div class="node allowed">
+        <span class="node-icon">🔐</span>
+        <span class="node-name">Auth Session</span>
+      </div>
+    </div>
+
+    <!-- Left connectors -->
+    <div class="connectors">
+      <div style="display:flex; align-items:center;">
+        <div class="conn-line green"></div>
+        <span style="color:rgba(126,183,127,0.5); font-size:12px; margin-left:2px;">→</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <div class="conn-line green"></div>
+        <span style="color:rgba(126,183,127,0.5); font-size:12px; margin-left:2px;">→</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <div class="conn-line green"></div>
+        <span style="color:rgba(126,183,127,0.5); font-size:12px; margin-left:2px;">→</span>
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="phone-content">
+          <div class="p-rings">
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+              <circle cx="20" cy="20" r="15" fill="none" stroke="#7EB77F" stroke-width="4"
+                stroke-dasharray="60 94" stroke-dashoffset="24" stroke-linecap="round"/>
+            </svg>
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+              <circle cx="20" cy="20" r="15" fill="none" stroke="#E07A2F" stroke-width="4"
+                stroke-dasharray="35 94" stroke-dashoffset="24" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="p-lines">
+            <div class="p-line g"></div>
+            <div class="p-line s"></div>
+            <div class="p-line m"></div>
+            <div class="p-line s" style="margin-top:6px;"></div>
+            <div class="p-line g"></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Your iPhone</div>
+    </div>
+
+    <!-- Right connectors -->
+    <div class="connectors">
+      <div style="display:flex; align-items:center;">
+        <span style="color:rgba(224,82,82,0.3); font-size:12px; margin-right:2px;">→</span>
+        <div class="conn-line red"></div>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span style="color:rgba(224,82,82,0.3); font-size:12px; margin-right:2px;">→</span>
+        <div class="conn-line red"></div>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span style="color:rgba(126,183,127,0.4); font-size:12px; margin-right:2px;">→</span>
+        <div class="conn-line green"></div>
+      </div>
+    </div>
+
+    <!-- Right nodes: what's blocked -->
+    <div class="nodes">
+      <div class="node blocked">
+        <div class="x-badge">✕</div>
+        <span class="node-icon">📡</span>
+        <span class="node-name">Third Parties</span>
+      </div>
+      <div class="node blocked">
+        <div class="x-badge">✕</div>
+        <span class="node-icon">🤖</span>
+        <span class="node-name">AI APIs</span>
+      </div>
+      <div class="node allowed">
+        <span class="node-icon">🗄️</span>
+        <span class="node-name">Supabase (RLS)</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats-row">
+    <div class="stat-pill">
+      <span class="stat-val">$0</span>
+      <span class="stat-lbl">per-user cost</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-val">0</span>
+      <span class="stat-lbl">third-party recipients</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-val">100%</span>
+      <span class="stat-lbl">insights on-device</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-val">RLS</span>
+      <span class="stat-lbl">on all tables</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-12">
-      <span className="text-xs font-semibold text-[#FD8973] uppercase tracking-[0.2em] whitespace-nowrap">
+      <span className="text-xs font-semibold uppercase tracking-[0.2em] whitespace-nowrap" style={{ color: ACCENT }}>
         {children}
       </span>
       <div className="h-px flex-1 bg-[#DDD8D1]" />
@@ -45,6 +45,8 @@ function CaseImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+const ACCENT = "#6B3FA0";
+
 const HERO_IMAGE = "https://framerusercontent.com/images/zZ2hHER48PtEN221uFQgkjWkY.png";
 
 const PROBLEM_IMAGES = [
@@ -63,7 +65,7 @@ export default function WritingProcess() {
   return (
     <>
       <Nav />
-      <CaseStudyNav sections={WP_SECTIONS} />
+      <CaseStudyNav sections={WP_SECTIONS} accentColor={ACCENT} />
       <main className="pt-[72px]">
 
         {/* ── HERO ── */}
@@ -71,9 +73,9 @@ export default function WritingProcess() {
           {/* Text content — constrained */}
           <div className="px-6 max-w-5xl mx-auto mb-12">
             <ScrollReveal>
-              <span className="badge-shipped inline-flex items-center justify-center gap-[6px] bg-[#DCFCE7] text-[#16A34A] font-semibold rounded-full" style={{ padding: "8px 16px 8px 12px", fontSize: "0.9rem", overflow: "visible" }}>
+              <span className="badge-shipped inline-flex items-center justify-center gap-[6px] font-semibold rounded-full" style={{ padding: "8px 16px 8px 12px", fontSize: "0.9rem", overflow: "visible", backgroundColor: "#EDE9F6", color: ACCENT }}>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <circle cx="7" cy="7" r="7" fill="#16A34A" />
+                  <circle cx="7" cy="7" r="7" fill={ACCENT} />
                   <path d="M4 7l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 Shipped
@@ -162,7 +164,7 @@ export default function WritingProcess() {
                         "Benefit from structured guidance through complex tasks",
                       ].map((item) => (
                         <li key={item} className="flex items-start gap-3 text-[#13181B] text-sm font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FD8973] mt-1.5 shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ backgroundColor: ACCENT }} />
                           {item}
                         </li>
                       ))}
@@ -229,7 +231,7 @@ export default function WritingProcess() {
                   "The interface was built for exploration, not instruction — placing the burden of assembly on the student",
                 ].map((issue, i) => (
                   <div key={i} className="bg-white rounded-2xl border border-[#DDD8D1] p-6">
-                    <span className="text-xs font-semibold text-[#FD8973] mb-3 block">
+                    <span className="text-xs font-semibold mb-3 block" style={{ color: ACCENT }}>
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <p className="text-[#13181B] text-sm font-medium leading-relaxed">{issue}</p>
@@ -325,7 +327,7 @@ export default function WritingProcess() {
                   "Videos and downloadable resources felt disconnected from the written instruction they were meant to support",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[#13181B] text-base font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FD8973] mt-2 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: ACCENT }} />
                     {item}
                   </li>
                 ))}
@@ -399,7 +401,7 @@ export default function WritingProcess() {
                   "Clear navigation to the previous and next stage",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[#13181B] text-base font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FD8973] mt-2 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full mt-2 shrink-0" style={{ backgroundColor: ACCENT }} />
                     {item}
                   </li>
                 ))}
@@ -454,7 +456,7 @@ export default function WritingProcess() {
               ].map((card, i) => (
                 <ScrollReveal key={card.title} delay={i * 0.1}>
                   <div className="bg-white rounded-2xl border border-[#DDD8D1] p-6 h-full">
-                    <h4 className="text-sm font-semibold text-[#FD8973] mb-3">{card.title}</h4>
+                    <h4 className="text-sm font-semibold mb-3" style={{ color: ACCENT }}>{card.title}</h4>
                     <p className="text-[#13181B] text-sm font-medium leading-relaxed">{card.body}</p>
                   </div>
                 </ScrollReveal>
@@ -481,10 +483,10 @@ export default function WritingProcess() {
               Back to all work
             </a>
             <a
-              href="/univo"
-              className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#FD8973] transition-colors"
+              href="/no2"
+              className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#6B3FA0] transition-colors"
             >
-              Next project: Univo
+              Next project: No. 2
               <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
             </a>
           </div>

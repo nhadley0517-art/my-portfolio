@@ -1,16 +1,44 @@
 import ScrollReveal from "./ScrollReveal";
 import ProjectCard from "./ProjectCard";
 
+const WpThumbnail = (
+  <div style={{ width: "100%", overflow: "hidden" }}>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img src="/wp_thumb.png" alt="Writing Process Redesign" style={{ width: "100%", height: "auto", display: "block" }} />
+  </div>
+);
+
+const No2Thumbnail = (
+  <div style={{ width: "100%", height: "352px", overflow: "hidden" }}>
+    <iframe src="/no2-thumb.html" scrolling="no" style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none" }} />
+  </div>
+);
+
+const RelayThumbnail = (
+  <div style={{ width: "100%", overflow: "hidden" }}>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img src="/relay_thumb.png" alt="Relay" style={{ width: "100%", height: "auto", display: "block" }} />
+  </div>
+);
+
 const projects = [
   {
     slug: "/writingprocess",
-    thumbnail: "/wp_thumb.png?v=2",
+    thumbnailNode: WpThumbnail,
     title: "Writing Process Redesign",
     year: "2026",
     tags: ["UX Design", "Internship"],
     description:
       "Redesigned GCU's student writing resource from a single overwhelming page into a guided, step-by-step learning experience.",
-    mobileThumbnail: "/wp_thumb_mobile.png",
+  },
+  {
+    slug: "/no2",
+    thumbnailNode: No2Thumbnail,
+    title: "No. 2",
+    year: "2026",
+    tags: ["iOS Development", "Branding", "Solo Build"],
+    description:
+      "A gut health tracking app built solo in two weeks — design, code, backend, and brand.",
   },
   {
     slug: "/univo",
@@ -23,21 +51,12 @@ const projects = [
   },
   {
     slug: "/relay",
-    thumbnail: "/relay_thumb.png",
+    thumbnailNode: RelayThumbnail,
     title: "Relay",
     year: "2025",
     tags: ["UX Design", "Dashboard", "Student Project"],
     description:
       "A mission coordination dashboard for field teams operating in disaster zones with no connectivity.",
-  },
-  {
-    slug: "/homify",
-    thumbnail: "/homify_thumb.png",
-    title: "Homify",
-    year: "2024",
-    tags: ["UX Design", "Student Project"],
-    description:
-      "A smart home dashboard redesigned from scratch for a cleaner, more intuitive everyday experience.",
   },
 ];
 

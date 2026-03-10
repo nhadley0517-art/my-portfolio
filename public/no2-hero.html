@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      background: #1C1C1E;
+    }
+
+    .container {
+      width: 1200px;
+      height: 630px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .glow {
+      position: absolute;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(126, 183, 127, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo {
+      position: absolute;
+      top: 24px;
+      left: 28px;
+      width: 56px;
+      height: 56px;
+      z-index: 10;
+    }
+
+    .logo svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .screens {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      margin: 0 auto;
+    }
+
+    .screen {
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      flex-shrink: 0;
+    }
+
+    .screen-side {
+      width: 200px;
+      height: 434px;
+    }
+
+    .screen-center {
+      width: 240px;
+      height: 520px;
+    }
+
+    .screen-left {
+      transform: rotate(-1deg) translateY(30px);
+    }
+
+    .screen-right {
+      transform: rotate(1deg) translateY(30px);
+    }
+
+    .screen video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @media (max-width: 767px) {
+      .screen-left, .screen-right { display: none; }
+      .screens { gap: 0; }
+      .screen-center { width: 72vw; height: calc(72vw * 19.5 / 9); transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="glow"></div>
+
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 246">
+        <rect width="246" height="246" rx="43.88" ry="43.88" fill="#1c1c1d"/>
+        <circle cx="47.78" cy="164.32" r="11.44" fill="#7eb880"/>
+        <path fill="#fff" d="M185.66,93.37h0c0-12.77-8.71-23.12-19.46-23.12h-92.25c-1.69,0-3.05,1.45-3.05,3.23v38.2c0,1.78,1.37,3.23,3.05,3.23h43.14c3.67,0,4.22,5.61.62,6.39l-31.14,6.82c-9.08,1.99-15.67,11.4-15.67,22.37h0c0,13.91,10.65,25.18,23.78,25.18h87.93c1.69,0,3.05-1.45,3.05-3.23v-38.2c0-1.78-1.37-3.23-3.05-3.23h-30.49c-10.65,0-19.28,13.59-19.28,24.52v-20.64c0-1.28.71-2.43,1.81-2.95l38.54-18.12c.64-.25,1.26-.55,1.87-.88l.25-.12h-.05c6.14-3.45,10.39-10.85,10.39-19.45Z"/>
+      </svg>
+    </div>
+
+    <div class="screens">
+      <div class="screen screen-side screen-left">
+        <video src="/calendar-screen.mp4" autoplay loop muted playsinline></video>
+      </div>
+      <div class="screen screen-center">
+        <video src="/home-screen.mp4" autoplay loop muted playsinline></video>
+      </div>
+      <div class="screen screen-side screen-right">
+        <video src="/insights-screen.mp4" autoplay loop muted playsinline></video>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

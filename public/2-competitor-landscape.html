@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No. 2 — Competitor Landscape</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F8F7F4;
+    font-family: 'Poppins', sans-serif;
+    padding: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .chart {
+    position: relative;
+    width: 680px;
+    height: 680px;
+  }
+
+  /* Quadrant backgrounds */
+  .quad {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    border-radius: 4px;
+  }
+  .q1 { top:0; left:0; background: rgba(74,144,217,0.05); }
+  .q2 { top:0; right:0; background: rgba(126,183,127,0.07); }
+  .q3 { bottom:0; left:0; background: rgba(224,82,82,0.04); }
+  .q4 { bottom:0; right:0; background: rgba(245,158,11,0.05); }
+
+  /* Axes */
+  .axis-h {
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 1px;
+    background: #D1D5DB;
+  }
+  .axis-v {
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 1px;
+    background: #D1D5DB;
+  }
+
+  /* Axis labels */
+  .ax-label {
+    position: absolute;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #B0B7C3;
+  }
+  .ax-top    { top: 14px; left: 50%; transform: translateX(-50%); }
+  .ax-bottom { bottom: 14px; left: 50%; transform: translateX(-50%); }
+  .ax-left   { left: 14px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+  .ax-right  { right: 14px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+
+  /* Dots */
+  .dot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .circle {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    flex-shrink: 0;
+  }
+
+  .dot-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1C1C1E;
+    background: white;
+    padding: 3px 9px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    white-space: nowrap;
+  }
+
+  /* No. 2 special */
+  .dot.star .circle {
+    width: 60px; height: 60px;
+    background: #1C1C1E;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+
+  .dot.star .dot-name {
+    background: #1C1C1E;
+    color: white;
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+
+  /* Gap annotation */
+  .gap-ring {
+    position: absolute;
+    border: 2px dashed rgba(126,183,127,0.35);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="chart">
+  <!-- Quadrants -->
+  <div class="quad q1"></div>
+  <div class="quad q2"></div>
+  <div class="quad q3"></div>
+  <div class="quad q4"></div>
+
+  <!-- Axes -->
+  <div class="axis-h"></div>
+  <div class="axis-v"></div>
+
+  <!-- Axis labels -->
+  <div class="ax-label ax-top">High Insight</div>
+  <div class="ax-label ax-bottom">Low Insight</div>
+  <div class="ax-label ax-left">Clinical</div>
+  <div class="ax-label ax-right">Friendly</div>
+
+  <!-- Gap ring around No. 2 position -->
+  <div class="gap-ring" style="left:66%; top:22%; width:130px; height:130px;"></div>
+
+  <!-- Competitors -->
+  <div class="dot" style="left:19%; top:74%;">
+    <div class="circle" style="width:38px;height:38px;background:#94A3B8;">GI</div>
+    <div class="dot-name">GI Monitor</div>
+  </div>
+
+  <div class="dot" style="left:27%; top:37%;">
+    <div class="circle" style="width:42px;height:42px;background:#4A90D9;">MS</div>
+    <div class="dot-name">MySymptoms</div>
+  </div>
+
+  <div class="dot" style="left:17%; top:46%;">
+    <div class="circle" style="width:38px;height:38px;background:#6366F1;">HW</div>
+    <div class="dot-name">Healow</div>
+  </div>
+
+  <div class="dot" style="left:73%; top:70%;">
+    <div class="circle" style="width:38px;height:38px;background:#F59E0B;">CC</div>
+    <div class="dot-name">Cara Care</div>
+  </div>
+
+  <div class="dot" style="left:82%; top:80%;">
+    <div class="circle" style="width:34px;height:34px;background:#E07A2F;">BW</div>
+    <div class="dot-name">Bowelle</div>
+  </div>
+
+  <div class="dot" style="left:88%; top:88%;">
+    <div class="circle" style="width:30px;height:30px;background:#D1D5DB;color:#6B7280;">PL</div>
+    <div class="dot-name">Poop Log</div>
+  </div>
+
+  <!-- No. 2 -->
+  <div class="dot star" style="left:66%; top:22%;">
+    <div class="circle">
+      <svg width="30" height="30" viewBox="0 0 246 246" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="47.78" cy="164.32" r="11.44" fill="#7eb880"/>
+        <path fill="#fff" d="M185.66,93.37h0c0-12.77-8.71-23.12-19.46-23.12h-92.25c-1.69,0-3.05,1.45-3.05,3.23v38.2c0,1.78,1.37,3.23,3.05,3.23h43.14c3.67,0,4.22,5.61.62,6.39l-31.14,6.82c-9.08,1.99-15.67,11.4-15.67,22.37h0c0,13.91,10.65,25.18,23.78,25.18h87.93c1.69,0,3.05-1.45,3.05-3.23v-38.2c0-1.78-1.37-3.23-3.05-3.23h-30.49c-10.65,0-19.28,13.59-19.28,24.52v-20.64c0-1.28.71-2.43,1.81-2.95l38.54-18.12c.64-.25,1.26-.55,1.87-.88l.25-.12h-.05c6.14-3.45,10.39-10.85,10.39-19.45Z"/>
+      </svg>
+    </div>
+    <div class="dot-name">No. 2</div>
+  </div>
+
+</div>
+</body>
+</html>
