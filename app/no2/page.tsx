@@ -78,9 +78,12 @@ export default function No2() {
       <main className="pt-[72px]">
         <style>{`
           @media (max-width: 768px) {
-            /* iframe scale-to-fit trick — scale 0.38, fixed 900px width */
-            .n2-ifr { overflow: hidden; border-radius: 12px; }
-            .n2-ifr iframe { width: 900px !important; transform: scale(0.38); transform-origin: top left; }
+            /* iframe scale-to-fit trick — scale 0.38, fixed 900px width, centered */
+            .n2-ifr { overflow: hidden; border-radius: 12px; width: 100%; }
+            .n2-ifr iframe { width: 900px !important; transform: scale(0.38); transform-origin: top center; }
+            /* hero iframe swap */
+            .hero-desktop { display: none; }
+            .hero-mobile { display: block; }
             /* wrapper heights = original iframe height × 0.38 */
             .n2-ifr-585 { height: 296px; }  /* 780 × 0.38 */
             .n2-ifr-615 { height: 312px; }  /* 820 × 0.38 */
@@ -93,6 +96,10 @@ export default function No2() {
             .n2-feat-vid { max-width: 100% !important; }
             /* first iterations side-by-side */
             .n2-iter-img { max-width: 100% !important; }
+          }
+          @media (min-width: 769px) {
+            .hero-desktop { display: block; }
+            .hero-mobile { display: none; }
           }
         `}</style>
 
@@ -137,7 +144,8 @@ export default function No2() {
 
           <ScrollReveal>
             <div className="px-6 max-w-5xl mx-auto py-10">
-              <iframe src="/no2-hero.html" scrolling="no" className="n2-hero-iframe" style={{ width: "100%", height: "500px", border: "none", borderRadius: "16px" }} />
+              <iframe src="/no2-hero.html" scrolling="no" className="hero-desktop" style={{ width: "100%", height: "500px", border: "none", borderRadius: "16px" }} />
+              <iframe src="/no2-thumb.html" scrolling="no" className="hero-mobile" style={{ width: "100%", height: "300px", border: "none", borderRadius: "16px" }} />
             </div>
           </ScrollReveal>
         </section>
