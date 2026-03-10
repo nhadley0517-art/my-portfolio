@@ -6,7 +6,8 @@
       "Bash(vercel:*)",
       "Bash(node:*)",
       "Bash(cd \"C:\\\\Users\\\\noahh\\\\OneDrive\\\\Desktop\\\\my-portfolio\" && npx tsc --noEmit 2>&1 | head -60)",
-      "Bash(cd \"C:\\\\Users\\\\noahh\\\\OneDrive\\\\Desktop\\\\my-portfolio\" && npx next build 2>&1 | tail -30)"
+      "Bash(cd \"C:\\\\Users\\\\noahh\\\\OneDrive\\\\Desktop\\\\my-portfolio\" && npx next build 2>&1 | tail -30)",
+      "Bash(python3 -c \"\nwith open\\('C:/Users/noahh/OneDrive/Desktop/my-portfolio/public/6-brand-identity.html', 'r', encoding='utf-8'\\) as f:\n    lines = f.readlines\\(\\)\n\nfor i, line in enumerate\\(lines, 1\\):\n    if len\\(line\\) > 500:\n        print\\(f'  {i}: [BASE64 IMAGE DATA - {len\\(line\\)} chars truncated]'\\)\n    else:\n        print\\(f'  {i}: {line}', end=''\\)\n\")"
     ]
   }
 }

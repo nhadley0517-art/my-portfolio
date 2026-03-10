@@ -144,6 +144,18 @@
     color: rgba(255,255,255,0.45);
     margin-top: 8px;
   }
+
+  @media (max-width: 600px) {
+    body { padding: 20px; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .card-chart { grid-column: 1 / 3; }
+    .card-stats { grid-column: 1 / 3; }
+    .stat-num { font-size: 48px; }
+    .in5 .big { font-size: 48px; }
+    .in5 .sm  { font-size: 28px; }
+    .big-pct  { font-size: 40px; }
+    .chart-area { height: 100px; }
+  }
 </style>
 </head>
 <body>

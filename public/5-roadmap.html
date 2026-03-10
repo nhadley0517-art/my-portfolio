@@ -128,6 +128,13 @@
   }
 
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  @media (max-width: 600px) {
+    body { padding: 20px; }
+    .section-title { font-size: 22px; margin-bottom: 28px; }
+    .phases { grid-template-columns: 1fr; }
+    .phases::before { display: none; }
+  }
 </style>
 </head>
 <body>

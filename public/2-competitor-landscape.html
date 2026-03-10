@@ -118,6 +118,18 @@
     transform: translate(-50%, -50%);
     pointer-events: none;
   }
+
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    .chart {
+      width: 100%;
+      max-width: 340px;
+      height: 340px;
+    }
+    .circle { font-size: 9px !important; }
+    .dot-name { font-size: 9px; padding: 2px 6px; }
+    .dot.star .circle { width: 44px !important; height: 44px !important; }
+  }
 </style>
 </head>
 <body>

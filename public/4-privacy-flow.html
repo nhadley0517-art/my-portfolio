@@ -178,6 +178,22 @@
     font-size: 11px;
     color: rgba(255,255,255,0.35);
   }
+
+  @media (max-width: 600px) {
+    body { padding: 20px; }
+    .diagram {
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .connectors { display: none; }
+    .nodes { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .node { width: 140px; }
+    .phone-wrap { order: -1; }
+    .stats-row { margin-top: 20px; gap: 8px; }
+    .stat-pill { padding: 6px 12px; }
+    .stat-val { font-size: 14px; }
+  }
 </style>
 </head>
 <body>
