@@ -142,9 +142,39 @@ export default function No2Content() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <div style={{ width: "100%", overflowX: "hidden" }}>
-                <iframe src="/1-stats.html?v=2" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "1400px" : "780px" }} />
-              </div>
+              {isMobile ? (
+                <div style={{background:'#F8F7F4', borderRadius:'12px', padding:'24px', display:'flex', flexDirection:'column', gap:'16px'}}>
+                  <div style={{background:'#1C1C1E', borderRadius:'16px', padding:'24px'}}>
+                    <div style={{fontSize:'48px', fontWeight:'800', color:'#fff', lineHeight:1}}>#1</div>
+                    <div style={{fontSize:'13px', color:'rgba(255,255,255,0.6)', marginTop:'8px'}}>Cancer killer of adults under 50 in the U.S.</div>
+                    <div style={{fontSize:'10px', color:'rgba(255,255,255,0.25)', marginTop:'8px'}}>American Cancer Society, 2026</div>
+                  </div>
+                  <div style={{background:'#7EB77F', borderRadius:'16px', padding:'24px'}}>
+                    <div style={{fontSize:'48px', fontWeight:'800', color:'#fff', lineHeight:1}}>1 in 5</div>
+                    <div style={{fontSize:'13px', color:'rgba(255,255,255,0.7)', marginTop:'8px'}}>Colorectal cancer diagnoses are now in adults under 55</div>
+                    <div style={{fontSize:'10px', color:'rgba(255,255,255,0.4)', marginTop:'8px'}}>ACS / Yale Medicine</div>
+                  </div>
+                  <div style={{background:'#fff', border:'1px solid #E5E7EB', borderRadius:'16px', padding:'24px'}}>
+                    <div style={{fontSize:'48px', fontWeight:'800', color:'#E05252', lineHeight:1}}>2×</div>
+                    <div style={{fontSize:'13px', color:'#6B7280', marginTop:'8px'}}>More likely to develop CRC if born in the 1990s vs. 1950s</div>
+                    <div style={{fontSize:'10px', color:'#C4C4C4', marginTop:'8px'}}>American College of Surgeons, 2024</div>
+                  </div>
+                  <div style={{background:'#1C1C1E', borderRadius:'16px', padding:'24px'}}>
+                    <div style={{fontSize:'40px', fontWeight:'800', color:'#fff', lineHeight:1}}>15%</div>
+                    <div style={{fontSize:'13px', color:'rgba(255,255,255,0.6)', marginTop:'8px'}}>Increase in diagnoses among 18–50 year olds since 2004</div>
+                    <div style={{fontSize:'10px', color:'rgba(255,255,255,0.25)', marginTop:'8px'}}>National Cancer Database</div>
+                  </div>
+                  <div style={{background:'#1C1C1E', borderRadius:'16px', padding:'24px'}}>
+                    <div style={{fontSize:'40px', fontWeight:'800', color:'#fff', lineHeight:1}}>75%</div>
+                    <div style={{fontSize:'13px', color:'rgba(255,255,255,0.6)', marginTop:'8px'}}>Of CRC cases in under-50s are advanced stage at diagnosis</div>
+                    <div style={{fontSize:'10px', color:'rgba(255,255,255,0.25)', marginTop:'8px'}}>Late detection = harder to treat</div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ width: "100%", overflowX: "hidden" }}>
+                  <iframe src="/1-stats.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'780px'}} />
+                </div>
+              )}
             </ScrollReveal>
           </div>
         </section>
@@ -185,9 +215,34 @@ export default function No2Content() {
             </div>
 
             <ScrollReveal>
-              <div style={{ width: "100%", overflowX: "hidden" }}>
-                <iframe src="/2-competitor-landscape.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "900px" : "820px" }} />
-              </div>
+              {isMobile ? (
+                <div style={{background:'#F8F9FA', borderRadius:'12px', padding:'24px'}}>
+                  <p style={{fontSize:'11px', fontWeight:'700', color:'#9CA3AF', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'16px'}}>Competitor Landscape</p>
+                  <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                    {[
+                      {name:'GI Monitor', desc:'Clinical-grade, doctor-facing, complex UI'},
+                      {name:'MySymptoms', desc:'Detailed but overwhelming for everyday use'},
+                      {name:'Healow', desc:'Healthcare portal, not consumer-friendly'},
+                      {name:'Cara Care', desc:'IBS-focused, subscription heavy'},
+                      {name:'Bowelle', desc:'Simple logging, no insights'},
+                      {name:'Poop Log', desc:'Novelty app, no real health focus'},
+                    ].map(c => (
+                      <div key={c.name} style={{background:'#fff', border:'1px solid #E5E7EB', borderRadius:'12px', padding:'16px'}}>
+                        <div style={{fontWeight:'700', fontSize:'14px', color:'#1C1C1E'}}>{c.name}</div>
+                        <div style={{fontSize:'13px', color:'#6B7280', marginTop:'4px'}}>{c.desc}</div>
+                      </div>
+                    ))}
+                    <div style={{background:'#1C1C1E', borderRadius:'12px', padding:'16px'}}>
+                      <div style={{fontWeight:'700', fontSize:'14px', color:'#7EB77F'}}>No. 2</div>
+                      <div style={{fontSize:'13px', color:'rgba(255,255,255,0.6)', marginTop:'4px'}}>Consumer-friendly, insight-driven, privacy-first</div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ width: "100%", overflowX: "hidden" }}>
+                  <iframe src="/2-competitor-landscape.html" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'820px'}} />
+                </div>
+              )}
             </ScrollReveal>
           </div>
         </section>
@@ -212,8 +267,8 @@ export default function No2Content() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <div style={{ width: "100%", overflowX: "hidden" }}>
-                    <iframe src="/4-privacy-flow.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "1000px" : "680px" }} />
+                  <div style={{ width: "100%", overflowX: "hidden", display: "flex", justifyContent: "center" }}>
+                    <iframe src="/4-privacy-flow.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "680px" : "680px" }} />
                   </div>
                 </ScrollReveal>
               </div>
@@ -231,7 +286,7 @@ export default function No2Content() {
                 </ScrollReveal>
                 <ScrollReveal>
                   <div style={{ width: "100%", overflowX: "hidden" }}>
-                    <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "1100px" : "560px" }} />
+                    <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "780px" : "560px" }} />
                   </div>
                 </ScrollReveal>
               </div>
@@ -347,9 +402,21 @@ export default function No2Content() {
                   <p className="text-lg leading-relaxed font-light mb-10" style={{ color: "rgba(244,244,245,0.75)" }}>
                     No. 2. Everyone knows what it means. Slightly funny, immediately clear, owns the subject instead of tiptoeing around it. The tagline was obvious: The No. 1 app for your No. 2. The logo dot is a colon — the punctuation mark and the organ. Two meanings, one mark.
                   </p>
-                  <div style={{ width: "100%", overflowX: "hidden" }}>
-                    <iframe src="/6-brand-identity.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "1400px" : "720px" }} />
-                  </div>
+                  {isMobile ? (
+                    <div style={{display:'flex', flexDirection:'column', gap:'24px', alignItems:'center'}}>
+                      <div style={{background:'#1C1C1E', borderRadius:'24px', padding:'48px', display:'flex', alignItems:'center', justifyContent:'center', width:'100%'}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 246" style={{width:'120px', height:'120px'}}>
+                          <rect width="246" height="246" rx="43.88" ry="43.88" fill="#1c1c1d"/>
+                          <circle cx="47.78" cy="164.32" r="11.44" fill="#7eb880"/>
+                          <path fill="#fff" d="M185.66,93.37h0c0-12.77-8.71-23.12-19.46-23.12h-92.25c-1.69,0-3.05,1.45-3.05,3.23v38.2c0,1.78,1.37,3.23,3.05,3.23h43.14c3.67,0,4.22,5.61.62,6.39l-31.14,6.82c-9.08,1.99-15.67,11.4-15.67,22.37h0c0,13.91,10.65,25.18,23.78,25.18h87.93c1.69,0,3.05-1.45,3.05-3.23v-38.2c0-1.78-1.37-3.23-3.05-3.23h-30.49c-10.65,0-19.28,13.59-19.28,24.52v-20.64c0-1.28.71-2.43,1.81-2.95l38.54-18.12c.64-.25,1.26-.55,1.87-.88l.25-.12h-.05c6.14-3.45,10.39-10.85,10.39-19.45Z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ width: "100%", overflowX: "hidden" }}>
+                      <iframe src="/6-brand-identity.html" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'720px'}} />
+                    </div>
+                  )}
                 </div>
               </ScrollReveal>
             </div>
@@ -371,7 +438,7 @@ export default function No2Content() {
 
             <ScrollReveal>
               <div style={{ width: "100%", overflowX: "hidden" }}>
-                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "1200px" : "580px" }} />
+                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "1175px" : "580px" }} />
               </div>
             </ScrollReveal>
           </div>
