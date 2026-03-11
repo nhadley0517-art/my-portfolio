@@ -130,7 +130,7 @@
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
   @media (max-width: 600px) {
-    body { padding: 20px; min-height: 960px; }
+    body { padding: 20px; height: auto; min-height: unset; overflow: visible; }
     .section-title { font-size: 22px; margin-bottom: 28px; }
     .phases { grid-template-columns: 1fr; }
     .phases::before { display: none; }
