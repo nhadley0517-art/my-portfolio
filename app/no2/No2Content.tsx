@@ -335,7 +335,7 @@ export default function No2Content() {
                     </div>
                   ) : (
                     <div style={{ width: "100%", overflowX: "hidden" }}>
-                      <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'670px'}} />
+                      <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'690px'}} />
                     </div>
                   )}
                 </ScrollReveal>
