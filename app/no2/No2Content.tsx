@@ -335,7 +335,7 @@ export default function No2Content() {
                     </div>
                   ) : (
                     <div style={{ width: "100%", overflowX: "hidden" }}>
-                      <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'615px'}} />
+                      <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'670px'}} />
                     </div>
                   )}
                 </ScrollReveal>
@@ -473,7 +473,7 @@ export default function No2Content() {
                         </svg>
                       </div>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/logo-sketch.png" style={{width:'100%', borderRadius:'16px', display:'block'}} alt="Logo sketches" />
+                      <img src="/logo-sketch.jpeg" style={{width:'100%', borderRadius:'16px', display:'block'}} alt="Logo sketches" />
                     </div>
                   ) : (
                     <div style={{ width: "100%", overflowX: "hidden" }}>
