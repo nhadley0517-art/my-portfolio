@@ -78,18 +78,9 @@ export default function No2() {
       <main className="pt-[72px]">
         <style>{`
           @media (max-width: 768px) {
-            /* iframe scale-to-fit — width 250%, scale 0.4, margin-left -75% to re-center */
-            .n2-ifr { overflow: hidden; border-radius: 12px; width: 100%; position: relative; }
-            .n2-ifr iframe { width: 250% !important; transform: scale(0.4); transform-origin: top left; margin-left: -75%; }
             /* hero iframe swap */
             .hero-desktop { display: none; }
             .hero-mobile { display: block; }
-            /* wrapper heights = original iframe height × 0.4 */
-            .n2-ifr-585 { height: 312px; }  /* 780 × 0.4 */
-            .n2-ifr-615 { height: 328px; }  /* 820 × 0.4 */
-            .n2-ifr-510 { height: 272px; }  /* 680 × 0.4 */
-            .n2-ifr-435 { height: 232px; }  /* 580 × 0.4 */
-            .n2-ifr-540 { height: 288px; }  /* 720 × 0.4 */
             /* hero iframe */
             .n2-hero-iframe { height: 280px !important; }
             /* feature video wrapper */
@@ -179,8 +170,8 @@ export default function No2() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <div className="n2-ifr n2-ifr-585" style={{ borderRadius: "12px" }}>
-                <iframe src="/1-stats.html?v=2" scrolling="no" style={{ width: "100%", height: "780px", border: "none", borderRadius: "12px", overflow: "hidden" }} />
+              <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                <iframe src="/1-stats.html?v=2" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "780px", border: "none", borderRadius: "12px", display: "block" }} />
               </div>
             </ScrollReveal>
           </div>
@@ -222,8 +213,8 @@ export default function No2() {
             </div>
 
             <ScrollReveal>
-              <div className="n2-ifr n2-ifr-615" style={{ borderRadius: "12px" }}>
-                <iframe src="/2-competitor-landscape.html" scrolling="no" style={{ width: "100%", height: "820px", border: "none", borderRadius: "12px", overflow: "hidden" }} />
+              <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                <iframe src="/2-competitor-landscape.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "820px", border: "none", borderRadius: "12px", display: "block" }} />
               </div>
             </ScrollReveal>
           </div>
@@ -249,8 +240,8 @@ export default function No2() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <div className="n2-ifr n2-ifr-585" style={{ borderRadius: "12px" }}>
-                    <iframe src="/4-privacy-flow.html" scrolling="no" style={{ width: "100%", height: "780px", border: "none", borderRadius: "12px", overflow: "hidden" }} />
+                  <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                    <iframe src="/4-privacy-flow.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "780px", border: "none", borderRadius: "12px", display: "block" }} />
                   </div>
                 </ScrollReveal>
               </div>
@@ -267,8 +258,8 @@ export default function No2() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <div className="n2-ifr n2-ifr-510" style={{ borderRadius: "12px" }}>
-                    <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{ width: "100%", height: "680px", border: "none", borderRadius: "12px", overflow: "hidden" }} />
+                  <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                    <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "680px", border: "none", borderRadius: "12px", display: "block" }} />
                   </div>
                 </ScrollReveal>
               </div>
@@ -384,8 +375,8 @@ export default function No2() {
                   <p className="text-lg leading-relaxed font-light mb-10" style={{ color: "rgba(244,244,245,0.75)" }}>
                     No. 2. Everyone knows what it means. Slightly funny, immediately clear, owns the subject instead of tiptoeing around it. The tagline was obvious: The No. 1 app for your No. 2. The logo dot is a colon — the punctuation mark and the organ. Two meanings, one mark.
                   </p>
-                  <div className="n2-ifr n2-ifr-540" style={{ borderRadius: "12px" }}>
-                    <iframe src="/6-brand-identity.html" scrolling="no" style={{ width: "100%", height: "720px", border: "none", borderRadius: "12px", overflow: "hidden" }} />
+                  <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                    <iframe src="/6-brand-identity.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "720px", border: "none", borderRadius: "12px", display: "block" }} />
                   </div>
                 </div>
               </ScrollReveal>
@@ -407,8 +398,8 @@ export default function No2() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <div className="n2-ifr n2-ifr-435" style={{ borderRadius: "12px" }}>
-                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", height: "580px", border: "none", borderRadius: "12px", overflow: "hidden" }} />
+              <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "580px", border: "none", borderRadius: "12px", display: "block" }} />
               </div>
             </ScrollReveal>
           </div>
