@@ -424,9 +424,18 @@ export default function No2Content() {
                       {feature.videoSrc ? (
                         <video src={feature.videoSrc} autoPlay loop muted playsInline style={{ width: "100%", borderRadius: "16px", display: "block" }} />
                       ) : (
-                        <div style={{ borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", maxWidth: "420px", margin: "0 auto" }}>
-                          <iframe src="/doctor-pdf.pdf" style={{ width: "100%", height: "600px", border: "none", display: "block" }} />
-                        </div>
+                        {isMobile ? (
+                          <div style={{background:'#F8F9FA', border:'1px solid #E5E7EB', borderRadius:'16px', padding:'32px', textAlign:'center'}}>
+                            <div style={{fontSize:'40px', marginBottom:'16px'}}>📄</div>
+                            <div style={{fontWeight:'700', fontSize:'16px', color:'#1C1C1E', marginBottom:'8px'}}>Doctor Export PDF</div>
+                            <div style={{fontSize:'13px', color:'#6B7280', marginBottom:'20px', lineHeight:1.6}}>A clean summary of your gut health data — generated on-device and ready to share with your doctor.</div>
+                            <a href="/doctor-pdf.pdf" target="_blank" style={{display:'inline-block', background:'#1C1C1E', color:'#fff', fontWeight:'600', fontSize:'14px', padding:'12px 24px', borderRadius:'10px', textDecoration:'none'}}>View PDF →</a>
+                          </div>
+                        ) : (
+                          <div style={{ borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", maxWidth: "420px", margin: "0 auto" }}>
+                            <iframe src="/doctor-pdf.pdf" style={{ width: "100%", height: "600px", border: "none", display: "block" }} />
+                          </div>
+                        )}
                       )}
                     </div>
                   </div>
@@ -455,7 +464,7 @@ export default function No2Content() {
                   {isMobile ? (
                     <div style={{display:'flex', flexDirection:'column', gap:'24px', alignItems:'center'}}>
                       <div style={{background:'#1C1C1E', borderRadius:'24px', padding:'48px', display:'flex', alignItems:'center', justifyContent:'center', width:'100%'}}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 246" style={{width:'160px', height:'160px'}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 246" style={{width:'200px', height:'200px'}}>
                           <rect width="246" height="246" rx="43.88" ry="43.88" fill="#1c1c1d"/>
                           <circle cx="47.78" cy="164.32" r="11.44" fill="#7eb880"/>
                           <path fill="#fff" d="M185.66,93.37h0c0-12.77-8.71-23.12-19.46-23.12h-92.25c-1.69,0-3.05,1.45-3.05,3.23v38.2c0,1.78,1.37,3.23,3.05,3.23h43.14c3.67,0,4.22,5.61.62,6.39l-31.14,6.82c-9.08,1.99-15.67,11.4-15.67,22.37h0c0,13.91,10.65,25.18,23.78,25.18h87.93c1.69,0,3.05-1.45,3.05-3.23v-38.2c0-1.78-1.37-3.23-3.05-3.23h-30.49c-10.65,0-19.28,13.59-19.28,24.52v-20.64c0-1.28.71-2.43,1.81-2.95l38.54-18.12c.64-.25,1.26-.55,1.87-.88l.25-.12h-.05c6.14-3.45,10.39-10.85,10.39-19.45Z"/>
