@@ -129,11 +129,15 @@
 
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  @media (max-width: 600px) {
-    body { padding: 20px; height: auto; min-height: unset; overflow: visible; }
-    .section-title { font-size: 22px; margin-bottom: 28px; }
-    .phases { grid-template-columns: 1fr; }
+  @media (max-width: 768px) {
+    body { padding: 24px; }
+    .section-title { font-size: 22px; margin-bottom: 24px; }
+    .phases { grid-template-columns: 1fr; gap: 24px; }
     .phases::before { display: none; }
+    .phase-dot { margin-bottom: 12px; }
+    .phase-card { padding: 20px; }
+    .phase-title { font-size: 16px; }
+    .phase-items li { font-size: 12px; }
   }
 </style>
 </head>

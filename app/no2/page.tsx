@@ -170,8 +170,8 @@ export default function No2() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                <iframe src="/1-stats.html?v=2" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "780px", border: "none", borderRadius: "12px", display: "block" }} onLoad={(e) => { const f = e.target as HTMLIFrameElement; if (window.innerWidth < 768) f.style.height = (f.contentWindow?.document.body.scrollHeight ?? 780) + 'px'; }} />
+              <div style={{ width: "100%", overflowX: "hidden" }}>
+                <iframe src="/1-stats.html?v=2" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: "780px" }} />
               </div>
             </ScrollReveal>
           </div>
@@ -213,8 +213,8 @@ export default function No2() {
             </div>
 
             <ScrollReveal>
-              <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                <iframe src="/2-competitor-landscape.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "820px", border: "none", borderRadius: "12px", display: "block" }} onLoad={(e) => { const f = e.target as HTMLIFrameElement; if (window.innerWidth < 768) f.style.height = (f.contentWindow?.document.body.scrollHeight ?? 820) + 'px'; }} />
+              <div style={{ width: "100%", overflowX: "hidden" }}>
+                <iframe src="/2-competitor-landscape.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: "820px" }} />
               </div>
             </ScrollReveal>
           </div>
@@ -240,8 +240,8 @@ export default function No2() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                    <iframe src="/4-privacy-flow.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "780px", border: "none", borderRadius: "12px", display: "block" }} onLoad={(e) => { const f = e.target as HTMLIFrameElement; if (window.innerWidth < 768) f.style.height = (f.contentWindow?.document.body.scrollHeight ?? 780) + 'px'; }} />
+                  <div style={{ width: "100%", overflowX: "hidden" }}>
+                    <iframe src="/4-privacy-flow.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: "780px" }} />
                   </div>
                 </ScrollReveal>
               </div>
@@ -258,8 +258,8 @@ export default function No2() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                    <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "680px", border: "none", borderRadius: "12px", display: "block" }} onLoad={(e) => { const f = e.target as HTMLIFrameElement; if (window.innerWidth < 768) f.style.height = (f.contentWindow?.document.body.scrollHeight ?? 680) + 'px'; }} />
+                  <div style={{ width: "100%", overflowX: "hidden" }}>
+                    <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: "680px" }} />
                   </div>
                 </ScrollReveal>
               </div>
@@ -375,8 +375,8 @@ export default function No2() {
                   <p className="text-lg leading-relaxed font-light mb-10" style={{ color: "rgba(244,244,245,0.75)" }}>
                     No. 2. Everyone knows what it means. Slightly funny, immediately clear, owns the subject instead of tiptoeing around it. The tagline was obvious: The No. 1 app for your No. 2. The logo dot is a colon — the punctuation mark and the organ. Two meanings, one mark.
                   </p>
-                  <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                    <iframe src="/6-brand-identity.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "720px", border: "none", borderRadius: "12px", display: "block" }} onLoad={(e) => { const f = e.target as HTMLIFrameElement; if (window.innerWidth < 768) f.style.height = (f.contentWindow?.document.body.scrollHeight ?? 720) + 'px'; }} />
+                  <div style={{ width: "100%", overflowX: "hidden" }}>
+                    <iframe src="/6-brand-identity.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: "720px" }} />
                   </div>
                 </div>
               </ScrollReveal>
@@ -398,8 +398,8 @@ export default function No2() {
             </ScrollReveal>
 
             <ScrollReveal>
-              <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
-                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", minWidth: "320px", height: "580px", border: "none", borderRadius: "12px", display: "block" }} onLoad={(e) => { const f = e.target as HTMLIFrameElement; if (window.innerWidth < 768) f.style.height = (f.contentWindow?.document.body.scrollHeight ?? 580) + 'px'; }} />
+              <div style={{ width: "100%", overflowX: "hidden" }}>
+                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: "580px" }} />
               </div>
             </ScrollReveal>
           </div>

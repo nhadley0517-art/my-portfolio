@@ -192,14 +192,14 @@
     color: rgba(0,0,0,0.35);
   }
 
-  @media (max-width: 600px) {
-    body { padding: 20px; height: auto; min-height: unset; overflow: visible; }
-    .grid { grid-template-columns: 1fr; }
-    .card-meaning { grid-column: 1; grid-template-columns: 1fr; padding: 28px 24px; }
-    .card-colors { grid-column: 1; }
-    .card-meaning .divider { display: none; }
-    .meaning-col { padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.07); }
-    .meaning-col:first-child { border-top: none; padding-top: 0; }
+  @media (max-width: 768px) {
+    body { padding: 24px; }
+    .grid, [style*="grid-template-columns"], [style*="display: grid"] {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+    }
+    * { max-width: 100% !important; min-width: unset !important; }
   }
 </style>
 </head>
