@@ -148,12 +148,15 @@
   @media (max-width: 600px) {
     body { padding: 20px; }
     .grid { grid-template-columns: repeat(2, 1fr); }
-    .card-chart { grid-column: 1 / 3; }
-    .card-stats { grid-column: 1 / 3; }
+    /* card-white auto-places at row 2 col 1; card-stats sits beside it in col 2 */
+    .card-stats { grid-column: 2; grid-row: 2; }
+    /* chart goes full-width in row 3 */
+    .card-chart { grid-column: 1 / 3; grid-row: 3; }
     .stat-num { font-size: 48px; }
     .in5 .big { font-size: 48px; }
     .in5 .sm  { font-size: 28px; }
-    .big-pct  { font-size: 40px; }
+    .big-pct  { font-size: 36px; }
+    .stat-block { padding: 18px 14px; }
     .chart-area { height: 100px; }
   }
 </style>
