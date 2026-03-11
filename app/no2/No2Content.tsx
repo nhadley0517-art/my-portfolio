@@ -424,18 +424,20 @@ export default function No2Content() {
                       {feature.videoSrc ? (
                         <video src={feature.videoSrc} autoPlay loop muted playsInline style={{ width: "100%", borderRadius: "16px", display: "block" }} />
                       ) : (
-                        {isMobile ? (
-                          <div style={{background:'#F8F9FA', border:'1px solid #E5E7EB', borderRadius:'16px', padding:'32px', textAlign:'center'}}>
-                            <div style={{fontSize:'40px', marginBottom:'16px'}}>📄</div>
-                            <div style={{fontWeight:'700', fontSize:'16px', color:'#1C1C1E', marginBottom:'8px'}}>Doctor Export PDF</div>
-                            <div style={{fontSize:'13px', color:'#6B7280', marginBottom:'20px', lineHeight:1.6}}>A clean summary of your gut health data — generated on-device and ready to share with your doctor.</div>
-                            <a href="/doctor-pdf.pdf" target="_blank" style={{display:'inline-block', background:'#1C1C1E', color:'#fff', fontWeight:'600', fontSize:'14px', padding:'12px 24px', borderRadius:'10px', textDecoration:'none'}}>View PDF →</a>
-                          </div>
-                        ) : (
-                          <div style={{ borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", maxWidth: "420px", margin: "0 auto" }}>
-                            <iframe src="/doctor-pdf.pdf" style={{ width: "100%", height: "600px", border: "none", display: "block" }} />
-                          </div>
-                        )}
+                        <>
+                          {isMobile ? (
+                            <div style={{background:'#F8F9FA', border:'1px solid #E5E7EB', borderRadius:'16px', padding:'32px', textAlign:'center'}}>
+                              <div style={{fontSize:'40px', marginBottom:'16px'}}>📄</div>
+                              <div style={{fontWeight:'700', fontSize:'16px', color:'#1C1C1E', marginBottom:'8px'}}>Doctor Export PDF</div>
+                              <div style={{fontSize:'13px', color:'#6B7280', marginBottom:'20px', lineHeight:1.6}}>A clean summary of your gut health data — generated on-device and ready to share with your doctor.</div>
+                              <a href="/doctor-pdf.pdf" target="_blank" style={{display:'inline-block', background:'#1C1C1E', color:'#fff', fontWeight:'600', fontSize:'14px', padding:'12px 24px', borderRadius:'10px', textDecoration:'none'}}>View PDF →</a>
+                            </div>
+                          ) : (
+                            <div style={{ borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", maxWidth: "420px", margin: "0 auto" }}>
+                              <iframe src="/doctor-pdf.pdf" style={{ width: "100%", height: "600px", border: "none", display: "block" }} />
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
