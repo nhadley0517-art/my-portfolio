@@ -267,9 +267,28 @@ export default function No2Content() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <div style={{ width: "100%", overflowX: "hidden", display: "flex", justifyContent: "center" }}>
-                    <iframe src="/4-privacy-flow.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "680px" : "680px" }} />
-                  </div>
+                  {isMobile ? (
+                    <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                      {[
+                        {icon:'📱', title:'Data stays on your device', desc:'All logs, symptoms, and health data are stored locally using SwiftData. Nothing leaves your phone by default.'},
+                        {icon:'🔒', title:'Supabase Row Level Security', desc:'Your account data in the cloud is protected by RLS policies — only you can read or write your own records.'},
+                        {icon:'🚫', title:'No third-party data sharing', desc:'No analytics SDKs, no ad tracking, no data brokers. Third-party access is blocked by design.'},
+                        {icon:'📄', title:'You control your exports', desc:'Doctor PDF reports are generated on-device and only shared when you choose to share them.'},
+                      ].map((item, i) => (
+                        <div key={i} style={{background:'#F8F9FA', border:'1px solid #E5E7EB', borderRadius:'16px', padding:'20px', display:'flex', gap:'16px', alignItems:'flex-start'}}>
+                          <div style={{fontSize:'28px', flexShrink:0}}>{item.icon}</div>
+                          <div>
+                            <div style={{fontWeight:'700', fontSize:'14px', color:'#1C1C1E', marginBottom:'6px'}}>{item.title}</div>
+                            <div style={{fontSize:'13px', color:'#6B7280', lineHeight:1.6}}>{item.desc}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ width: "100%", overflowX: "hidden" }}>
+                      <iframe src="/4-privacy-flow.html" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'680px'}} />
+                    </div>
+                  )}
                 </ScrollReveal>
               </div>
 
@@ -285,9 +304,40 @@ export default function No2Content() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <div style={{ width: "100%", overflowX: "hidden" }}>
-                    <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "780px" : "560px" }} />
-                  </div>
+                  {isMobile ? (
+                    <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                      <div style={{background:'#1C1C1E', borderRadius:'16px', padding:'24px'}}>
+                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px'}}>
+                          <div style={{fontWeight:'700', fontSize:'15px', color:'rgba(255,255,255,0.5)'}}>AI Insight API</div>
+                          <div style={{background:'rgba(224,82,82,0.15)', color:'#E05252', fontSize:'10px', fontWeight:'700', padding:'4px 10px', borderRadius:'20px', letterSpacing:'0.1em'}}>REJECTED</div>
+                        </div>
+                        {['📱 User logs entry','☁️ API call — Claude Haiku','📡 Health data leaves device','💬 AI generates insight','💸 $0.003 per call · scales with users'].map((s,i) => (
+                          <div key={i} style={{background: i===0 ? 'rgba(255,255,255,0.05)' : 'rgba(224,82,82,0.08)', border: i===0 ? 'none' : '1px solid rgba(224,82,82,0.15)', borderRadius:'10px', padding:'10px 14px', fontSize:'13px', color: i===0 ? 'rgba(255,255,255,0.6)' : 'rgba(224,82,82,0.75)', marginBottom:'6px'}}>{s}</div>
+                        ))}
+                        <div style={{background:'rgba(224,82,82,0.07)', border:'1px solid rgba(224,82,82,0.15)', borderRadius:'14px', padding:'20px', marginTop:'8px', display:'flex', alignItems:'center', gap:'14px'}}>
+                          <div style={{fontSize:'32px', fontWeight:'800', color:'#E05252'}}>$11k</div>
+                          <div style={{fontSize:'12px', color:'rgba(255,255,255,0.35)', lineHeight:1.5}}>per year at 10k users<br/>before any revenue</div>
+                        </div>
+                      </div>
+                      <div style={{background:'#1C1C1E', borderRadius:'16px', padding:'24px'}}>
+                        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'16px'}}>
+                          <div style={{fontWeight:'700', fontSize:'15px', color:'#fff'}}>Rule-Based Engine</div>
+                          <div style={{background:'rgba(126,183,127,0.2)', color:'#7EB77F', fontSize:'10px', fontWeight:'700', padding:'4px 10px', borderRadius:'20px', letterSpacing:'0.1em'}}>CHOSEN</div>
+                        </div>
+                        {['📱 User logs entry','⚙️ Local rule engine processes log','🔒 Data never leaves the device','💡 Pattern insight generated','🚀 AI unlocked as Phase 2 premium'].map((s,i) => (
+                          <div key={i} style={{background: i===0 ? 'rgba(255,255,255,0.05)' : i===4 ? 'rgba(126,183,127,0.15)' : 'rgba(126,183,127,0.08)', border: i===0 ? 'none' : i===4 ? '1px solid rgba(126,183,127,0.3)' : '1px solid rgba(126,183,127,0.15)', borderRadius:'10px', padding:'10px 14px', fontSize:'13px', color: i===0 ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.8)', marginBottom:'6px'}}>{s}</div>
+                        ))}
+                        <div style={{background:'rgba(126,183,127,0.07)', border:'1px solid rgba(126,183,127,0.2)', borderRadius:'14px', padding:'20px', marginTop:'8px', display:'flex', alignItems:'center', gap:'14px'}}>
+                          <div style={{fontSize:'32px', fontWeight:'800', color:'#7EB77F'}}>$0</div>
+                          <div style={{fontSize:'12px', color:'rgba(255,255,255,0.5)', lineHeight:1.5}}>per user per year<br/>at any scale</div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ width: "100%", overflowX: "hidden" }}>
+                      <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'560px'}} />
+                    </div>
+                  )}
                 </ScrollReveal>
               </div>
 
@@ -405,7 +455,7 @@ export default function No2Content() {
                   {isMobile ? (
                     <div style={{display:'flex', flexDirection:'column', gap:'24px', alignItems:'center'}}>
                       <div style={{background:'#1C1C1E', borderRadius:'24px', padding:'48px', display:'flex', alignItems:'center', justifyContent:'center', width:'100%'}}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 246" style={{width:'120px', height:'120px'}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 246" style={{width:'160px', height:'160px'}}>
                           <rect width="246" height="246" rx="43.88" ry="43.88" fill="#1c1c1d"/>
                           <circle cx="47.78" cy="164.32" r="11.44" fill="#7eb880"/>
                           <path fill="#fff" d="M185.66,93.37h0c0-12.77-8.71-23.12-19.46-23.12h-92.25c-1.69,0-3.05,1.45-3.05,3.23v38.2c0,1.78,1.37,3.23,3.05,3.23h43.14c3.67,0,4.22,5.61.62,6.39l-31.14,6.82c-9.08,1.99-15.67,11.4-15.67,22.37h0c0,13.91,10.65,25.18,23.78,25.18h87.93c1.69,0,3.05-1.45,3.05-3.23v-38.2c0-1.78-1.37-3.23-3.05-3.23h-30.49c-10.65,0-19.28,13.59-19.28,24.52v-20.64c0-1.28.71-2.43,1.81-2.95l38.54-18.12c.64-.25,1.26-.55,1.87-.88l.25-.12h-.05c6.14-3.45,10.39-10.85,10.39-19.45Z"/>
