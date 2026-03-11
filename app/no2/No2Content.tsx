@@ -335,7 +335,7 @@ export default function No2Content() {
                     </div>
                   ) : (
                     <div style={{ width: "100%", overflowX: "hidden" }}>
-                      <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'560px'}} />
+                      <iframe src="/3-architecture-decision.html?v=2" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'615px'}} />
                     </div>
                   )}
                 </ScrollReveal>
@@ -470,6 +470,8 @@ export default function No2Content() {
                           <path fill="#fff" d="M185.66,93.37h0c0-12.77-8.71-23.12-19.46-23.12h-92.25c-1.69,0-3.05,1.45-3.05,3.23v38.2c0,1.78,1.37,3.23,3.05,3.23h43.14c3.67,0,4.22,5.61.62,6.39l-31.14,6.82c-9.08,1.99-15.67,11.4-15.67,22.37h0c0,13.91,10.65,25.18,23.78,25.18h87.93c1.69,0,3.05-1.45,3.05-3.23v-38.2c0-1.78-1.37-3.23-3.05-3.23h-30.49c-10.65,0-19.28,13.59-19.28,24.52v-20.64c0-1.28.71-2.43,1.81-2.95l38.54-18.12c.64-.25,1.26-.55,1.87-.88l.25-.12h-.05c6.14-3.45,10.39-10.85,10.39-19.45Z"/>
                         </svg>
                       </div>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/logo-sketch.png" style={{width:'100%', borderRadius:'16px', display:'block'}} alt="Logo sketches" />
                     </div>
                   ) : (
                     <div style={{ width: "100%", overflowX: "hidden" }}>
