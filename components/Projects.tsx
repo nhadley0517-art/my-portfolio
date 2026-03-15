@@ -8,7 +8,7 @@ const ease = [0.25, 0.46, 0.45, 0.94] as const;
 // ── Thumbnail nodes ──────────────────────────────────────────────────────────
 
 const WpThumbnail = (
-  <div className="project-thumb-wrap" style={{ height: "280px", overflow: "hidden", position: "relative" }}>
+  <div className="project-thumb-wrap project-thumb-wrap--wp" style={{ height: "280px", overflow: "hidden", position: "relative" }}>
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src="/wp_thumb.png"
@@ -233,6 +233,10 @@ export default function Projects() {
           .project-thumb-wrap {
             height: auto !important;
             aspect-ratio: 4 / 3;
+          }
+          /* Writing Process card gets a wider crop on mobile */
+          .project-thumb-wrap--wp {
+            aspect-ratio: 16 / 9;
           }
           /* Thumbnail images and iframes fill the aspect-ratio container */
           .project-thumb-wrap img,
