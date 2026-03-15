@@ -82,7 +82,7 @@ export default function Marquee() {
     >
       <div
         className="flex marquee-track"
-        style={{ animation: "var(--marquee-duration, 60s) marquee linear infinite", width: "max-content", alignItems: "center" }}
+        style={{ animation: "var(--marquee-duration, 90s) marquee linear infinite", width: "max-content", alignItems: "center" }}
       >
         <span style={spanStyle}>
           {SEGMENT.map((pill, i) => (
