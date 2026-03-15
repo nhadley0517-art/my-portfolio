@@ -8,8 +8,8 @@ export default function Contact() {
   return (
     <section
       id="contact"
-      style={{ background: "#13181B", padding: "120px 80px" }}
-      className="md:px-20 px-6 py-[80px] md:py-[120px]"
+      style={{ background: "#13181B" }}
+      className="md:px-20 px-6 py-[60px] md:py-[120px]"
     >
       <div className="max-w-6xl mx-auto">
 

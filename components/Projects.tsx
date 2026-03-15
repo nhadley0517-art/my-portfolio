@@ -8,7 +8,7 @@ const ease = [0.25, 0.46, 0.45, 0.94] as const;
 // ── Thumbnail nodes ──────────────────────────────────────────────────────────
 
 const WpThumbnail = (
-  <div style={{ height: "280px", overflow: "hidden", position: "relative" }}>
+  <div className="project-thumb-wrap" style={{ height: "280px", overflow: "hidden", position: "relative" }}>
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src="/wp_thumb.png"
@@ -20,7 +20,7 @@ const WpThumbnail = (
 );
 
 const No2Thumbnail = (
-  <div style={{ height: "280px", overflow: "hidden", pointerEvents: "none" }}>
+  <div className="project-thumb-wrap" style={{ height: "280px", overflow: "hidden", pointerEvents: "none" }}>
     <iframe
       src="/no2-thumb.html"
       scrolling="no"
@@ -30,7 +30,7 @@ const No2Thumbnail = (
 );
 
 const RelayThumbnail = (
-  <div style={{ height: "280px", overflow: "hidden", position: "relative" }}>
+  <div className="project-thumb-wrap" style={{ height: "280px", overflow: "hidden", position: "relative" }}>
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src="/relay_thumb.png"
@@ -42,7 +42,7 @@ const RelayThumbnail = (
 );
 
 const UnivoThumbnail = (
-  <div style={{ height: "280px", overflow: "hidden", position: "relative" }}>
+  <div className="project-thumb-wrap" style={{ height: "280px", overflow: "hidden", position: "relative" }}>
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src="/univo_thumb.png"
@@ -122,7 +122,7 @@ function ProjectCard({
         overflow: "hidden",
         cursor: "pointer",
       }}
-      className="group"
+      className="group project-card"
     >
       {/* Thumbnail */}
       <div className="project-card-thumb">
@@ -130,7 +130,7 @@ function ProjectCard({
       </div>
 
       {/* Content */}
-      <div style={{ padding: "24px" }}>
+      <div className="project-card-content" style={{ padding: "24px" }}>
         {/* Tags */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "12px" }}>
           {tags.map((tag) => (
@@ -171,10 +171,8 @@ export default function Projects() {
   return (
     <section
       id="work"
-      style={{
-        background: "#13181B",
-        padding: "120px 80px",
-      }}
+      // inline style keeps only background — padding handled by Tailwind so mobile overrides work
+      style={{ background: "#13181B" }}
       className="md:px-20 px-6 py-[60px] md:py-[120px]"
     >
       <div className="max-w-6xl mx-auto">
@@ -215,18 +213,42 @@ export default function Projects() {
           Selected Work
         </motion.h2>
 
-        {/* 2-col grid */}
-        <div className="grid sm:grid-cols-2 gap-6">
+        {/* md:2-col grid — 1 col on mobile */}
+        <div className="grid md:grid-cols-2 gap-6">
           {projects.map((project, index) => (
             <ProjectCard key={project.slug} {...project} index={index} />
           ))}
         </div>
       </div>
 
-      {/* Hover thumbnail scale via CSS */}
       <style>{`
+        /* Desktop hover scale on thumbnail images */
         .group:hover .project-thumb-img {
           transform: scale(1.05);
+        }
+
+        /* ── Mobile-only overrides (below 768px) ── */
+        @media (max-width: 767px) {
+          /* Thumbnail: drop fixed height, use aspect-ratio instead */
+          .project-thumb-wrap {
+            height: auto !important;
+            aspect-ratio: 4 / 3;
+          }
+          /* Thumbnail images and iframes fill the aspect-ratio container */
+          .project-thumb-wrap img,
+          .project-thumb-wrap iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          /* Card content padding */
+          .project-card-content {
+            padding: 20px !important;
+          }
+          /* Breathing room between stacked cards */
+          .project-card {
+            margin-bottom: 16px;
+          }
         }
       `}</style>
     </section>
