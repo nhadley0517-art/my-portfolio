@@ -1,44 +1,98 @@
-const ITEMS = [
+// Skills marquee — slow, elegant pill strip.
+// Two-span / translateX(-50%) seamless loop, 60s speed.
+
+const SYMBOLS = ["✦", "○", "◆", "▸"] as const;
+
+const SKILLS = [
   "UX Design",
   "Product Design",
-  "User Research",
   "Interaction Design",
-  "Wireframing",
   "Prototyping",
+  "User Research",
+  "Figma",
+  "Wireframing",
   "Visual Design",
-  "Design Systems",
-  "Usability Testing",
-  "Information Architecture",
+  "Branding",
+  "Typography",
+  "Design Thinking",
+  "Mobile Design",
+  "Web Design",
+  "Claude Code",
 ];
 
-// \u00A0 = non-breaking space — guaranteed not to collapse in the browser.
-// Three on each side of · gives generous breathing room between items.
-const SEP = "\u00A0\u00A0\u00A0\u00A0·\u00A0\u00A0\u00A0\u00A0";
-const SEGMENT = ITEMS.join(SEP) + SEP;
+// Build the pill items with symbol prefix and style variant
+const PILLS = SKILLS.map((skill, i) => ({
+  label: skill,
+  symbol: SYMBOLS[i % SYMBOLS.length],
+  // Every 3rd item (0-indexed: 2, 5, 8, 11) gets coral accent
+  coral: i % 3 === 2,
+}));
 
-// 3 repeats per span — each span is wider than any viewport.
-// Two identical spans fill the track; animation shifts -50% (one span) for a seamless loop.
-const CONTENT = SEGMENT.repeat(3);
+// Repeat 3 times per span so the span is always wider than the viewport
+const SEGMENT = [...PILLS, ...PILLS, ...PILLS];
+
+function Pill({ label, symbol, coral }: typeof PILLS[0]) {
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "7px",
+        flexShrink: 0,
+        whiteSpace: "nowrap",
+        padding: "8px 20px",
+        borderRadius: "40px",
+        border: coral
+          ? "1px solid rgba(253,137,115,0.3)"
+          : "1px solid rgba(19,24,27,0.1)",
+        background: coral
+          ? "rgba(253,137,115,0.1)"
+          : "rgba(19,24,27,0.06)",
+        fontSize: "13px",
+        fontWeight: 600,
+        letterSpacing: "0.02em",
+        color: coral ? "#FD8973" : "#13181B",
+      }}
+    >
+      <span style={{ fontSize: "10px", opacity: 0.7 }}>{symbol}</span>
+      {label}
+    </span>
+  );
+}
+
+// Gap between pills: 12px. Trailing paddingRight: 12px for seamless span join.
+const spanStyle: React.CSSProperties = {
+  display: "flex",
+  gap: "12px",
+  paddingRight: "12px",
+  flexShrink: 0,
+  alignItems: "center",
+};
 
 export default function Marquee() {
   return (
-    <div className="border-t border-b border-[#DDD8D1] py-7 overflow-hidden">
+    <div
+      className="overflow-hidden"
+      style={{
+        background: "#F7F5F0",
+        padding: "28px 0",
+        borderTop: "1px solid #E5E0D8",
+        borderBottom: "1px solid #E5E0D8",
+      }}
+    >
       <div
-        className="flex whitespace-nowrap marquee-track"
-        style={{ animation: "marquee 75s linear infinite" }}
+        className="flex marquee-track"
+        style={{ animation: "var(--marquee-duration, 60s) marquee linear infinite", width: "max-content", alignItems: "center" }}
       >
-        <span
-          className="text-[#13181B]"
-          style={{ fontSize: "1.1rem", fontWeight: 600 }}
-        >
-          {CONTENT}
+        <span style={spanStyle}>
+          {SEGMENT.map((pill, i) => (
+            <Pill key={i} {...pill} />
+          ))}
         </span>
-        <span
-          className="text-[#13181B]"
-          style={{ fontSize: "1.1rem", fontWeight: 600 }}
-          aria-hidden="true"
-        >
-          {CONTENT}
+        <span style={spanStyle} aria-hidden="true">
+          {SEGMENT.map((pill, i) => (
+            <Pill key={i} {...pill} />
+          ))}
         </span>
       </div>
     </div>

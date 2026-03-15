@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #F7F8FA;
+  --bg: #F7F5F0;
   --fg: #13181B;
   --accent: #FD8973;
   --accent-secondary: #FFBF65;
@@ -11,6 +11,11 @@
   --card: #FFFFFF;
   --nav-height: 72px;
   --gradient-dusk: linear-gradient(135deg, #FFBF65 0%, #FD8973 50%, #003A6C 100%);
+
+  /* New tokens */
+  --cream: #F7F5F0;
+  --graphite: #13181B;
+  --coral: #FD8973;
 }
 
 @theme inline {
@@ -28,10 +33,16 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background: var(--cream);
   color: var(--fg);
   font-family: var(--font-poppins), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* Hide scrollbar globally */
+  scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 section {
@@ -57,9 +68,14 @@ section {
   animation: shipped-glow 2s ease-in-out infinite;
 }
 
+/* Hide snap-scroll track scrollbar (webkit) */
+.snap-scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
 @media (max-width: 767px) {
   .marquee-track {
-    animation-duration: 20s !important;
+    animation-duration: 120s !important;
   }
 
   .hero-name,
