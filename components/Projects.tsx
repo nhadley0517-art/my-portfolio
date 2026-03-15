@@ -30,7 +30,7 @@ const No2Thumbnail = (
 );
 
 const RelayThumbnail = (
-  <div className="project-thumb-wrap" style={{ height: "280px", overflow: "hidden", position: "relative" }}>
+  <div className="project-thumb-wrap project-thumb-wrap--relay" style={{ height: "280px", overflow: "hidden", position: "relative" }}>
     {/* eslint-disable-next-line @next/next/no-img-element */}
     <img
       src="/relay_thumb.png"
@@ -234,8 +234,9 @@ export default function Projects() {
             height: auto !important;
             aspect-ratio: 4 / 3;
           }
-          /* Writing Process card gets a wider crop on mobile */
-          .project-thumb-wrap--wp {
+          /* Writing Process and Relay cards get a wider crop on mobile */
+          .project-thumb-wrap--wp,
+          .project-thumb-wrap--relay {
             aspect-ratio: 16 / 9;
           }
           /* Thumbnail images and iframes fill the aspect-ratio container */
