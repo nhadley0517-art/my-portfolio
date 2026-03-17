@@ -68,7 +68,7 @@ export default function Hero() {
                 color: "#6B7280",
               }}
             >
-              New grad. Designer who builds.
+              Designing things. Learning by doing.
             </motion.p>
 
             <motion.p
@@ -81,9 +81,10 @@ export default function Hero() {
                 marginTop: "24px",
               }}
             >
-              I design products that feel good to use, then I build them.
-              Finishing my degree at GCU, interning at Canyon Creative, and
-              shipping apps solo.
+              I&apos;m a product and UX designer who cares about how things feel
+              to use, not just how they look. I&apos;m finishing my degree at GCU,
+              interning at Canyon Creative and Grand Canyon Education, and
+              spending the rest of my time building things I believe in.
             </motion.p>
 
             {/* Contact links instead of buttons */}

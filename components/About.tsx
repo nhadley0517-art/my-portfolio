@@ -77,12 +77,13 @@ export default function About() {
               <p style={{ fontSize: "16px", color: "#4B5563", lineHeight: 1.75 }}>
                 I&apos;m Noah, a product and UX designer finishing my B.A. in Digital
                 Design at Grand Canyon University in April 2026. I intern at Canyon
-                Creative and Grand Canyon Education, and I build things on the side.
+                Creative and Grand Canyon Education, where I get to work on real
+                design problems with real constraints.
               </p>
               <p style={{ fontSize: "16px", color: "#4B5563", lineHeight: 1.75 }}>
-                I designed and built No. 2, a gut health app, completely solo in two
-                weeks. Design, code, backend, and brand. I care about the details
-                and I ship real things.
+                I care about the details. The spacing, the copy, the interaction.
+                Good design is the kind you don&apos;t notice because it just works.
+                That&apos;s what I&apos;m always working toward.
               </p>
             </div>
 

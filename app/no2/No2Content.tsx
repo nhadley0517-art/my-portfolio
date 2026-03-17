@@ -122,7 +122,7 @@ export default function No2Content() {
 
             <ScrollReveal delay={0.1}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
-                I built a gut health app. From scratch. In two weeks. Design, code, backend, brand — all me. No team, no handoffs. Just me, Claude Code, and a problem I thought was worth solving. As of March 9th I am waiting on my Apple Developer account. It goes live on the App Store next week.
+                I built a gut health app. From scratch. In two weeks. Design, code, backend, brand. All me. No team, no handoffs. Just me, Claude Code, and a problem I thought was worth solving. As of March 9th I am waiting on my Apple Developer account. It goes live on the App Store next week.
               </p>
             </ScrollReveal>
           </div>
@@ -271,7 +271,7 @@ export default function No2Content() {
                     <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
                       {[
                         {icon:'📱', title:'Data stays on your device', desc:'All logs, symptoms, and health data are stored locally using SwiftData. Nothing leaves your phone by default.'},
-                        {icon:'🔒', title:'Supabase Row Level Security', desc:'Your account data in the cloud is protected by RLS policies — only you can read or write your own records.'},
+                        {icon:'🔒', title:'Supabase Row Level Security', desc:'Your account data in the cloud is protected by RLS policies. Only you can read or write your own records.'},
                         {icon:'🚫', title:'No third-party data sharing', desc:'No analytics SDKs, no ad tracking, no data brokers. Third-party access is blocked by design.'},
                         {icon:'📄', title:'You control your exports', desc:'Doctor PDF reports are generated on-device and only shared when you choose to share them.'},
                       ].map((item, i) => (
@@ -349,7 +349,7 @@ export default function No2Content() {
                 </ScrollReveal>
                 <ScrollReveal delay={0.2}>
                   <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-10">
-                    I did not land on the final design on the first try. Not even close. The home screen alone went through five or six distinct directions before it felt right. A lot of the process was me describing a very specific feeling to Claude Code — not just make it look clean but things like the card should feel like it has weight, the spacing needs to breathe more, the green should feel calm not medical. It was a different kind of design process than Figma but the eye for detail was the same.
+                    I did not land on the final design on the first try. Not even close. The home screen alone went through five or six distinct directions before it felt right. A lot of the process was me describing a very specific feeling to Claude Code. Not just &quot;make it look clean&quot; but things like &quot;the card should feel like it has weight, the spacing needs to breathe more, the green should feel calm not medical.&quot; It was a different kind of design process than Figma but the eye for detail was the same.
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
@@ -429,7 +429,7 @@ export default function No2Content() {
                             <div style={{background:'#F8F9FA', border:'1px solid #E5E7EB', borderRadius:'16px', padding:'32px', textAlign:'center'}}>
                               <div style={{fontSize:'40px', marginBottom:'16px'}}>📄</div>
                               <div style={{fontWeight:'700', fontSize:'16px', color:'#1C1C1E', marginBottom:'8px'}}>Doctor Export PDF</div>
-                              <div style={{fontSize:'13px', color:'#6B7280', marginBottom:'20px', lineHeight:1.6}}>A clean summary of your gut health data — generated on-device and ready to share with your doctor.</div>
+                              <div style={{fontSize:'13px', color:'#6B7280', marginBottom:'20px', lineHeight:1.6}}>A clean summary of your gut health data, generated on-device and ready to share with your doctor.</div>
                               <a href="/doctor-pdf.pdf" target="_blank" style={{display:'inline-block', background:'#1C1C1E', color:'#fff', fontWeight:'600', fontSize:'14px', padding:'12px 24px', borderRadius:'10px', textDecoration:'none'}}>View PDF →</a>
                             </div>
                           ) : (
@@ -461,7 +461,7 @@ export default function No2Content() {
                     The name is the whole brand strategy.
                   </h3>
                   <p className="text-lg leading-relaxed font-light mb-10" style={{ color: "rgba(244,244,245,0.75)" }}>
-                    No. 2. Everyone knows what it means. Slightly funny, immediately clear, owns the subject instead of tiptoeing around it. The tagline was obvious: The No. 1 app for your No. 2. The logo dot is a colon — the punctuation mark and the organ. Two meanings, one mark.
+                    No. 2. Everyone knows what it means. Slightly funny, immediately clear, owns the subject instead of tiptoeing around it. The tagline was obvious: The No. 1 app for your No. 2. The logo dot is a colon. The punctuation mark and the organ. Two meanings, one mark.
                   </p>
                   {isMobile ? (
                     <div style={{display:'flex', flexDirection:'column', gap:'24px', alignItems:'center'}}>

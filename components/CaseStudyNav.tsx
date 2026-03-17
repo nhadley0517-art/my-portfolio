@@ -44,7 +44,7 @@ export default function CaseStudyNav({ sections, accentColor }: CaseStudyNavProp
 
   return (
     <nav
-      className="hidden lg:flex fixed left-6 z-40 flex-col gap-0.5"
+      className="hidden min-[1330px]:flex fixed left-6 z-40 flex-col gap-0.5"
       style={{ top: "120px" }}
       aria-label="Page sections"
     >

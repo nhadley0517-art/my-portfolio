@@ -185,9 +185,9 @@ export default function Univo() {
               <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-16 max-w-3xl">
                 At the start of this project, I assumed modern patient portals had largely solved
                 usability challenges. After reviewing anonymized visit summaries and existing
-                tools, I realized medical notes are written for clinicians — dense, jargon-heavy,
-                and structured for documentation, not decision-making. Patients leave appointments
-                with information — but not always understanding.
+                tools, I realized medical notes are written for clinicians. They&apos;re dense,
+                jargon-heavy, and structured for documentation, not decision-making. Patients
+                leave appointments with information, but not always with understanding.
               </p>
             </ScrollReveal>
 
@@ -430,7 +430,7 @@ export default function Univo() {
                 If brought to market, Univo would launch as a limited pilot rather than a full
                 hospital system replacement. A realistic rollout would begin with read-only visit
                 summaries, launch within a single provider network, and prioritize clarity over
-                advanced AI features. Full EHR integration is complex and slow — proving
+                advanced AI features. Full EHR integration is complex and slow. Proving
                 comprehension gains would come first.
               </p>
             </ScrollReveal>
@@ -464,7 +464,7 @@ export default function Univo() {
             <ScrollReveal delay={0.1}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 This project challenged me to design within emotional and legal context.
-                Healthcare design is not just about usability — it involves trust, compliance,
+                Healthcare design is not just about usability. It involves trust, compliance,
                 and high-stakes information. I learned to balance clarity with responsibility,
                 scope intentionally, think beyond interface design, and consider system-level
                 constraints.

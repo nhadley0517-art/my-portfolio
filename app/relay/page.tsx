@@ -129,7 +129,7 @@ export default function Relay() {
                   Relay is a mission coordination and communication dashboard designed for field
                   teams operating in disaster zones, rural areas, and remote environments where
                   radios fail and cell service disappears. It gives teams and command staff a
-                  shared, real-time operational view — centralizing team locations, hazard alerts,
+                  shared, real-time operational view that centralizes team locations, hazard alerts,
                   mission objectives, and emergency actions in one place. This was a class project
                   with an open brief. I chose to design for high-stakes field operations because
                   it presented a genuinely hard UI problem: how do you design a dashboard that
@@ -196,13 +196,12 @@ export default function Relay() {
 
             <ScrollReveal delay={0.2}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-16 max-w-3xl">
-                During emergency or remote missions, teams are often working across fragmented
-                tools — radios, paper notes, separate apps — while under intense pressure with
-                weak or no connectivity. The result is predictable: critical information gets
-                missed, situational awareness breaks down, and emergency escalation is slower
-                than it needs to be. In a high-stress moment, no one has time to hunt through
-                a cluttered interface for what matters most. The tool itself was becoming an
-                obstacle.
+                During emergency or remote missions, teams are often juggling radios, paper
+                notes, and separate apps at once, under intense pressure with weak or no
+                connectivity. The result is predictable: critical information gets missed,
+                situational awareness breaks down, and emergency escalation is slower than it
+                needs to be. In a high-stress moment, no one has time to hunt through a
+                cluttered interface for what matters most. The tool itself becomes an obstacle.
               </p>
             </ScrollReveal>
 
@@ -270,7 +269,7 @@ export default function Relay() {
                   },
                   {
                     title: "Behaviors",
-                    body: "When systems feel slow or unclear, teams rely on radios, memory, or assumptions — leading to missed updates and delayed decisions.",
+                    body: "When systems feel slow or unclear, teams fall back on radios, memory, or assumptions. Updates get missed and decisions get delayed.",
                   },
                   {
                     title: "Market Insights",
@@ -306,9 +305,9 @@ export default function Relay() {
             <ScrollReveal>
               <div className="grid md:grid-cols-2 gap-4">
                 {[
-                  "Keep critical information visible at all times — no hunting required",
+                  "Keep critical information visible at all times. No hunting required.",
                   "Support fast decision-making under stress through clear visual hierarchy",
-                  "Centralize mission data — locations, hazards, weather, objectives — in one shared view",
+                  "Centralize mission data, locations, hazards, weather, objectives, in one shared view",
                   "Make emergency actions impossible to miss, regardless of screen state",
                 ].map((goal, i) => (
                   <div key={i} className="bg-white rounded-2xl border border-[#DDD8D1] p-6">
@@ -336,8 +335,8 @@ export default function Relay() {
                   My earliest concepts explored wire mesh maps and 3D rendered mission zones.
                   They looked distinctive, but I cut them quickly for a practical reason: in a
                   real deployment, you&apos;re not going to have a custom 3D mesh of every
-                  mission area. A satellite imagery layer — pulled from something like the Google
-                  Maps API — is what field teams would actually have access to. Designing around
+                  mission area. A satellite imagery layer pulled from something like the Google
+                  Maps API is what field teams would actually have access to. Designing around
                   an unrealistic asset would have made Relay look good in a portfolio and fail in
                   the field. Satellite imagery was the only credible choice.
                 </p>
@@ -346,7 +345,7 @@ export default function Relay() {
               <ScrollReveal delay={0.2}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   I also explored dense, data-heavy dashboard layouts early on. They felt
-                  overwhelming — too much competing for attention at once. I shifted toward a
+                  overwhelming. Too much competing for attention at once. I shifted toward a
                   hierarchy-first approach: the map as the primary focus, with supporting panels
                   for hazards, weather, objectives, and logs arranged around it.
                 </p>
@@ -375,17 +374,17 @@ export default function Relay() {
                     A Key Interaction Decision
                   </h3>
                   <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                    One of the most important decisions I made on this project wasn&apos;t visual
-                    — it was about where controls live on the screen. Through research into tablet
+                    One of the most important decisions I made on this project wasn&apos;t visual.
+                    It was about where controls live on the screen. Through research into tablet
                     ergonomics and field device usage, I found that first responders in the field
                     are most likely using a tablet. When someone is holding a tablet with both
-                    hands, their thumbs naturally rest near the edges of the screen — not the
+                    hands, their thumbs naturally rest near the edges of the screen, not the
                     bottom center. Placing key dashboard controls along the sides rather than the
                     bottom means faster access with less hand movement, which matters enormously
-                    when seconds count. It also kept the bottom of the interface clear — because
-                    in a mission context, the map needs to remain the primary focus at all times.
-                    This is the kind of decision that&apos;s invisible when it works — but would
-                    have been a real usability failure if I&apos;d ignored it.
+                    when seconds count. It also kept the bottom of the interface clear. In a
+                    mission context, the map needs to stay the primary focus at all times.
+                    This kind of decision is invisible when it works. It would have been a real
+                    usability failure if I&apos;d ignored it.
                   </p>
                 </div>
               </ScrollReveal>
@@ -396,15 +395,15 @@ export default function Relay() {
                     The Emergency Alert Button
                   </h3>
                   <p className="text-[#F4F4F5]/75 text-lg leading-relaxed font-light">
-                    The feature I&apos;m most deliberate about in Relay is the emergency alert
-                    button — and deliberately keeping it visible at all times, regardless of
-                    what else is on screen. In a real first-response scenario, if something goes
-                    wrong, a team member needs to find that button instantly. Hiding it behind a
-                    menu or tucking it away to keep the UI looking clean would be the wrong call.
-                    Clarity of that button&apos;s location isn&apos;t a nice-to-have — it&apos;s
-                    the difference between a tool that works in a crisis and one that fails at the
-                    worst moment. This is a case where &ldquo;clean UI&rdquo; has to take a back
-                    seat to functional priority. The button stays prominent. Always.
+                    The most deliberate decision in Relay is the emergency alert button. It stays
+                    visible at all times, regardless of what else is on screen. In a real
+                    first-response scenario, if something goes wrong, a team member needs to find
+                    that button instantly. Hiding it behind a menu or tucking it away to keep the
+                    UI looking clean would be the wrong call. Clarity of that button&apos;s
+                    location isn&apos;t a nice-to-have. It&apos;s the difference between a tool
+                    that works in a crisis and one that fails at the worst moment. &ldquo;Clean
+                    UI&rdquo; has to take a back seat to functional priority. The button stays
+                    prominent. Always.
                   </p>
                 </div>
               </ScrollReveal>
@@ -489,8 +488,8 @@ export default function Relay() {
                 layout, satellite-based mapping, and always-visible emergency action reduce the
                 cognitive load on users so they can focus on the mission rather than the tool.
                 Feedback from class presentation sessions confirmed that the dashboard concept
-                was compelling and the visual approach — dark, high-contrast, information-dense
-                — felt appropriate for the environment it was designed for.
+                was compelling. The dark, high-contrast, information-dense visual approach felt
+                right for the environment it was designed for.
               </p>
             </ScrollReveal>
 
@@ -501,13 +500,13 @@ export default function Relay() {
                 </h3>
                 <p className="text-[#F4F4F5]/75 text-lg leading-relaxed font-light">
                   Designing for extreme contexts taught me that the rules of good UX don&apos;t
-                  change under pressure — they become more consequential. Hierarchy, speed, and
+                  change under pressure. They become more consequential. Hierarchy, speed, and
                   trust matter more than feature depth or visual novelty. Every decision I made
                   on Relay had a &ldquo;what happens if someone gets this wrong in the
                   field?&rdquo; layer attached to it. I also learned to make practical calls over
                   impressive ones. The wire mesh maps looked better in early mockups. Satellite
                   imagery is what would actually work. Choosing the realistic option made Relay a
-                  stronger, more credible product — and that&apos;s a principle I&apos;ll carry
+                  stronger, more credible product. That&apos;s a principle I&apos;ll carry
                   into every project.
                 </p>
               </div>

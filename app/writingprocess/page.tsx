@@ -137,14 +137,13 @@ export default function WritingProcess() {
               {/* Left: overview paragraph */}
               <ScrollReveal delay={0.1}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                  During my internship at GCE, I redesigned a student-facing writing resource
-                  — originally built as a single, content-heavy page. The material was strong,
-                  but the experience had aged: instructional content was buried in menus, students
-                  had to self-assemble the writing process, and the interface prioritized
-                  comprehensiveness over clarity. My goal was to improve how students discover,
-                  navigate, and absorb writing instruction — while aligning the redesigned
-                  experience with GCU&apos;s UI and accessibility standards — and it&apos;s now
-                  in the final stages before live deployment.
+                  During my internship at GCE, I redesigned a student-facing writing resource.
+                  It started as a single, content-heavy page. The material was strong, but the
+                  experience had aged. Instructional content was buried in menus, students had to
+                  self-assemble the writing process, and the interface prioritized comprehensiveness
+                  over clarity. My goal was to improve how students discover, navigate, and absorb
+                  writing instruction, while aligning the redesigned experience with GCU&apos;s UI
+                  and accessibility standards. It&apos;s now in the final stages before live deployment.
                 </p>
               </ScrollReveal>
 
@@ -211,7 +210,7 @@ export default function WritingProcess() {
 
             <ScrollReveal delay={0.2}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light mb-16 max-w-3xl">
-                To access any specific stage — prewriting, drafting, revision — students had to
+                To access any specific stage, prewriting, drafting, revision, students had to
                 dig through menus and tabs. The content was all there, but the structure worked
                 against the people it was meant to help.
               </p>
@@ -226,9 +225,9 @@ export default function WritingProcess() {
             <ScrollReveal>
               <div className="grid md:grid-cols-3 gap-4">
                 {[
-                  "No visible progression through the writing process — students had no sense of where they were or what came next",
+                  "No visible progression through the writing process. Students had no sense of where they were or what came next.",
                   "Educational videos and resources were buried rather than surfaced at the moment they were relevant",
-                  "The interface was built for exploration, not instruction — placing the burden of assembly on the student",
+                  "The interface was built for exploration, not instruction. It placed the burden of assembly on the student.",
                 ].map((issue, i) => (
                   <div key={i} className="bg-white rounded-2xl border border-[#DDD8D1] p-6">
                     <span className="text-xs font-semibold mb-3 block" style={{ color: ACCENT }}>
@@ -253,17 +252,17 @@ export default function WritingProcess() {
               <ScrollReveal delay={0.1}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
                   Before touching Figma, I reviewed student-facing educational platforms and
-                  comparable writing resources. A clear pattern emerged: the tools that worked
-                  best combined sequential structure with just-in-time content — giving students
+                  comparable writing resources. A clear pattern emerged. The tools that worked
+                  best combined sequential structure with just-in-time content. They gave students
                   what they needed at each stage, not everything at once.
                 </p>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                  I also spoke with students between classes — asking how they used writing
+                  I also spoke with students between classes, asking how they used writing
                   resources, what frustrated them, and whether they&apos;d turned to outside
-                  sources (like Google or YouTube) instead of official tools. The answers were
+                  sources like Google or YouTube instead of official tools. The answers were
                   consistent: official resources felt overwhelming, so most students either
                   skimmed and gave up, or bypassed them entirely.
                 </p>
@@ -271,8 +270,8 @@ export default function WritingProcess() {
 
               <ScrollReveal delay={0.3}>
                 <p className="text-[#13181B] text-lg font-semibold leading-relaxed">
-                  These early conversations shaped my hypothesis going into the wireframe phase:
-                  the problem wasn&apos;t the content — it was the structure around it.
+                  These early conversations shaped my hypothesis going into the wireframe phase.
+                  The problem wasn&apos;t the content. It was the structure around it.
                 </p>
               </ScrollReveal>
             </div>
@@ -289,12 +288,12 @@ export default function WritingProcess() {
             <ScrollReveal delay={0.1}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
                 My first approach focused on improving clarity within the existing one-page
-                model — introducing a centralized landing page with modal-based access to videos,
+                model. I introduced a centralized landing page with modal-based access to videos,
                 handouts, and transcripts, so students could view content without losing their
                 place. The goals were to reduce visual clutter, improve scannability, and surface
-                key resources more prominently. I intentionally kept the architecture intact to
+                key resources more prominently. I kept the architecture intact on purpose, to
                 test whether better visual organization alone could solve the problem before
-                proposing a more significant structural change.
+                proposing a bigger structural change.
               </p>
             </ScrollReveal>
 
@@ -323,7 +322,7 @@ export default function WritingProcess() {
               <ul className="space-y-3 mb-12">
                 {[
                   "Each stage of the writing process felt significant enough to deserve its own dedicated space",
-                  "The modals made it harder to stay oriented — opening a video felt like losing your place",
+                  "Opening a video in a modal made it harder to stay oriented. It felt like losing your place.",
                   "Videos and downloadable resources felt disconnected from the written instruction they were meant to support",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-[#13181B] text-base font-medium">
@@ -338,7 +337,7 @@ export default function WritingProcess() {
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
                 This feedback reframed the problem for me. I&apos;d been treating it as a visual
                 design issue, but users were telling me it was a structural one. The one-page
-                format wasn&apos;t failing because it looked cluttered — it was failing because
+                format wasn&apos;t failing because it looked cluttered. It was failing because
                 it asked students to hold the entire writing process in their head at once.
               </p>
             </ScrollReveal>
@@ -355,13 +354,13 @@ export default function WritingProcess() {
             <div className="max-w-3xl space-y-8">
               <ScrollReveal delay={0.1}>
                 <p className="text-[#2D3436] text-lg leading-relaxed font-light">
-                  Rather than refining the one-page experience further, the project restructured
-                  the resource into a linear, eight-page learning flow — each page dedicated to
-                  a single stage of the writing process. This pivot reframed the entire product:
-                  instead of a reference tool students navigate on their own terms, it became a
+                  Rather than refining the one-page experience further, I restructured the
+                  resource into a linear, eight-page learning flow. Each page is dedicated to
+                  a single stage of the writing process. This pivot reframed the entire product.
+                  Instead of a reference tool students navigate on their own terms, it became a
                   guided instructional experience that walks them through it step by step. Videos
                   and resources now appear inline, at exactly the stage where they&apos;re
-                  relevant, rather than tucked into a modal or a menu.
+                  relevant, not tucked into a modal or a menu.
                 </p>
               </ScrollReveal>
 
@@ -411,7 +410,7 @@ export default function WritingProcess() {
             <ScrollReveal delay={0.1}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
                 The result removes the cognitive burden of self-assembly. Students no longer need
-                to figure out where they are or what comes next — the experience guides them
+                to figure out where they are or what comes next. The experience guides them
                 forward.
               </p>
             </ScrollReveal>
@@ -430,8 +429,8 @@ export default function WritingProcess() {
                 The redesigned experience is currently pending a final presentation to
                 GCU&apos;s writing department before developer handoff and live deployment,
                 expected in 2026. During informal testing, students who used the redesigned flow
-                were able to identify their starting point and next step without prompting —
-                something that wasn&apos;t possible with the original single-page format.
+                were able to identify their starting point and next step without prompting.
+                That wasn&apos;t possible with the original single-page format.
               </p>
             </ScrollReveal>
 
