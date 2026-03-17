@@ -122,7 +122,7 @@ export default function No2Content() {
 
             <ScrollReveal delay={0.1}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
-                I built a gut health app. From scratch. In two weeks. Design, code, backend, brand. All me. No team, no handoffs. Just me, Claude Code, and a problem I thought was worth solving. As of March 9th I am waiting on my Apple Developer account. It goes live on the App Store next week.
+                I built a gut health app. From scratch. In two weeks. Design, code, backend, brand. All me. No team, no handoffs. Just me, Claude Code, and a problem I thought was worth solving. Currently waiting on Apple Developer account approval. It will be live on the App Store soon.
               </p>
             </ScrollReveal>
           </div>
