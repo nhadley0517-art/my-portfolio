@@ -379,7 +379,7 @@ export default function Hero() {
         </div>
       </div>
       <style>{`
-        .hero-section { padding: 120px 80px; }
+        .hero-section { padding: 180px 80px; }
         @media (max-width: 1279px) {
           .hero-section { padding: 120px 80px; }
           .hero-card-container { height: 280px !important; }
@@ -387,7 +387,7 @@ export default function Hero() {
           .hero-left-col { max-width: 600px; width: 100%; }
         }
         @media (max-width: 767px) {
-          .hero-section { padding: 60px 24px; }
+          .hero-section { padding: 100px 24px; }
           .hero-card-wrap { max-width: 100%; }
         }
       `}</style>
