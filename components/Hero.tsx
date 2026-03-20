@@ -262,6 +262,7 @@ export default function Hero() {
                 fontSize: "clamp(20px, 3vw, 28px)",
                 fontWeight: 400,
                 color: "#6B7280",
+                lineHeight: 1.8,
               }}
             >
               Designing things. Learning by doing.

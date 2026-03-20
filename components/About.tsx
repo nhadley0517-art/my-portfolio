@@ -18,7 +18,7 @@ export default function About() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.7, ease }}
-        style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "32px" }}
+        style={{ maxWidth: "720px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "0" }}
       >
         <span style={{
           fontSize: "11px",
@@ -26,6 +26,7 @@ export default function About() {
           letterSpacing: "0.15em",
           textTransform: "uppercase",
           color: "#FD8973",
+          marginBottom: "12px",
         }}>
           About
         </span>
@@ -35,25 +36,21 @@ export default function About() {
             fontSize: "clamp(28px, 4vw, 48px)",
             fontWeight: 800,
             color: "#13181B",
-            lineHeight: 1.1,
+            lineHeight: 1.3,
             letterSpacing: "-0.02em",
+            marginBottom: "32px",
           }}
           className="about-heading"
         >
-          Designing things.<br />Building things.<br />New grad.
+          Designing products that feel good to use.
         </h2>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "32px" }}>
           <p style={{ fontSize: "16px", color: "#4B5563", lineHeight: 1.75 }}>
-            I&apos;m Noah, a product and UX designer finishing my B.A. in Digital
-            Design at Grand Canyon University in April 2026. I intern at Canyon
-            Creative and Grand Canyon Education, where I get to work on real
-            design problems with real constraints.
+            I start with the problem. Before I open Figma, I want to understand what is actually broken and why. Good design to me is when something works so well that nobody notices it. That is the bar I hold myself to. I go wide too, design, research, a bit of code, whatever it takes to get there.
           </p>
           <p style={{ fontSize: "16px", color: "#4B5563", lineHeight: 1.75 }}>
-            I care about the details. The spacing, the copy, the interaction.
-            Good design is the kind you don&apos;t notice because it just works.
-            That&apos;s what I&apos;m always working toward.
+            Outside of design I am usually at the gym, spending time outdoors, or bothering my dogs. I am finishing my degree at GCU in April and looking for a product design role where the work is real and the problems are worth solving.
           </p>
         </div>
 
