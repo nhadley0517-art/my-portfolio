@@ -10,9 +10,18 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Noah Hadley — UX/UI & Product Designer",
+  title: "Noah Hadley — Product Designer",
   description:
-    "Portfolio of Noah Hadley, a UX/UI and product designer turning complex problems into experiences that feel effortless.",
+    "Product designer and builder. New grad. Open to full-time roles May 2026.",
+  openGraph: {
+    images: [{ url: "/univo_thumb.png", width: 1200, height: 630 }],
+    title: "Noah Hadley — Product Designer",
+    description: "Product designer and builder. New grad. Open to full-time roles May 2026.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/univo_thumb.png"],
+  },
 };
 
 export default function RootLayout({
