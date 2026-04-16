@@ -10,7 +10,7 @@ export default function About() {
   return (
     <section
       id="about"
-      style={{ background: "#F7F5F0" }}
+      style={{ background: "#F8F8FA" }}
       className="md:px-20 px-6 py-[60px] md:py-[120px]"
     >
       <motion.div

@@ -74,7 +74,7 @@ export default function Marquee() {
     <div
       className="overflow-hidden"
       style={{
-        background: "#F7F5F0",
+        background: "#F8F8FA",
         padding: "28px 0",
         borderTop: "1px solid #E5E0D8",
         borderBottom: "1px solid #E5E0D8",

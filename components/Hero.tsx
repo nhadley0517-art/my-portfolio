@@ -77,7 +77,7 @@ function ProjectCard({ project }: { project: typeof projects[0] }) {
           style={{
             position: "absolute",
             inset: 0,
-            background: "#F8F9FA",
+            background: "#F8F8FA",
             overflow: "hidden",
           }}
         >
@@ -218,7 +218,7 @@ export default function Hero() {
     <section
       ref={sectionRef}
       className="hero-section flex items-center"
-      style={{ background: "#F7F5F0" }}
+      style={{ background: "#F8F8FA" }}
     >
       <div className="max-w-6xl mx-auto w-full">
         <div className="flex flex-col-reverse xl:flex-row items-center gap-12 xl:gap-20">

@@ -75,7 +75,7 @@ export default function No2Content() {
                   <circle cx="7" cy="7" r="7" fill="#16A34A" />
                   <path d="M4 7l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Shipping to App Store
+                Live on the App Store
               </span>
             </ScrollReveal>
 
@@ -122,7 +122,7 @@ export default function No2Content() {
 
             <ScrollReveal delay={0.1}>
               <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
-                I built a gut health app. From scratch. In two weeks. Design, code, backend, brand. All me. No team, no handoffs. Just me, Claude Code, and a problem I thought was worth solving. Currently waiting on Apple Developer account approval. It will be live on the App Store soon.
+                I built a gut health app from scratch in two weeks. Design, code, backend, brand. All me. No team, no handoffs. Just me, Claude Code, and a problem I thought was worth solving. It is now live on the App Store.
               </p>
             </ScrollReveal>
           </div>
@@ -265,30 +265,6 @@ export default function No2Content() {
                   <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-10">
                     Going into this I was a designer. I knew Figma. I did not know what row-level security was, what a Supabase migration was, or why an API key being exposed in a chat window was a problem. I used Supabase for the backend and spent a serious amount of time researching security standards before writing a single line. Input validation at the database level. Rate limiting on login attempts. No sensitive data in the app bundle. It was one of the harder parts of the project. But it made me a better product thinker because I now understand what I am actually asking engineers to build when I spec something out.
                   </p>
-                </ScrollReveal>
-                <ScrollReveal>
-                  {isMobile ? (
-                    <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
-                      {[
-                        {icon:'📱', title:'Data stays on your device', desc:'All logs, symptoms, and health data are stored locally using SwiftData. Nothing leaves your phone by default.'},
-                        {icon:'🔒', title:'Supabase Row Level Security', desc:'Your account data in the cloud is protected by RLS policies. Only you can read or write your own records.'},
-                        {icon:'🚫', title:'No third-party data sharing', desc:'No analytics SDKs, no ad tracking, no data brokers. Third-party access is blocked by design.'},
-                        {icon:'📄', title:'You control your exports', desc:'Doctor PDF reports are generated on-device and only shared when you choose to share them.'},
-                      ].map((item, i) => (
-                        <div key={i} style={{background:'#F8F9FA', border:'1px solid #E5E7EB', borderRadius:'16px', padding:'20px', display:'flex', gap:'16px', alignItems:'flex-start'}}>
-                          <div style={{fontSize:'28px', flexShrink:0}}>{item.icon}</div>
-                          <div>
-                            <div style={{fontWeight:'700', fontSize:'14px', color:'#1C1C1E', marginBottom:'6px'}}>{item.title}</div>
-                            <div style={{fontSize:'13px', color:'#6B7280', lineHeight:1.6}}>{item.desc}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ width: "100%", overflowX: "hidden" }}>
-                      <iframe src="/4-privacy-flow.html" scrolling="no" style={{width:'100%', border:'none', borderRadius:'12px', display:'block', height:'680px'}} />
-                    </div>
-                  )}
                 </ScrollReveal>
               </div>
 
