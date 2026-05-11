@@ -20,6 +20,24 @@ const NO2_SECTIONS = [
 const ACCENT = "#7EB77F";
 const DARK = "#1C1C1E";
 
+function AutoplayVideo({ src, style }: { src: string; style?: React.CSSProperties }) {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  React.useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) { video.play().catch(() => {}); }
+        else { video.pause(); }
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+  return <video ref={videoRef} src={src} loop muted playsInline style={style} />;
+}
+
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-12">
@@ -31,6 +49,18 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       </span>
       <div className="h-px flex-1 bg-[#DDD8D1]" />
     </div>
+  );
+}
+
+function Callout({ label, heading, body, delay = 0 }: { label: string; heading: string; body: string; delay?: number }) {
+  return (
+    <ScrollReveal delay={delay}>
+      <div style={{ paddingBottom: "72px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#888", marginBottom: "16px" }}>{label}</p>
+        <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 700, color: "#13181B", lineHeight: 1.15, marginBottom: "20px", maxWidth: "680px" }}>{heading}</p>
+        <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px" }}>{body}</p>
+      </div>
+    </ScrollReveal>
   );
 }
 
@@ -86,14 +116,14 @@ export default function No2Content() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-xl md:text-2xl text-[#2D3436] font-light mb-10">
-                The No. 1 app for your No. 2
+              <p className="text-lg font-semibold mb-8 max-w-2xl" style={{ color: ACCENT }}>
+                A gut health iOS app designed and built solo in two weeks. Live on the App Store.
               </p>
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
               <div className="flex flex-wrap gap-3">
-                {["Solo", "2 weeks", "Built with Claude Code", "Shipping March 2026"].map((pill) => (
+                {["Solo", "2 weeks", "Built with Claude Code", "iOS App Store"].map((pill) => (
                   <span
                     key={pill}
                     className="text-sm font-medium text-[#13181B] border border-[#DDD8D1] bg-white px-4 py-2 rounded-full"
@@ -114,14 +144,14 @@ export default function No2Content() {
         </section>
 
         {/* ── 01 — THE PROJECT ── */}
-        <section id="overview" className="px-6 py-20 md:py-28">
+        <section id="overview" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>01 — The Project</SectionLabel>
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl">
+              <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "640px" }}>
                 I built a gut health app from scratch in two weeks. Design, code, backend, brand. All me. No team, no handoffs. Just me, Claude Code, and a problem I thought was worth solving. It is now live on the App Store.
               </p>
             </ScrollReveal>
@@ -129,15 +159,21 @@ export default function No2Content() {
         </section>
 
         {/* ── 02 — CONTEXT ── */}
-        <section id="context" className="px-6 py-20 md:py-28">
+        <section id="context" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>02 — Context</SectionLabel>
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
-                Colorectal cancer is now the number 1 cause of cancer death in adults under 50 in the U.S. It jumped from 5th place. The symptoms show up years before a diagnosis. Most people ignore them because nobody told them it was worth paying attention to.
+              <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "640px", marginBottom: "24px" }}>
+                My own research on colorectal cancer in younger adults made it feel personal — gut issues have been part of my life for a while. The idea of a poop tracker had floated around before, mostly as a joke. But a close friend asked me one day why I hadn&apos;t just built it, and I didn&apos;t have a good answer. So I did. The timing was right too — Claude Code was becoming a real tool, and I wanted something in my portfolio I&apos;d taken from zero to shipped.
+              </p>
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.15}>
+              <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "640px", marginBottom: "64px" }}>
+                Colorectal cancer is now the number 1 cause of cancer death in adults under 50 in the U.S. — up from 5th place. The symptoms show up years before a diagnosis. Most people ignore them because nobody told them it was worth paying attention to.
               </p>
             </ScrollReveal>
 
@@ -180,39 +216,30 @@ export default function No2Content() {
         </section>
 
         {/* ── 03 — KEY INSIGHTS ── */}
-        <section id="insights" className="px-6 py-20 md:py-28">
+        <section id="insights" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>03 — Key Insights</SectionLabel>
             </ScrollReveal>
 
-            <div className="grid md:grid-cols-3 gap-4 mb-16">
-              {[
-                {
-                  heading: "Nobody tracks their gut health until something is already wrong.",
-                  body: "There is no habit around this. No baseline. People go years without thinking about it, and then something changes and they have nothing to compare it to. No. 2 is about building that baseline before you need it.",
-                },
-                {
-                  heading: "The apps that exist are either scary or useless.",
-                  body: "They split into two camps. Cold and clinical, like filling out a medical form. Or so soft and vague they had nothing useful to say. Nobody was making something you would actually want to open every day.",
-                },
-                {
-                  heading: "If it is not fast, people will not do it.",
-                  body: "Logging has to be frictionless or it just does not happen. Health tracking apps live and die by whether people actually do it every day. That meant the whole input flow had to be designed around speed first.",
-                },
-              ].map((insight, i) => (
-                <ScrollReveal key={i} delay={i * 0.1}>
-                  <div className="bg-white rounded-2xl border border-[#DDD8D1] p-6 h-full">
-                    <h4 className="text-sm font-semibold mb-3" style={{ color: ACCENT }}>
-                      {insight.heading}
-                    </h4>
-                    <p className="text-[#13181B] text-sm font-medium leading-relaxed">
-                      {insight.body}
-                    </p>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
+            <Callout
+              label="Insight 01"
+              heading="Nobody tracks their gut health until something is already wrong."
+              body="There is no habit around this. No baseline. People go years without thinking about it, and then something changes and they have nothing to compare it to. No. 2 is about building that baseline before you need it."
+              delay={0.05}
+            />
+            <Callout
+              label="Insight 02"
+              heading="The apps that exist are either scary or useless."
+              body="They split into two camps. Cold and clinical, like filling out a medical form. Or so soft and vague they had nothing useful to say. Nobody was making something you would actually want to open every day."
+              delay={0.1}
+            />
+            <Callout
+              label="Insight 03"
+              heading="If it is not fast, people will not do it."
+              body="Logging has to be frictionless or it just does not happen. Health tracking apps live and die by whether people actually do it every day. That meant the whole input flow had to be designed around speed first."
+              delay={0.15}
+            />
 
             <ScrollReveal>
               {isMobile ? (
@@ -248,7 +275,7 @@ export default function No2Content() {
         </section>
 
         {/* ── 04 — PROCESS ── */}
-        <section id="process" className="px-6 py-20 md:py-28">
+        <section id="process" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>04 — Process</SectionLabel>
@@ -257,12 +284,12 @@ export default function No2Content() {
             <div className="space-y-20">
               <div>
                 <ScrollReveal delay={0.1}>
-                  <h3 className="text-xl md:text-2xl font-bold text-[#13181B] mb-6">
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", marginBottom: "24px", lineHeight: 1.2 }}>
                     I had never built a backend before. So I learned one.
                   </h3>
                 </ScrollReveal>
                 <ScrollReveal delay={0.2}>
-                  <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-10">
+                  <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "640px", marginBottom: "40px" }}>
                     Going into this I was a designer. I knew Figma. I did not know what row-level security was, what a Supabase migration was, or why an API key being exposed in a chat window was a problem. I used Supabase for the backend and spent a serious amount of time researching security standards before writing a single line. Input validation at the database level. Rate limiting on login attempts. No sensitive data in the app bundle. It was one of the harder parts of the project. But it made me a better product thinker because I now understand what I am actually asking engineers to build when I spec something out.
                   </p>
                 </ScrollReveal>
@@ -270,12 +297,12 @@ export default function No2Content() {
 
               <div>
                 <ScrollReveal delay={0.1}>
-                  <h3 className="text-xl md:text-2xl font-bold text-[#13181B] mb-6">
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", marginBottom: "24px", lineHeight: 1.2 }}>
                     I started with AI insights. Then I did the math.
                   </h3>
                 </ScrollReveal>
                 <ScrollReveal delay={0.2}>
-                  <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-10">
+                  <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "640px", marginBottom: "40px" }}>
                     The original plan was to run every log through an AI model. At $0.003 per call, once a day per user, that is $1.10 per user per year. At 10,000 users that is $11,000 a year before a single dollar of revenue. So I built a rule-based engine instead. Runs on the device, costs nothing. AI becomes a Phase 2 premium feature when there is actually money to pay for it.
                   </p>
                 </ScrollReveal>
@@ -319,12 +346,12 @@ export default function No2Content() {
 
               <div>
                 <ScrollReveal delay={0.1}>
-                  <h3 className="text-xl md:text-2xl font-bold text-[#13181B] mb-6">
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", marginBottom: "24px", lineHeight: 1.2 }}>
                     The UI went through a lot of versions.
                   </h3>
                 </ScrollReveal>
                 <ScrollReveal delay={0.2}>
-                  <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-10">
+                  <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "640px", marginBottom: "40px" }}>
                     I did not land on the final design on the first try. Not even close. The home screen alone went through five or six distinct directions before it felt right. A lot of the process was me describing a very specific feeling to Claude Code. Not just &quot;make it look clean&quot; but things like &quot;the card should feel like it has weight, the spacing needs to breathe more, the green should feel calm not medical.&quot; It was a different kind of design process than Figma but the eye for detail was the same.
                   </p>
                 </ScrollReveal>
@@ -347,7 +374,7 @@ export default function No2Content() {
         </section>
 
         {/* ── 05 — FEATURES ── */}
-        <section id="features" className="px-6 py-20 md:py-28">
+        <section id="features" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>05 — Features</SectionLabel>
@@ -389,16 +416,16 @@ export default function No2Content() {
                 <ScrollReveal key={i}>
                   <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div>
-                      <h3 className="text-xl md:text-2xl font-bold text-[#13181B] mb-4">
+                      <h3 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: "#13181B", marginBottom: "16px", lineHeight: 1.2 }}>
                         {feature.heading}
                       </h3>
-                      <p className="text-[#2D3436] text-lg leading-relaxed font-light">
+                      <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85 }}>
                         {feature.body}
                       </p>
                     </div>
                     <div className="n2-feat-vid" style={{ maxWidth: "280px", margin: "0 auto" }}>
                       {feature.videoSrc ? (
-                        <video src={feature.videoSrc} autoPlay loop muted playsInline style={{ width: "100%", borderRadius: "16px", display: "block" }} />
+                        <AutoplayVideo src={feature.videoSrc} style={{ width: "100%", borderRadius: "16px", display: "block" }} />
                       ) : (
                         <>
                           {isMobile ? (
@@ -424,19 +451,45 @@ export default function No2Content() {
         </section>
 
         {/* ── 06 — DESIGN DECISIONS ── */}
-        <section id="decisions" className="px-6 py-20 md:py-28">
+        <section id="decisions" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>06 — Design Decisions</SectionLabel>
             </ScrollReveal>
 
-            <div className="space-y-6">
+            <div className="space-y-16">
+              <ScrollReveal delay={0.1}>
+                <div style={{ paddingBottom: "16px" }}>
+                  <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#888", marginBottom: "16px" }}>Design Decision</p>
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", lineHeight: 1.15, marginBottom: "20px", maxWidth: "680px" }}>
+                    The carousel slowed people down. The list didn&apos;t.
+                  </h3>
+                  <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px", marginBottom: "16px" }}>
+                    The first logging flow showed Bristol types in a scrolling carousel. Users had to swipe through options without seeing them all at once — which meant extra decisions, extra time. Switching to a full list view, with illustrated icons for each type, changed everything. Users could immediately spot their type and tap it. No scrolling required.
+                  </p>
+                  <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px", marginBottom: "40px" }}>
+                    The icons weren&apos;t just aesthetic. &ldquo;Mushy&rdquo; or &ldquo;watery&rdquo; means different things to different people — a small illustration anchors the meaning instantly. The result: average logging time dropped from around a minute to under 20 seconds.
+                  </p>
+                  <div style={{ display: "flex", gap: "40px", alignItems: "flex-start" }}>
+                    <div>
+                      <p style={{ fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 800, color: "#E05252", lineHeight: 1 }}>~1 min</p>
+                      <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#9CA3AF", marginTop: "8px" }}>Carousel</p>
+                    </div>
+                    <div style={{ width: "1px", background: "#E5E7EB", alignSelf: "stretch", margin: "4px 0" }} />
+                    <div>
+                      <p style={{ fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 800, color: ACCENT, lineHeight: 1 }}>~20 sec</p>
+                      <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#9CA3AF", marginTop: "8px" }}>List view</p>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+
               <ScrollReveal delay={0.1}>
                 <div className="rounded-2xl p-8 md:p-10" style={{ background: DARK }}>
-                  <h3 className="text-xl md:text-2xl font-bold text-[#F4F4F5] mb-6">
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 700, color: "#F4F4F5", marginBottom: "24px", lineHeight: 1.15 }}>
                     The name is the whole brand strategy.
                   </h3>
-                  <p className="text-lg leading-relaxed font-light mb-10" style={{ color: "rgba(244,244,245,0.75)" }}>
+                  <p style={{ fontSize: "15px", lineHeight: 1.85, marginBottom: "40px", color: "rgba(244,244,245,0.75)", maxWidth: "600px" }}>
                     No. 2. Everyone knows what it means. Slightly funny, immediately clear, owns the subject instead of tiptoeing around it. The tagline was obvious: The No. 1 app for your No. 2. The logo dot is a colon. The punctuation mark and the organ. Two meanings, one mark.
                   </p>
                   {isMobile ? (
@@ -463,14 +516,14 @@ export default function No2Content() {
         </section>
 
         {/* ── 07 — ROADMAP ── */}
-        <section id="roadmap" className="px-6 py-20 md:py-28">
+        <section id="roadmap" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>07 — Roadmap</SectionLabel>
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-[#2D3436] text-lg leading-relaxed font-light max-w-3xl mb-16">
+              <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "640px", marginBottom: "64px" }}>
                 Phase 1 is just getting it out the door. Ship it, prove the core experience works, build a user base. Phase 2 is where it gets smarter with AI. Phase 3 is where it starts to matter at a clinical level.
               </p>
             </ScrollReveal>
@@ -484,43 +537,36 @@ export default function No2Content() {
         </section>
 
         {/* ── 08 — KEY LEARNINGS ── */}
-        <section id="learnings" className="px-6 py-20 md:py-28">
+        <section id="learnings" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <SectionLabel>08 — Key Learnings</SectionLabel>
             </ScrollReveal>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              {[
-                {
-                  heading: "Learning backend as a designer changed how I think about specs.",
-                  body: "I used to write specs without really understanding what I was asking for. Now I understand how RLS works, how auth sessions are managed, and what actually happens when data gets stored. It made me a better collaborator and a better product thinker.",
-                },
-                {
-                  heading: "The UI only got good because I refused to let it be fine.",
-                  body: "There were a lot of moments where something was almost right. I kept going anyway. The gap between almost right and actually right is where most of the hours went.",
-                },
-                {
-                  heading: "The AI cost thing was a product decision, not a technical one.",
-                  body: "Cutting AI from Phase 1 was not a compromise. It made the product cheaper, faster to ship, and more honest about what it actually is right now.",
-                },
-                {
-                  heading: "Two weeks is enough to ship something real.",
-                  body: "With Claude Code handling the development work, I could focus on actual product decisions. That is a different kind of solo than it used to be.",
-                },
-              ].map((learning, i) => (
-                <ScrollReveal key={i} delay={i * 0.1}>
-                  <div className="bg-white rounded-2xl border border-[#DDD8D1] p-6 h-full">
-                    <h4 className="text-sm font-semibold mb-3" style={{ color: ACCENT }}>
-                      {learning.heading}
-                    </h4>
-                    <p className="text-[#13181B] text-sm font-medium leading-relaxed">
-                      {learning.body}
-                    </p>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
+            <Callout
+              label="Learning 01"
+              heading="Learning backend as a designer changed how I think about specs."
+              body="I used to write specs without really understanding what I was asking for. Now I understand how RLS works, how auth sessions are managed, and what actually happens when data gets stored. It made me a better collaborator and a better product thinker."
+              delay={0.05}
+            />
+            <Callout
+              label="Learning 02"
+              heading="The UI only got good because I refused to let it be fine."
+              body="There were a lot of moments where something was almost right. I kept going anyway. The gap between almost right and actually right is where most of the hours went."
+              delay={0.1}
+            />
+            <Callout
+              label="Learning 03"
+              heading="The AI cost thing was a product decision, not a technical one."
+              body="Cutting AI from Phase 1 was not a compromise. It made the product cheaper, faster to ship, and more honest about what it actually is right now."
+              delay={0.15}
+            />
+            <Callout
+              label="Learning 04"
+              heading="Two weeks is enough to ship something real."
+              body="Since launch with no marketing, No. 2 has had a dozen-plus downloads — friends, family, and strangers who scanned a QR code at my senior showcase. Every person who's used it has found it genuinely helpful. The 5-star review from the friend who first pushed me to build it was a good way for that story to end."
+              delay={0.2}
+            />
           </div>
         </section>
 
@@ -528,17 +574,17 @@ export default function No2Content() {
         <section className="px-6 py-12 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <a
-              href="/writingprocess"
+              href="/#work"
               className="group flex items-center gap-2 text-sm font-semibold text-[#7D8A93] hover:text-[#13181B] transition-colors"
             >
               <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
-              Writing Process Redesign
+              Back to all work
             </a>
             <a
-              href="/univo"
+              href="/writingprocess"
               className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#7EB77F] transition-colors"
             >
-              Univo
+              Writing Process Redesign
               <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
             </a>
           </div>
