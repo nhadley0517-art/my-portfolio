@@ -76,7 +76,7 @@ export default function No2Content() {
   return (
     <>
       <Nav />
-      <CaseStudyNav sections={NO2_SECTIONS} accentColor={ACCENT} />
+      <CaseStudyNav sections={NO2_SECTIONS} accentColor={ACCENT} card />
       <main className="pt-[72px]">
         <style>{`
           @media (max-width: 768px) {
@@ -581,10 +581,10 @@ export default function No2Content() {
               Back to all work
             </a>
             <a
-              href="/writingprocess"
+              href="/cove"
               className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#7EB77F] transition-colors"
             >
-              Writing Process Redesign
+              Cove
               <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
             </a>
           </div>

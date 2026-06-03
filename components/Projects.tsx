@@ -21,27 +21,30 @@ const projects: Array<Project & { initialRotate: number; cursorLabel: string }> 
     initialRotate: -1.5,
   },
   {
+    slug: "/cove",
+    title: "Cove",
+    cursorLabel: "Cove",
+    year: "2026",
+    tags: ["Field Service CRM", "Founding Designer", "AI-native"],
+    description:
+      "A field service CRM built from zero. Scheduling, payments, client management, and embedded AI.",
+    color: "#4F46E5",
+    video: "/client-profile-demo.mp4",
+    mediaBg: "#1E1B4B",
+    mediaHeight: 300,
+    initialRotate: 1.2,
+  },
+  {
     slug: "/writingprocess",
     title: "Writing Process Redesign",
     cursorLabel: "Writing Process",
-    year: "2026",
+    year: "2025",
     tags: ["Product Design", "Internship"],
     description:
       "Redesigned GCU's student writing resource into a guided, step-by-step experience students actually want to use.",
     color: "#6B3FA0",
     image: "/wp_thumb.png",
-    initialRotate: 1.2,
-  },
-  {
-    title: "Miah Families",
-    cursorLabel: "Miah Families",
-    year: "2026",
-    tags: ["Website Redesign", "Internship"],
-    description:
-      "Worked with a nonprofit during my internship at Canyon Creative to redesign their site using Webflow.",
-    color: "#C4845A",
-    comingSoon: true,
-    mediaBg: "#1A1A1A",
+    mediaHeight: 300,
     initialRotate: -1,
   },
 ];

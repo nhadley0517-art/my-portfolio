@@ -15,9 +15,11 @@ export interface Project {
   image?: string;
   thumbnailHtml?: string;
   mobileThumbHtml?: string;
+  placeholderLabel?: string;
   comingSoon?: boolean;
   mediaBg?: string;
   mediaFit?: "cover" | "contain";
+  mediaHeight?: number;
 }
 
 interface ProjectCardProps {
@@ -42,7 +44,7 @@ export default function ProjectCard({
   initialRotate = 0,
   cursorLabel,
 }: ProjectCardProps) {
-  const { slug, title, year, tags, description, color, video, image, thumbnailHtml, mobileThumbHtml, comingSoon, mediaBg, mediaFit = "cover" } = project;
+  const { slug, title, year, tags, description, color, video, image, thumbnailHtml, mobileThumbHtml, placeholderLabel, comingSoon, mediaBg, mediaFit = "cover", mediaHeight } = project;
   const rgb = hexToRgb(color);
   const [hovered, setHovered] = useState(false);
 
@@ -88,8 +90,8 @@ export default function ProjectCard({
     >
       {/* Media */}
       <div
-        style={{ overflow: "hidden", background: mediaBg ?? `rgba(${rgb}, 0.07)` }}
-        className={featured ? "card-media--featured" : "card-media--regular"}
+        style={{ overflow: "hidden", background: mediaBg ?? `rgba(${rgb}, 0.07)`, ...(mediaHeight && !featured ? { height: `${mediaHeight}px` } : {}) }}
+        className={`${featured ? "card-media--featured" : "card-media--regular"}${mediaHeight && !featured ? " card-media--custom-height" : ""}`}
       >
         {thumbnailHtml ? (
           <>
@@ -129,6 +131,31 @@ export default function ProjectCard({
             alt={title}
             style={{ width: "100%", height: "100%", objectFit: mediaFit, display: "block" }}
           />
+        ) : placeholderLabel ? (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "24px",
+              background: mediaBg ?? `rgba(${rgb}, 0.07)`,
+            }}
+          >
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: 700,
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color,
+                textAlign: "center",
+              }}
+            >
+              {placeholderLabel}
+            </span>
+          </div>
         ) : (
           <div style={{ width: "100%", height: "100%", background: mediaBg ?? `rgba(${rgb}, 0.1)` }} />
         )}
@@ -218,6 +245,7 @@ export default function ProjectCard({
         @media (max-width: 767px) {
           .card-media--featured { height: 240px; }
           .card-media--regular  { height: 180px; }
+          .card-media--custom-height { height: auto !important; aspect-ratio: 16 / 9; }
           .card-title--featured { font-size: 20px; }
           .thumb-desktop { display: none; }
           .thumb-mobile  { display: block; width: 100%; height: 100%; }

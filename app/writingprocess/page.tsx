@@ -87,7 +87,7 @@ export default function WritingProcess() {
   return (
     <>
       <Nav />
-      <CaseStudyNav sections={WP_SECTIONS} accentColor={ACCENT} />
+      <CaseStudyNav sections={WP_SECTIONS} accentColor={ACCENT} card />
       <main className="pt-[72px]">
 
         {/* ── HERO ── */}
@@ -135,7 +135,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 01 — OVERVIEW ── */}
-        <section id="overview" className="px-6 py-28 md:py-36 border-t border-[#DDD8D1]">
+        <section id="overview" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>01 — Overview</SectionLabel></ScrollReveal>
 
@@ -198,7 +198,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 02 — THE PROBLEM ── */}
-        <section id="problem" className="px-6 py-28 md:py-36 border-t border-[#DDD8D1]">
+        <section id="problem" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>02 — The Problem</SectionLabel></ScrollReveal>
 
@@ -245,7 +245,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 03 — RESEARCH & EARLY INSIGHTS ── */}
-        <section id="research" className="px-6 py-28 md:py-36 border-t border-[#DDD8D1]">
+        <section id="research" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>03 — Research &amp; Early Insights</SectionLabel></ScrollReveal>
 
@@ -286,7 +286,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 04 — FIRST ITERATION ── */}
-        <section id="first-iteration" className="px-6 py-28 md:py-36 border-t border-[#DDD8D1]">
+        <section id="first-iteration" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>04 — First Iteration</SectionLabel></ScrollReveal>
 
@@ -337,7 +337,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 05 — THE PIVOT ── */}
-        <section id="the-pivot" className="px-6 py-28 md:py-36 border-t border-[#DDD8D1]">
+        <section id="the-pivot" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>05 — The Pivot</SectionLabel></ScrollReveal>
 
@@ -384,7 +384,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 06 — FINAL SOLUTION ── */}
-        <section id="final-solution" className="px-6 py-28 md:py-36 border-t border-[#DDD8D1]">
+        <section id="final-solution" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>06 — Final Solution</SectionLabel></ScrollReveal>
 
@@ -425,7 +425,7 @@ export default function WritingProcess() {
         </section>
 
         {/* ── 07 — OUTCOME ── */}
-        <section id="outcome" className="px-6 py-28 md:py-36 border-t border-[#DDD8D1]">
+        <section id="outcome" className="px-6 py-28 md:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>07 — Outcome &amp; Stakeholder Response</SectionLabel></ScrollReveal>
 
@@ -475,11 +475,11 @@ export default function WritingProcess() {
         </section>
 
         {/* ── BOTTOM NAVIGATION ── */}
-        <section className="px-6 py-12 border-t border-[#DDD8D1]">
+        <section className="px-6 py-12">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <a href="/no2" className="group flex items-center gap-2 text-sm font-semibold text-[#7D8A93] hover:text-[#13181B] transition-colors">
+            <a href="/cove" className="group flex items-center gap-2 text-sm font-semibold text-[#7D8A93] hover:text-[#13181B] transition-colors">
               <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
-              No. 2
+              Cove
             </a>
             <a href="/#work" className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#6B3FA0] transition-colors">
               Back to all work
