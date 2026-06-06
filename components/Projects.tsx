@@ -69,7 +69,7 @@ export default function Projects() {
             display: "block",
             fontSize: "11px",
             fontWeight: 600,
-            letterSpacing: "0.15em",
+            letterSpacing: "0.14em",
             textTransform: "uppercase",
             color: "#9CA3AF",
             marginBottom: "12px",
@@ -85,11 +85,11 @@ export default function Projects() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.08, ease }}
           style={{
-            fontSize: "clamp(36px, 5vw, 56px)",
-            fontWeight: 800,
+            fontSize: "clamp(30px, 4.2vw, 50px)",
+            fontWeight: 500,
             color: "#111827",
-            lineHeight: 1,
-            letterSpacing: "-0.03em",
+            lineHeight: 1.3,
+            letterSpacing: "-0.02em",
             marginBottom: "40px",
           }}
         >

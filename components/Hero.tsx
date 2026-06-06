@@ -1,468 +1,534 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  animate,
-} from "framer-motion";
+import { useState, useEffect, useRef, ReactNode } from "react";
+import { motion } from "framer-motion";
 
-const ease = [0.25, 0.46, 0.45, 0.94] as const;
-const mouseSpring = { stiffness: 80, damping: 20 };
-const spring = { type: "spring" as const, stiffness: 300, damping: 28 };
+const STATEMENT = "Designing products that\nfeel good to use.";
+const LINES = STATEMENT.split("\n");
+const TYPE_SPEED = 40;
+const TYPE_JITTER = 16;
+const TYPE_DELAY = 320;
+const LINE2_DELAY = 450; // after line 1 types out, before tags + chat fade in (line 2 slides in during this)
 
-const roles = [
-  {
-    company: "Grand Canyon Education",
-    role: "Product Design Intern",
-    period: "Oct 2024 – Apr 2026",
-    description:
-      "Partnered with PMs, engineers, and designers to ship improvements to a student-facing platform used by tens of thousands of GCU users. Ran user research and usability testing throughout, synthesizing findings to inform design decisions and iterate on solutions.",
-  },
-  {
-    company: "Canyon Creative",
-    role: "Product Design Intern",
-    period: "Dec 2025 – Apr 2026",
-    description:
-      "Designed user-facing features end to end across multiple client products, from wireframes through high-fidelity UI and developer handoff. Built and maintained design systems, prototyped in Figma, and collaborated with engineering through implementation and QA.",
-  },
+// Apple-ish settle: soft, decelerating, never bouncy
+const charEase = [0.16, 1, 0.3, 1] as const;
+
+const TAGS = ["Product Design", "Prototyping", "Design Systems"];
+
+const QUICK_PROMPTS = [
+  "Recent work",
+  "What I'm looking for",
+  "My stack",
+  "Get in touch",
 ];
 
-function fadeUp(delay: number, opts?: { y?: number }) {
-  return {
-    initial: { opacity: 0, y: opts?.y ?? 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.55, delay, ease },
-  };
+const linkStyle = { color: "#FD8973", textDecoration: "none", borderBottom: "1px solid #FD8973" } as const;
+const Email = () => <a href="mailto:nhadley0517@gmail.com" style={linkStyle}>nhadley0517@gmail.com</a>;
+const LinkedIn = () => <a href="https://www.linkedin.com/in/noah-hadley/" target="_blank" rel="noopener noreferrer" style={linkStyle}>LinkedIn</a>;
+const WorkLink = () => <a href="#work" style={linkStyle}>the work ↓</a>;
+
+function getResponse(q: string): ReactNode {
+  const l = q.toLowerCase().trim();
+  const words = l.split(/[^a-z0-9']+/).filter(Boolean);
+  // word-boundary match — for short tokens like "hi" that would false-match inside "this"
+  const word = (...ws: string[]) => ws.some(w => words.includes(w));
+  // substring match — for distinctive phrases/longer terms
+  const has = (...ss: string[]) => ss.some(s => l.includes(s));
+
+  // ── Small talk ───────────────────────────────
+  if (word("hi", "hey", "yo", "hello", "hiya", "howdy", "sup", "hii", "heya") ||
+      has("what's up", "whats up", "wassup", "good morning", "good afternoon", "good evening")) {
+    return "Hey! 👋 I'm Noah — well, the part of my site that answers questions. Ask me about my work, my background, what I'm looking for, my stack, or what I get up to outside of design.";
+  }
+  if (has("how are you", "how are u", "how's it going", "hows it going", "how you doing", "you doing", "you good")) {
+    return "Doing great — building things and looking for the right team. How about you? Feel free to ask me anything about my work or background.";
+  }
+  if (word("thanks", "thank", "thx", "ty", "tysm", "cheers") || has("thank you", "appreciate")) {
+    return "Anytime! 🙏 If you want to keep going, you can email me or connect on LinkedIn — links are under \"Get in touch.\"";
+  }
+  if (word("bye", "goodbye", "cya", "later") || has("see you", "see ya", "take care")) {
+    return (<>Take care! 👋 If anything stuck with you, I&apos;m at <Email /> or on <LinkedIn />.</>);
+  }
+
+  // ── Is this real? ────────────────────────────
+  if (has("are you ai", "are you a bot", "are you real", "is this ai", "is this real", "chatgpt", "real person", "actually noah", "talking to a", "are you human")) {
+    return "Ha — not real AI. This is a little hand-built responder Noah coded into the page (a fun way to show he designs and builds). The answers are all his, though. Want the real Noah? Hit \"Get in touch.\"";
+  }
+  if (has("build this", "built this", "make this", "made this", "build the site", "build your site", "this site", "this website", "how was this", "who made this", "did you build")) {
+    return "Yep — I designed and built this whole site myself: Next.js, React, TypeScript, and Framer Motion. Including this little chat. I like proving the design-and-build combo rather than just claiming it.";
+  }
+
+  // ── Working together / hiring ────────────────
+  if (has("work with you", "work together", "work with me", "collaborate", "freelance", "hire you", "project together")) {
+    return (<>I&apos;d love to. The fastest way is to reach out directly — <Email /> or <LinkedIn /> — and tell me a bit about what you&apos;re working on.</>);
+  }
+  if (word("looking", "hiring", "hire", "job", "role", "open", "available", "opportunity", "recruit", "recruiting", "employ", "position") ||
+      has("full-time", "full time", "open to work")) {
+    return "Actively looking for a full-time product design role — somewhere the problems are real and the team cares about craft. Open to in-person or remote, and happy to relocate for the right team. If that sounds like your team, let's talk.";
+  }
+
+  // ── Resume / contact ─────────────────────────
+  if (word("resume", "cv") || has("curriculum vitae")) {
+    return (<>Happy to send my resume over — just email me at <Email /> or reach out on <LinkedIn /> and I&apos;ll get it right to you.</>);
+  }
+  if (word("contact", "email", "reach", "linkedin", "connect", "message") || has("get in touch", "reach out", "get a hold", "how do i contact")) {
+    return (<>Easiest ways to reach me: <Email /> or <LinkedIn />. I read everything.</>);
+  }
+
+  // ── Background ───────────────────────────────
+  if (word("experience", "worked", "internship", "intern", "companies", "company", "career") ||
+      has("where have you worked", "canyon creative", "grand canyon education", "work history")) {
+    return "Two product design internships: Grand Canyon Education (Oct 2024–Apr 2026), shipping to a student platform used by tens of thousands, and Canyon Creative (Dec 2025–Apr 2026), designing features end-to-end across client products and building design systems.";
+  }
+  if (word("school", "study", "studied", "degree", "college", "university", "gcu", "graduate", "graduated", "education", "major") ||
+      has("grand canyon university", "where did you go")) {
+    return "I just finished my degree at Grand Canyon University (GCU). A lot of what I know, though, came from building real things and learning by doing.";
+  }
+  if (word("location", "based", "live", "living", "reno", "nevada", "nv", "relocate", "remote") ||
+      has("where are you", "where do you live", "where are you based", "willing to move")) {
+    return "Based in Reno, NV — but I'm open to roles in person or fully remote, and happy to relocate for the right team.";
+  }
+
+  // ── Craft ────────────────────────────────────
+  if (word("stack", "tools", "tool", "tech", "code", "coding", "figma", "framework", "languages") ||
+      has("do you code", "do you build", "how do you build", "what do you use", "tech stack")) {
+    return "Figma for design and prototyping. React, Next.js, TypeScript, and Framer Motion for building — this site is proof. I'm not an engineer, but I prototype fast in code and can hand off (or collaborate) with engineers without a translator in between.";
+  }
+  if (word("work", "projects", "project", "shipped", "ship", "portfolio", "built", "case") || has("case study", "case studies", "show me")) {
+    return (<>I&apos;ve got a few case studies below — <strong>Cove</strong> (a field-service CRM I designed from zero as founding designer), <strong>No. 2</strong> (a gut-health app I designed and built solo in two weeks), and a redesign of GCU&apos;s writing resource. Take a look at <WorkLink /></>);
+  }
+  if (has("favorite project", "favourite project", "best project", "best work", "proudest", "most proud", "favorite work")) {
+    return (<>Probably <strong>No. 2</strong> — I designed, branded, coded, and shipped it solo in two weeks. It&apos;s the clearest proof of the design-and-build thing I keep talking about. It&apos;s in <WorkLink /></>);
+  }
+  if (word("process", "philosophy", "approach", "method", "principles", "principle") ||
+      has("how do you work", "how do you design", "your process", "design philosophy")) {
+    return "I start with the problem. Before I open Figma I want to understand what's actually broken and why. To me, good design is when something works so well nobody notices it — that's the bar. And I'll go wide to get there: research, design, a bit of code, whatever the problem needs.";
+  }
+  if (has("why design", "why product", "got into", "get into design", "why ux", "what got you", "why do you design")) {
+    return "I care about how things feel to use, not just how they look. Design is where problem-solving, psychology, and craft all meet — and you actually get to ship the thing. That mix is what hooked me.";
+  }
+  if (word("strength", "strengths", "superpower", "skills", "skill") || has("good at", "best at", "stand out")) {
+    return "My edge is the design-and-build combo: I can research and design a product, then prototype it in real code. That means tighter loops, fewer things lost in handoff, and ideas you can actually click instead of imagine.";
+  }
+
+  // ── Personal ─────────────────────────────────
+  if (word("dog", "dogs", "pet", "pets") ) {
+    return "I've got dogs and I bother them constantly. 🐶 Easily one of the best parts of my day.";
+  }
+  if (word("hobby", "hobbies", "fun", "outside", "hobbies", "interests", "weekend", "passion", "passions") ||
+      has("for fun", "free time", "outside of work", "outside of design", "do for fun", "when you're not", "spare time")) {
+    return "Outside of design I'm usually at the gym, spending time outdoors, or bothering my dogs. 🏋️🌲🐶";
+  }
+  if (word("age", "old") || has("how old")) {
+    return "Old enough to have strong opinions about empty states and loading spinners. Let's keep it about the work. 😄";
+  }
+  if (word("salary", "pay", "rate", "compensation", "comp", "money") || has("how much", "expected salary", "pay range")) {
+    return (<>Happy to talk specifics directly rather than here — reach out at <Email /> and we&apos;ll figure out if it&apos;s a fit.</>);
+  }
+  if (has("joke", "make me laugh", "funny", "tell me something funny")) {
+    return "Why did the designer get kicked out of the museum? They kept trying to align the paintings to an 8-point grid. 🎨";
+  }
+  if (has("marry me", "love you", "are you single", "date you", "your number")) {
+    return "Flattered. 😄 But the only commitment I'm after right now is a great product team. Speaking of — ask me what I'm looking for.";
+  }
+
+  // ── About (broad catch) ──────────────────────
+  if (word("who", "about", "yourself", "noah", "you", "intro", "introduce", "name", "bio") ||
+      has("tell me about", "your name", "who are you")) {
+    return (<>I&apos;m <strong>Noah Hadley</strong> — a product designer who also builds. I just finished at GCU, interned at Grand Canyon Education and Canyon Creative, and I care about how products <em>feel</em> to use, not just how they look. Ask me about my work, my stack, or what I&apos;m looking for.</>);
+  }
+
+  // ── Fallback ─────────────────────────────────
+  return "Good question — I might not have a canned answer for that one. Try asking about my work, my background, what I'm looking for, my stack, where I'm based, or what I do for fun. Or just reach out directly under \"Get in touch.\"";
 }
 
-function shapeLoad(delay: number) {
-  return {
-    initial: { opacity: 0, scale: 0.6 },
-    animate: { opacity: 1, scale: 1 },
-    transition: { duration: 0.4, delay, ease },
-  };
-}
+type Msg = { role: "user" | "assistant"; content: ReactNode };
 
 export default function Hero() {
-  // Mouse parallax — offset from viewport center
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, mouseSpring);
-  const springY = useSpring(mouseY, mouseSpring);
-  const backX = useTransform(springX, v => v * 0.02);
-  const backY = useTransform(springY, v => v * 0.02);
-  const frontX = useTransform(springX, v => v * 0.06);
-  const frontY = useTransform(springY, v => v * 0.06);
+  const [progress, setProgress]         = useState(0); // characters revealed in line 1
+  const [showLine2, setShowLine2]       = useState(false);
+  const [showMeta, setShowMeta]         = useState(false);
+  const [msgs, setMsgs]                 = useState<Msg[]>([]);
+  const [input, setInput]               = useState("");
+  const logRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    mouseX.set(e.clientX - window.innerWidth / 2);
-    mouseY.set(e.clientY - window.innerHeight / 2);
-  };
-
-  // Card motion values — driven imperatively by scroll snap
-  const heroY       = useMotionValue(0);
-  const heroOpacity = useMotionValue(1);
-  const heroScale   = useMotionValue(1);
-  const heroRotate  = useMotionValue(0);
-  const heroZIndex  = useMotionValue(2);
-
-  // Experience card starts off-screen below for the load animation
-  const expY       = useMotionValue(80);
-  const expOpacity = useMotionValue(0);
-  const expScale   = useMotionValue(0.94);
-  const expRotate  = useMotionValue(0);
-  const expZIndex  = useMotionValue(1);
-
-  // Tracks animation state — avoids React re-renders
-  const locked  = useRef(false); // true while animation is in flight
-  const flipped = useRef(false); // true once exp card is in foreground
-
-  // Refs for measuring card heights to compute mobile peek offset
-  const expCardRef  = useRef<HTMLDivElement>(null);
-  const heroCardRef = useRef<HTMLDivElement>(null);
-
-  // Load sequence — blocks scroll until complete, then hands off to scroll logic
+  // Keep the conversation scrolled to the newest message — scoped to the chat
+  // window only (sets the container's scrollTop, never the page's).
   useEffect(() => {
-    locked.current = true;
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [msgs]);
 
-    const timer = setTimeout(async () => {
-      await Promise.all([
-        animate(expY, 60, { type: "spring", stiffness: 200, damping: 22 }),
-        animate(expOpacity, 1, { duration: 0.3 }),
-      ]);
-      locked.current = false;
-    }, 1000);
-
-    return () => clearTimeout(timer);
+  // Keep the page pinned to the hero on load (don't let the browser restore
+  // a previous scroll position or jump to an anchor).
+  useEffect(() => {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
   }, []);
 
+  // Typewriter
   useEffect(() => {
-    const animateForward = async () => {
-      // Hero departs: slides up, tilts, fades; exp rises to foreground
-      await Promise.all([
-        animate(heroY,       -80,  spring),
-        animate(heroOpacity, 0,    { duration: 0.25, ease: "easeIn" }),
-        animate(heroRotate,  -4,   spring),
-        animate(heroScale,   0.96, spring),
-        animate(expY,        0,    spring),
-        animate(expScale,    1,    spring),
-      ]);
-      // Invisible snap: reposition hero behind exp card at peek.
-      // On mobile the exp card is single-column (taller) so 60px isn't enough —
-      // compute the minimum y that lets the hero peek below the exp card.
-      let peekY = 60;
-      if (window.innerWidth < 768 && expCardRef.current && heroCardRef.current) {
-        const expH  = expCardRef.current.offsetHeight;
-        const heroH = heroCardRef.current.offsetHeight;
-        // heroY + heroH * heroScale must exceed expH to peek; add 32px of peek
-        peekY = Math.max(60, expH - heroH * 0.94 + 32);
-      }
-      heroY.set(peekY);
-      heroRotate.set(0);
-      heroScale.set(0.94);
-      heroZIndex.set(1);
-      expZIndex.set(2);
-      // Fade hero back in — now peeking below exp card
-      await animate(heroOpacity, 1, { duration: 0.2 });
-      flipped.current = true;
-      locked.current  = false;
-    };
+    let idx = 0;
+    let t: ReturnType<typeof setTimeout>;
 
-    const animateReverse = async () => {
-      // Exp departs upward (mirrors hero forward); hero rises from peek
-      heroZIndex.set(2);
-      expZIndex.set(1);
-      await Promise.all([
-        animate(expY,       -80,  spring),
-        animate(expOpacity, 0,    { duration: 0.25, ease: "easeIn" }),
-        animate(expRotate,  -4,   spring),
-        animate(expScale,   0.96, spring),
-        animate(heroY,      0,    spring),
-        animate(heroScale,  1,    spring),
-        animate(heroRotate, 0,    spring),
-      ]);
-      // Invisible snap: reposition exp behind hero at peek
-      expY.set(60);
-      expRotate.set(0);
-      expScale.set(0.94);
-      await animate(expOpacity, 1, { duration: 0.2 });
-      flipped.current = false;
-      locked.current  = false;
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      // Always block scroll while animation is running
-      if (locked.current) { e.preventDefault(); return; }
-
-      if (e.deltaY > 0 && !flipped.current) {
-        e.preventDefault();
-        locked.current = true;
-        animateForward();
-        return;
-      }
-      if (e.deltaY < 0 && flipped.current && window.scrollY === 0) {
-        e.preventDefault();
-        locked.current = true;
-        animateReverse();
-        return;
+    const tick = () => {
+      idx++;
+      setProgress(idx);
+      if (idx < LINES[0].length) {
+        t = setTimeout(tick, TYPE_SPEED + (Math.random() * TYPE_JITTER * 2 - TYPE_JITTER));
+      } else {
+        // line 1 done — slide line 2 in as a block, then reveal tags + chat
+        setShowLine2(true);
+        setTimeout(() => setShowMeta(true), LINE2_DELAY);
       }
     };
 
-    let touchStartY = 0;
-    const onTouchStart = (e: TouchEvent) => { touchStartY = e.touches[0].clientY; };
-    const onTouchMove  = (e: TouchEvent) => {
-      if (locked.current) { e.preventDefault(); return; }
-      const dy = touchStartY - e.touches[0].clientY; // positive = swipe up = scroll down
-      touchStartY = e.touches[0].clientY;
+    const init = setTimeout(tick, TYPE_DELAY);
+    return () => { clearTimeout(init); clearTimeout(t); };
+  }, []);
 
-      if (dy > 0 && !flipped.current) {
-        e.preventDefault();
-        locked.current = true;
-        animateForward();
-        return;
-      }
-      if (dy < 0 && flipped.current && window.scrollY === 0) {
-        e.preventDefault();
-        locked.current = true;
-        animateReverse();
-        return;
-      }
-    };
+  const send = (text: string) => {
+    if (!text.trim()) return;
+    setMsgs(p => [
+      ...p,
+      { role: "user",      content: text },
+      { role: "assistant", content: getResponse(text) },
+    ]);
+    setInput("");
+  };
 
-    window.addEventListener("wheel",      onWheel,      { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true  });
-    window.addEventListener("touchmove",  onTouchMove,  { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel",      onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove",  onTouchMove);
-    };
-  }, []); // motion values and refs are stable — safe empty deps
 
   return (
-    <div
-      onMouseMove={handleMouseMove}
-      style={{ padding: "144px 0 80px", background: "transparent" }}
+    <section
+      className="px-6 md:px-10 lg:px-16"
+      style={{
+        background: "#f4f4f5",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: "120px",
+        paddingBottom: "80px",
+        boxSizing: "border-box",
+        position: "relative",
+      }}
     >
-      <div style={{ width: "100%", maxWidth: "1120px", margin: "0 auto", padding: "0 24px" }}>
+      <div className="max-w-5xl mx-auto w-full">
 
-        {/*
-          CSS Grid overlap: both cards share gridRow/gridColumn 1 — cell height
-          equals the tallest card (hero), giving both cards identical dimensions.
-        */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr" }}>
+        {/* Eyebrow */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(20px, 3vw, 32px)" }}
+        >
+          <span className="nh-label">Noah Hadley</span>
+          <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#D1D5DB" }} />
+          <span className="nh-label" style={{ color: "#9CA3AF" }}>Product Designer &amp; Builder</span>
+        </motion.div>
 
-          {/* ── Experience card ── peeking below hero at rest */}
-          <motion.div
-            style={{
-              gridRow: 1,
-              gridColumn: 1,
-              y: expY,
-              opacity: expOpacity,
-              scale: expScale,
-              rotate: expRotate,
-              zIndex: expZIndex,
-              transformOrigin: "center bottom",
-            }}
-          >
-            <div ref={expCardRef} className="exp-card">
-              <p className="exp-label">Experience</p>
-              <div className="exp-grid">
-                {roles.map((role) => (
-                  <div key={role.company}>
-                    <p className="exp-period">{role.period}</p>
-                    <h3 className="exp-company">{role.company}</h3>
-                    <p className="exp-role">{role.role}</p>
-                    <p className="exp-desc">{role.description}</p>
-                  </div>
+        {/* Statement — typewriter with per-character depth.
+            A hidden copy of the full statement reserves the exact height + width
+            so the title types in place without ever reflowing the layout. */}
+        <h1 className="nh-statement" style={{ position: "relative" }}>
+          <span aria-hidden style={{ visibility: "hidden" }}>
+            {STATEMENT.split("\n").map((ln, i) => (
+              <span key={i} style={{ display: "block" }}>{ln}</span>
+            ))}
+          </span>
+          <span style={{ position: "absolute", inset: 0 }}>
+            {/* Line 1 — types out character by character */}
+            <span style={{ display: "block" }}>
+              {[...LINES[0]].slice(0, progress).map((ch, ci) => (
+                <motion.span
+                  key={ci}
+                  initial={{ opacity: 0, y: "0.4em", filter: "blur(10px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{ duration: 0.5, ease: charEase }}
+                  style={{ display: "inline-block", whiteSpace: "pre" }}
+                >
+                  {ch}
+                </motion.span>
+              ))}
+              {/* cursor trails line 1 while it types */}
+              {!showLine2 && <span className="nh-cursor">|</span>}
+            </span>
+
+            {/* Line 2 — slides in as a whole block once line 1 finishes */}
+            <span style={{ display: "block" }}>
+              {showLine2 && (
+                <motion.span
+                  initial={{ opacity: 0, y: "0.5em", filter: "blur(10px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{ duration: 0.55, ease: charEase }}
+                  style={{ display: "inline-block", whiteSpace: "pre" }}
+                >
+                  {LINES[1]}
+                </motion.span>
+              )}
+            </span>
+          </span>
+        </h1>
+
+        {/* Discipline tags — always present (reserves space), fades in place */}
+        <motion.div
+          animate={{ opacity: showMeta ? 1 : 0, y: showMeta ? 0 : 6 }}
+          transition={{ duration: 0.55, ease: charEase }}
+          aria-hidden={!showMeta}
+          style={{ display: "flex", alignItems: "center", flexWrap: "wrap", marginTop: "clamp(20px, 3vw, 28px)" }}
+        >
+          {TAGS.map((tag, i) => (
+            <span key={tag} style={{ display: "flex", alignItems: "center" }}>
+              <span className="nh-tag">{tag}</span>
+              {i < TAGS.length - 1 && (
+                <span style={{ margin: "0 14px", color: "#D1D5DB", fontSize: "11px" }}>/</span>
+              )}
+            </span>
+          ))}
+        </motion.div>
+
+        {/* Chat — always present (reserves space), fades in place as one cohesive search element */}
+        <motion.div
+          animate={{ opacity: showMeta ? 1 : 0, y: showMeta ? 0 : 10 }}
+          transition={{ duration: 0.6, ease: charEase }}
+          aria-hidden={!showMeta}
+          style={{ marginTop: "clamp(36px, 5vw, 52px)", maxWidth: "560px", pointerEvents: showMeta ? "auto" : "none" }}
+        >
+              {/* Quick prompts — persistent, sit just above the input so they stay available mid-chat */}
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "12px" }}>
+                {QUICK_PROMPTS.map(p => (
+                  <motion.button
+                    key={p}
+                    onClick={() => send(p)}
+                    whileHover={{ y: -1, boxShadow: "0 4px 14px rgba(0,0,0,0.10)" }}
+                    whileTap={{ scale: 0.97 }}
+                    className="nh-prompt-btn"
+                    tabIndex={showMeta ? 0 : -1}
+                  >
+                    {p}
+                  </motion.button>
                 ))}
               </div>
-            </div>
-          </motion.div>
 
-          {/* ── Hero card ── on top at rest */}
-          <motion.div
-            style={{
-              gridRow: 1,
-              gridColumn: 1,
-              y: heroY,
-              scale: heroScale,
-              opacity: heroOpacity,
-              rotate: heroRotate,
-              zIndex: heroZIndex,
-              transformOrigin: "center top",
-            }}
-          >
-            <div style={{ perspective: "1000px" }}>
-              {/*
-                Outer container: layout + overflow clipping only.
-                No background — the decoration layer (below) fades in at 600ms.
-              */}
-              <div
-                ref={heroCardRef}
-                className="hero-card"
-                style={{
-                  borderRadius: "24px",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
+              {/* Search input */}
+              <form
+                onSubmit={e => { e.preventDefault(); send(input); }}
+                className="nh-search"
               >
-                {/* Step 2 — Card shell fades in at 600ms */}
-                <motion.div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    borderRadius: "24px",
-                    background: "#FFFFFF",
-                    boxShadow: "0 8px 48px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)",
-                    zIndex: 0,
-                  }}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.6, ease: "easeOut" }}
+                <svg className="nh-search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  placeholder="Ask me anything…"
+                  className="nh-input"
+                  tabIndex={showMeta ? 0 : -1}
                 />
-
-                {/* Back blob layer — shapes animate in during Step 1 */}
-                <motion.div
-                  aria-hidden
-                  style={{ x: backX, y: backY, position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none" }}
+                <button
+                  type="submit"
+                  className="nh-send-btn"
+                  aria-label="Send"
+                  tabIndex={showMeta ? 0 : -1}
+                  style={{ background: input.trim() ? "#111827" : "transparent", color: input.trim() ? "#fff" : "#C4C7CC" }}
                 >
-                  <motion.div {...shapeLoad(0.05)} style={{ position: "absolute", top: -28, right: 32, width: 120, height: 120 }}>
-                    <div className="hs--back" style={{ width: 120, height: 120, background: "rgba(220,100,70,0.5)", borderRadius: "50%", animation: "hd1 13s ease-in-out infinite" }} />
-                  </motion.div>
-                  <motion.div {...shapeLoad(0.15)} style={{ position: "absolute", top: 18, right: -10, width: 80, height: 46 }}>
-                    <div className="hs--back" style={{ width: 80, height: 46, background: "rgba(100,190,140,0.5)", borderRadius: 100, animation: "hd2 10s ease-in-out infinite" }} />
-                  </motion.div>
-                  <motion.div {...shapeLoad(0.25)} style={{ position: "absolute", bottom: 24, left: 18, width: 72, height: 72 }}>
-                    <div className="hs--back" style={{ width: 72, height: 72, background: "rgba(100,170,220,0.5)", borderRadius: 18, animation: "hd3 15s ease-in-out infinite" }} />
-                  </motion.div>
-                  <motion.div {...shapeLoad(0.35)} style={{ position: "absolute", bottom: -8, right: 80, width: 50, height: 50 }}>
-                    <div className="hs--back" style={{ width: 50, height: 50, background: "rgba(230,150,100,0.45)", borderRadius: "50%", animation: "hd1 11s ease-in-out infinite 2s" }} />
-                  </motion.div>
-                </motion.div>
+                  ↑
+                </button>
+              </form>
 
-                {/* Content — Step 1 fadeUp animations, front-loaded delays */}
-                <div style={{ position: "relative", zIndex: 2 }}>
-                  <motion.p {...fadeUp(0.05, { y: 8 })} className="hero-label">
-                    Product Designer &amp; Builder
-                  </motion.p>
-                  <motion.h1 {...fadeUp(0.12)} className="hero-name">
-                    Noah Hadley
-                  </motion.h1>
-                  <motion.p {...fadeUp(0.20)} className="hero-tagline">
-                    Designing things. Learning by doing.
-                  </motion.p>
-                  <motion.hr {...fadeUp(0.27)} className="hero-rule" />
-                  <motion.p {...fadeUp(0.35)} className="hero-bio">
-                    I&apos;m a product and UX designer who cares about how things feel to use,
-                    not just how they look. Recently graduated from GCU, and now actively looking
-                    for full-time product design roles.
-                  </motion.p>
-                  <motion.div {...fadeUp(0.45)} className="hero-links">
-                    <motion.a
-                      href="mailto:nhadley0517@gmail.com"
-                      whileHover={{ y: -2, boxShadow: "0 6px 20px rgba(0,0,0,0.10)" }}
-                      whileTap={{ scale: 0.97 }}
-                      className="hero-btn hero-btn--outline"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FD8973" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2" />
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                      </svg>
-                      Email
-                    </motion.a>
-                    <motion.a
-                      href="https://www.linkedin.com/in/noah-hadley/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ y: -2, boxShadow: "0 6px 20px rgba(253,137,115,0.28)" }}
-                      whileTap={{ scale: 0.97 }}
-                      className="hero-btn hero-btn--filled"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                        <rect x="2" y="9" width="4" height="12" />
-                        <circle cx="4" cy="4" r="2" />
-                      </svg>
-                      LinkedIn
-                    </motion.a>
-                  </motion.div>
+              {/* Answers — a fixed-height context window. The page grows once when
+                  the first message appears; after that, the conversation scrolls
+                  inside this box instead of growing the page. */}
+              {msgs.length > 0 && (
+                <div ref={logRef} className="nh-chatlog" style={{ height: "260px", overflowY: "auto", marginTop: "16px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px", minHeight: "100%", justifyContent: "flex-end", paddingRight: "4px" }}>
+                    {msgs.map((m, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, ease: charEase }}
+                        style={{
+                          alignSelf: m.role === "user" ? "flex-end" : "flex-start",
+                          maxWidth: "92%",
+                          flexShrink: 0,
+                          padding: "12px 16px",
+                          borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                          background: m.role === "user" ? "#111827" : "#fff",
+                          color: m.role === "user" ? "#fff" : "#1F2937",
+                          fontSize: "14px",
+                          lineHeight: 1.65,
+                          boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+                        }}
+                      >
+                        {m.content}
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
-
-                {/* Front blob layer — shapes animate in during Step 1 */}
-                <motion.div
-                  aria-hidden
-                  style={{ x: frontX, y: frontY, position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none" }}
-                >
-                  <motion.div {...shapeLoad(0.10)} style={{ position: "absolute", top: 30, left: -8, width: 44, height: 70 }}>
-                    <div className="hs--front" style={{ width: 44, height: 70, background: "rgba(210,80,80,0.45)", borderRadius: 100, filter: "blur(2px)", animation: "hd2 12s ease-in-out infinite 1s" }} />
-                  </motion.div>
-                  <motion.div {...shapeLoad(0.20)} style={{ position: "absolute", bottom: 36, right: -6, width: 42, height: 42 }}>
-                    <div className="hs--front" style={{ width: 42, height: 42, background: "rgba(100,170,220,0.5)", borderRadius: 10, filter: "blur(3px)", animation: "hd3 9s ease-in-out infinite" }} />
-                  </motion.div>
-                  <motion.div {...shapeLoad(0.30)} style={{ position: "absolute", bottom: 70, left: 55, width: 32, height: 32 }}>
-                    <div className="hs--front" style={{ width: 32, height: 32, background: "rgba(100,190,140,0.5)", borderRadius: "50%", filter: "blur(2px)", animation: "hd1 14s ease-in-out infinite 3s" }} />
-                  </motion.div>
-                  <motion.div {...shapeLoad(0.40)} style={{ position: "absolute", top: 60, right: 20, width: 28, height: 28 }}>
-                    <div className="hs--front" style={{ width: 28, height: 28, background: "rgba(230,150,100,0.45)", borderRadius: "50%", filter: "blur(2px)", animation: "hd2 8s ease-in-out infinite 0.5s" }} />
-                  </motion.div>
-                </motion.div>
-
-              </div>
-            </div>
-          </motion.div>
-
-        </div>
+              )}
+        </motion.div>
       </div>
 
+      {/* Scroll cue — fills the empty bottom of the centered hero and hints at what's below.
+          Absolutely positioned so it never affects the centered content. */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: showMeta ? 1 : 0 }}
+        transition={{ duration: 0.6, delay: showMeta ? 0.35 : 0, ease: charEase }}
+        aria-hidden={!showMeta}
+        className="nh-cue-wrap px-6 md:px-10 lg:px-16"
+        style={{ position: "absolute", left: 0, right: 0, bottom: "32px", pointerEvents: showMeta ? "auto" : "none" }}
+      >
+        <div
+          className="max-w-5xl mx-auto"
+          style={{
+            borderTop: "1px solid rgba(0,0,0,0.09)",
+            paddingTop: "16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "16px",
+          }}
+        >
+          <span className="nh-label" style={{ color: "#9CA3AF" }}>Open to full-time roles</span>
+          <button
+            type="button"
+            onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+            className="nh-scrollcue"
+            tabIndex={showMeta ? 0 : -1}
+          >
+            Selected Work
+            <motion.span
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+              style={{ display: "inline-block" }}
+            >
+              ↓
+            </motion.span>
+          </button>
+        </div>
+      </motion.div>
+
       <style>{`
-        /* Hero card */
-        .hero-card { padding: 56px 52px; }
-        .hero-label {
-          font-size: 11px; font-weight: 600; letter-spacing: 0.15em;
-          text-transform: uppercase; color: #9CA3AF; margin: 0 0 20px; text-align: center;
+        .nh-label {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #111827;
         }
-        .hero-name {
-          font-size: 80px; font-weight: 800; color: #111827; line-height: 0.92;
-          letter-spacing: -0.035em; margin: 0 0 18px; text-align: center;
+        .nh-statement {
+          font-size: clamp(30px, 4.2vw, 50px);
+          font-weight: 500;
+          color: #111827;
+          line-height: 1.34;
+          letter-spacing: -0.02em;
+          margin: 0;
         }
-        .hero-tagline {
-          font-size: 21px; font-weight: 400; color: #6B7280;
-          line-height: 1.6; margin: 0 0 24px; text-align: center;
+        .nh-tag {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.13em;
+          text-transform: uppercase;
+          color: #9CA3AF;
         }
-        .hero-rule { border: none; border-top: 1px solid rgba(0,0,0,0.07); margin: 0 0 24px; }
-        .hero-bio { font-size: 15px; color: #4B5563; line-height: 1.75; margin: 0; text-align: center; }
-        .hero-links {
-          display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 28px;
+        .nh-scrollcue {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          font-family: inherit;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: #111827;
+          transition: color 0.15s ease;
         }
-        .hero-btn {
-          display: inline-flex; align-items: center; gap: 7px; font-size: 14px;
-          font-weight: 600; padding: 11px 22px; border-radius: 8px;
-          text-decoration: none; cursor: pointer;
+        .nh-scrollcue:hover { color: #FD8973; }
+        .nh-chatlog {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0,0,0,0.18) transparent;
         }
-        .hero-btn--outline {
-          color: #111827; border: 1px solid rgba(0,0,0,0.12); background: rgba(255,255,255,0.7);
+        .nh-chatlog::-webkit-scrollbar { width: 6px; }
+        .nh-chatlog::-webkit-scrollbar-track { background: transparent; }
+        .nh-chatlog::-webkit-scrollbar-thumb {
+          background: rgba(0,0,0,0.18);
+          border-radius: 999px;
         }
-        .hero-btn--filled { color: #fff; background: #FD8973; border: 1px solid transparent; }
-
-        /* Experience card */
-        .exp-card {
-          background: #2667FF;
-          border-radius: 24px;
-          box-shadow: 0 4px 32px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
-          padding: 56px 52px;
-          height: 100%;
-          box-sizing: border-box;
+        /* Hide the cue when the viewport is too short to fit it below the centered content */
+        @media (max-height: 720px), (max-width: 640px) {
+          .nh-cue-wrap { display: none !important; }
         }
-        .exp-label {
-          font-size: 13px; font-weight: 600; letter-spacing: 0.12em;
-          text-transform: uppercase; color: rgba(255,255,255,0.7); margin: 0 0 32px;
+        .nh-cursor {
+          display: inline-block;
+          color: #FD8973;
+          font-weight: 300;
+          margin-left: 2px;
+          transform: translateY(-0.02em);
+          animation: nh-blink 0.8s steps(1) infinite;
         }
-        .exp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .exp-period {
-          font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.45);
-          letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px;
+        @keyframes nh-blink {
+          0%, 50%   { opacity: 1; }
+          50.01%, 100% { opacity: 0; }
         }
-        .exp-company {
-          font-size: 22px; font-weight: 800; color: #FFFFFF;
-          letter-spacing: -0.015em; line-height: 1.2; margin: 0 0 4px;
-          text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        .nh-search {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: #fff;
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 14px;
+          padding: 6px 6px 6px 16px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+          transition: box-shadow 0.2s, border-color 0.2s;
         }
-        .exp-role {
-          font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.55);
-          text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px;
+        .nh-search:focus-within {
+          border-color: rgba(0,0,0,0.16);
+          box-shadow: 0 4px 18px rgba(0,0,0,0.07);
         }
-        .exp-desc { font-size: 14px; color: rgba(255,255,255,0.78); line-height: 1.7; margin: 0; }
-
-        /* Floating shape keyframes */
-        @keyframes hd1 {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          50%       { transform: translate(12px,-8px) scale(1.07); }
+        .nh-search-icon { color: #9CA3AF; flex-shrink: 0; }
+        .nh-input {
+          flex: 1;
+          border: none;
+          background: transparent;
+          font-size: 15px;
+          color: #111827;
+          outline: none;
+          padding: 9px 0;
+          font-family: inherit;
         }
-        @keyframes hd2 {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          50%       { transform: translate(-9px,11px) scale(0.94); }
+        .nh-input::placeholder { color: #9CA3AF; }
+        .nh-send-btn {
+          flex-shrink: 0;
+          width: 38px;
+          height: 38px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          border: none;
+          font-size: 17px;
+          cursor: pointer;
+          font-family: inherit;
+          transition: background 0.2s, color 0.2s;
         }
-        @keyframes hd3 {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          35%       { transform: translate(8px,10px) scale(1.05); }
-          70%       { transform: translate(-6px,-5px) scale(0.97); }
-        }
-        .hs--back  { filter: blur(8px); opacity: 0.3; }
-        .hs--front { opacity: 0.45; }
-
-        @media (max-width: 767px) {
-          .hero-card    { padding: 36px 28px !important; }
-          .hero-name    { font-size: clamp(52px, 13vw, 72px); }
-          .hero-tagline { font-size: 18px; }
-          .exp-card     { padding: 36px 28px; }
-          .exp-grid     { grid-template-columns: 1fr; gap: 24px; }
+        .nh-prompt-btn {
+          padding: 9px 16px;
+          border-radius: 999px;
+          border: 1px solid rgba(0,0,0,0.10);
+          background: #fff;
+          font-size: 13px;
+          font-weight: 500;
+          color: #374151;
+          cursor: pointer;
+          font-family: inherit;
+          transition: box-shadow 0.15s;
         }
       `}</style>
-    </div>
+    </section>
   );
 }

@@ -23,7 +23,7 @@ export default function About() {
         <span style={{
           fontSize: "11px",
           fontWeight: 600,
-          letterSpacing: "0.15em",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
           color: "#9CA3AF",
           display: "block",
@@ -34,15 +34,15 @@ export default function About() {
 
         <h2
           style={{
-            fontSize: "clamp(28px, 4vw, 44px)",
-            fontWeight: 800,
+            fontSize: "clamp(30px, 4.2vw, 50px)",
+            fontWeight: 500,
             color: "#111827",
-            lineHeight: 1.15,
-            letterSpacing: "-0.025em",
+            lineHeight: 1.3,
+            letterSpacing: "-0.02em",
             marginBottom: "28px",
           }}
         >
-          Designing products that feel good to use.
+          Built on curiosity.
         </h2>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "36px" }}>

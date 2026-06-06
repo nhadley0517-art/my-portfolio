@@ -8,7 +8,7 @@ export default function Footer() {
     >
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <p style={{ fontWeight: 700, color: "#111827", fontSize: "14px", letterSpacing: "-0.01em" }}>
+          <p style={{ fontWeight: 500, color: "#111827", fontSize: "14px", letterSpacing: "-0.02em" }}>
             Noah Hadley
           </p>
           <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "4px" }}>

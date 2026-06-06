@@ -179,9 +179,9 @@ export default function ProjectCard({
         {/* Title */}
         <h3
           style={{
-            fontWeight: 700,
+            fontWeight: 500,
             color: "#111827",
-            letterSpacing: "-0.015em",
+            letterSpacing: "-0.02em",
             lineHeight: 1.2,
             margin: "0 0 8px",
           }}

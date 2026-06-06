@@ -52,7 +52,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-12">
       <span
-        className="text-xs font-semibold uppercase tracking-[0.2em] whitespace-nowrap"
+        className="text-[11px] font-semibold uppercase tracking-[0.14em] whitespace-nowrap"
         style={{ color: ACCENT }}
       >
         {children}
@@ -313,7 +313,7 @@ const AI_SUBSECTIONS: { title: string; placeholder: string; video?: string; body
   {
     title: "Dashboard Insights",
     placeholder: "AI INSIGHTS PLACEHOLDER",
-    video: "/2026-06-02 17-16-41.mp4",
+    video: "/dashboard-insights-demo.mp4",
     body: "The dashboard surfaces two or three proactive insights the owner would otherwise have to go looking for. We capped it at three cards maximum. More than three and owners stopped reading them entirely.",
   },
 ];
@@ -336,7 +336,7 @@ export default function CoveContent() {
 
           <div className="px-6 max-w-5xl mx-auto mt-16 md:mt-20 mb-0">
             <ScrollReveal delay={0.05}>
-              <h1 className="text-[clamp(40px,7vw,88px)] font-extrabold tracking-tight leading-[1.22] text-[#13181B] mb-5">
+              <h1 className="text-[clamp(40px,7vw,72px)] font-medium tracking-[-0.02em] leading-[1.1] text-[#13181B] mb-5">
                 Cove
               </h1>
             </ScrollReveal>
@@ -457,7 +457,7 @@ export default function CoveContent() {
             <ScrollReveal><SectionLabel>03. Design System</SectionLabel></ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#13181B", lineHeight: 1.2, marginBottom: "24px", maxWidth: "680px" }}>
+              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px", maxWidth: "680px" }}>
                 Built in Code First
               </h3>
             </ScrollReveal>
@@ -603,7 +603,7 @@ export default function CoveContent() {
             <ScrollReveal><SectionLabel>04. Core Product</SectionLabel></ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#13181B", lineHeight: 1.2, marginBottom: "24px", maxWidth: "680px" }}>
+              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px", maxWidth: "680px" }}>
                 The Product
               </h3>
             </ScrollReveal>
@@ -621,10 +621,10 @@ export default function CoveContent() {
               {PRODUCT_SUBSECTIONS.map((sub, i) => (
                 <ScrollReveal key={sub.title} delay={0.05}>
                   <div>
-                    <p style={{ fontSize: "11px", fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "8px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "8px" }}>
                       {String(i + 1).padStart(2, "0")}
                     </p>
-                    <h4 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: "#13181B", lineHeight: 1.2, marginBottom: "24px" }}>
+                    <h4 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px" }}>
                       {sub.title}
                     </h4>
                     <div style={{ marginBottom: "24px" }}>
@@ -648,7 +648,7 @@ export default function CoveContent() {
             <ScrollReveal><SectionLabel>05. AI Integration</SectionLabel></ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#13181B", lineHeight: 1.2, marginBottom: "24px", maxWidth: "680px" }}>
+              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px", maxWidth: "680px" }}>
                 Intelligence Built In
               </h3>
             </ScrollReveal>
@@ -666,10 +666,10 @@ export default function CoveContent() {
               {AI_SUBSECTIONS.map((sub, i) => (
                 <ScrollReveal key={sub.title} delay={0.05}>
                   <div>
-                    <p style={{ fontSize: "11px", fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "8px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "8px" }}>
                       {String(i + 1).padStart(2, "0")}
                     </p>
-                    <h4 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: "#13181B", lineHeight: 1.2, marginBottom: "24px" }}>
+                    <h4 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px" }}>
                       {sub.title}
                     </h4>
                     <div style={{ marginBottom: "24px" }}>
@@ -695,7 +695,7 @@ export default function CoveContent() {
             <ScrollReveal><SectionLabel>06. Reflection</SectionLabel></ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#13181B", lineHeight: 1.2, marginBottom: "24px", maxWidth: "680px" }}>
+              <h3 style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px", maxWidth: "680px" }}>
                 What I Learned
               </h3>
             </ScrollReveal>
@@ -713,7 +713,7 @@ export default function CoveContent() {
 
             <ScrollReveal delay={0.2}>
               <div className="rounded-2xl p-8 md:p-10" style={{ background: DARK }}>
-                <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: ACCENT_SOFT, marginBottom: "16px" }}>
+                <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: ACCENT_SOFT, marginBottom: "16px" }}>
                   What I would do next
                 </p>
                 <p style={{ fontSize: "15px", lineHeight: 1.85, color: "rgba(244,244,245,0.78)", maxWidth: "600px" }}>

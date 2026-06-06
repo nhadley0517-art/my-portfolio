@@ -42,7 +42,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-12">
       <span
-        className="text-xs font-semibold uppercase tracking-[0.2em] whitespace-nowrap"
+        className="text-[11px] font-semibold uppercase tracking-[0.14em] whitespace-nowrap"
         style={{ color: ACCENT }}
       >
         {children}
@@ -56,8 +56,8 @@ function Callout({ label, heading, body, delay = 0 }: { label: string; heading: 
   return (
     <ScrollReveal delay={delay}>
       <div style={{ paddingBottom: "72px" }}>
-        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#888", marginBottom: "16px" }}>{label}</p>
-        <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 700, color: "#13181B", lineHeight: 1.15, marginBottom: "20px", maxWidth: "680px" }}>{heading}</p>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "16px" }}>{label}</p>
+        <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "20px", maxWidth: "680px" }}>{heading}</p>
         <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px" }}>{body}</p>
       </div>
     </ScrollReveal>
@@ -110,7 +110,7 @@ export default function No2Content() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.05}>
-              <h1 className="text-[clamp(40px,7vw,88px)] font-extrabold tracking-tight leading-[1.22] text-[#13181B] mt-5 mb-5">
+              <h1 className="text-[clamp(40px,7vw,72px)] font-medium tracking-[-0.02em] leading-[1.1] text-[#13181B] mt-5 mb-5">
                 No. 2
               </h1>
             </ScrollReveal>
@@ -284,7 +284,7 @@ export default function No2Content() {
             <div className="space-y-20">
               <div>
                 <ScrollReveal delay={0.1}>
-                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", marginBottom: "24px", lineHeight: 1.2 }}>
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", marginBottom: "24px", lineHeight: 1.3 }}>
                     I had never built a backend before. So I learned one.
                   </h3>
                 </ScrollReveal>
@@ -297,7 +297,7 @@ export default function No2Content() {
 
               <div>
                 <ScrollReveal delay={0.1}>
-                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", marginBottom: "24px", lineHeight: 1.2 }}>
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", marginBottom: "24px", lineHeight: 1.3 }}>
                     I started with AI insights. Then I did the math.
                   </h3>
                 </ScrollReveal>
@@ -346,7 +346,7 @@ export default function No2Content() {
 
               <div>
                 <ScrollReveal delay={0.1}>
-                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", marginBottom: "24px", lineHeight: 1.2 }}>
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", marginBottom: "24px", lineHeight: 1.3 }}>
                     The UI went through a lot of versions.
                   </h3>
                 </ScrollReveal>
@@ -356,7 +356,7 @@ export default function No2Content() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <p style={{ fontSize: "11px", fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "16px" }}>First iterations</p>
+                  <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "16px" }}>First iterations</p>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="n2-iter-img" style={{ maxWidth: "280px", margin: "0 auto" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -416,7 +416,7 @@ export default function No2Content() {
                 <ScrollReveal key={i}>
                   <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div>
-                      <h3 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 700, color: "#13181B", marginBottom: "16px", lineHeight: 1.2 }}>
+                      <h3 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", marginBottom: "16px", lineHeight: 1.3 }}>
                         {feature.heading}
                       </h3>
                       <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85 }}>
@@ -460,8 +460,8 @@ export default function No2Content() {
             <div className="space-y-16">
               <ScrollReveal delay={0.1}>
                 <div style={{ paddingBottom: "16px" }}>
-                  <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#888", marginBottom: "16px" }}>Design Decision</p>
-                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 700, color: "#13181B", lineHeight: 1.15, marginBottom: "20px", maxWidth: "680px" }}>
+                  <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "16px" }}>Design Decision</p>
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "20px", maxWidth: "680px" }}>
                     The carousel slowed people down. The list didn&apos;t.
                   </h3>
                   <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px", marginBottom: "16px" }}>
@@ -486,7 +486,7 @@ export default function No2Content() {
 
               <ScrollReveal delay={0.1}>
                 <div className="rounded-2xl p-8 md:p-10" style={{ background: DARK }}>
-                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 700, color: "#F4F4F5", marginBottom: "24px", lineHeight: 1.15 }}>
+                  <h3 style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 500, color: "#F4F4F5", letterSpacing: "-0.02em", marginBottom: "24px", lineHeight: 1.3 }}>
                     The name is the whole brand strategy.
                   </h3>
                   <p style={{ fontSize: "15px", lineHeight: 1.85, marginBottom: "40px", color: "rgba(244,244,245,0.75)", maxWidth: "600px" }}>

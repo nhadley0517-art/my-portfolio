@@ -37,7 +37,7 @@ const ITERATION_IMAGES = [
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-16">
-      <span className="text-xs font-semibold uppercase tracking-[0.2em] whitespace-nowrap" style={{ color: ACCENT }}>
+      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] whitespace-nowrap" style={{ color: ACCENT }}>
         {children}
       </span>
       <div className="h-px flex-1 bg-[#DDD8D1]" />
@@ -69,10 +69,10 @@ function Callout({ label, heading, body, delay = 0 }: { label: string; heading: 
   return (
     <ScrollReveal delay={delay}>
       <div style={{ paddingBottom: "72px" }}>
-        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#888", marginBottom: "16px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "16px" }}>
           {label}
         </p>
-        <p style={{ fontSize: "clamp(24px, 3vw, 30px)", fontWeight: 700, color: "#13181B", lineHeight: 1.15, marginBottom: "20px", maxWidth: "680px" }}>
+        <p style={{ fontSize: "clamp(24px, 3vw, 30px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "20px", maxWidth: "680px" }}>
           {heading}
         </p>
         <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px" }}>
@@ -104,8 +104,8 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <h1 className="text-[clamp(40px,7vw,88px)] font-extrabold tracking-tight leading-[1.22] text-[#13181B] mt-5 mb-5">
-                Writing Process<br />Redesign
+              <h1 className="text-[clamp(34px,5vw,56px)] font-medium tracking-[-0.02em] leading-[1.1] text-[#13181B] mt-5 mb-5">
+                Writing Process Redesign
               </h1>
             </ScrollReveal>
 
@@ -157,7 +157,7 @@ export default function WritingProcess() {
               <ScrollReveal delay={0.2}>
                 <div className="space-y-10">
                   <div>
-                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#888", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "16px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "16px" }}>
                       Designed For Students Who
                     </p>
                     <ul className="space-y-3">
@@ -185,7 +185,7 @@ export default function WritingProcess() {
                       { label: "Project Type", value: "Educational Media Redesign" },
                     ].map(({ label, value }, i, arr) => (
                       <div key={label}>
-                        <p style={{ fontSize: "11px", fontWeight: 600, color: "#888", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "2px" }}>{label}</p>
+                        <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "2px" }}>{label}</p>
                         <p style={{ fontSize: "14px", fontWeight: 500, color: "#13181B" }}>{value}</p>
                         {i < arr.length - 1 && <div className="h-px bg-[#DDD8D1] mt-4" />}
                       </div>
@@ -203,7 +203,7 @@ export default function WritingProcess() {
             <ScrollReveal><SectionLabel>02 — The Problem</SectionLabel></ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 700, color: "#13181B", lineHeight: 1.15, maxWidth: "760px", marginBottom: "32px" }}>
+              <p style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, maxWidth: "760px", marginBottom: "32px" }}>
                 The original resource packed the entire writing process into a single page.
               </p>
             </ScrollReveal>
@@ -277,7 +277,7 @@ export default function WritingProcess() {
               </ScrollReveal>
 
               <ScrollReveal delay={0.3}>
-                <p style={{ fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 700, color: "#13181B", lineHeight: 1.3 }}>
+                <p style={{ fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
                   The problem wasn&apos;t the content — it was the structure around it.
                 </p>
               </ScrollReveal>
@@ -306,7 +306,7 @@ export default function WritingProcess() {
             </div>
 
             <ScrollReveal>
-              <p style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#13181B", lineHeight: 1.2, maxWidth: "680px", marginBottom: "28px" }}>
+              <p style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, maxWidth: "680px", marginBottom: "28px" }}>
                 What the feedback revealed
               </p>
             </ScrollReveal>
@@ -329,7 +329,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.2}>
-              <p style={{ fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 700, color: "#13181B", lineHeight: 1.3, maxWidth: "640px" }}>
+              <p style={{ fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, maxWidth: "640px" }}>
                 I&apos;d been treating it as a visual design problem. Users were telling me it was structural.
               </p>
             </ScrollReveal>
@@ -352,7 +352,7 @@ export default function WritingProcess() {
               </ScrollReveal>
 
               <ScrollReveal delay={0.15}>
-                <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#888", marginBottom: "14px" }}>
+                <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "14px" }}>
                   How it was validated
                 </p>
                 <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, marginBottom: "32px" }}>
@@ -375,7 +375,7 @@ export default function WritingProcess() {
               </ScrollReveal>
 
               <ScrollReveal delay={0.25}>
-                <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 700, color: "#13181B", lineHeight: 1.25 }}>
+                <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3 }}>
                   A meaningful scope change mid-project. The right call.
                 </p>
               </ScrollReveal>
@@ -417,7 +417,7 @@ export default function WritingProcess() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 700, color: "#13181B", lineHeight: 1.25, maxWidth: "640px" }}>
+              <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, maxWidth: "640px" }}>
                 Students no longer need to figure out where they are or what comes next. The experience guides them forward.
               </p>
             </ScrollReveal>
