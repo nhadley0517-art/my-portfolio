@@ -27,17 +27,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.noahhadley.com"),
   title: "Noah Hadley — Product Designer",
   description:
     "Product designer and builder. New grad. Open to full-time roles May 2026.",
   openGraph: {
-    images: [{ url: "/univo_thumb.png", width: 1200, height: 630 }],
+    type: "website",
+    url: "https://www.noahhadley.com",
+    siteName: "Noah Hadley",
     title: "Noah Hadley — Product Designer",
     description: "Product designer and builder. New grad. Open to full-time roles May 2026.",
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/univo_thumb.png"],
+    title: "Noah Hadley — Product Designer",
+    description: "Product designer and builder. New grad. Open to full-time roles May 2026.",
   },
 };
 
