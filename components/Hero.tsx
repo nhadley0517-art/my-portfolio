@@ -24,10 +24,10 @@ const SEASONS: { id: Season; label: string; color: string }[] = [
   { id: "winter", label: "Winter", color: "#AFCBE3" },
 ];
 const SEASON_SRC: Record<Season, string> = {
-  spring: "/pixelart-spring.png",
-  summer: "/pixelart-summer.png",
-  fall:   "/pixelart-fall.png",
-  winter: "/pixelart-winter.png",
+  spring: "/pixelart-spring.webp",
+  summer: "/pixelart-summer.webp",
+  fall:   "/pixelart-fall.webp",
+  winter: "/pixelart-winter.webp",
 };
 
 // First title line split into word/space tokens so the typewriter wraps by
@@ -193,6 +193,14 @@ export default function Hero() {
   useEffect(() => {
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
+  }, []);
+
+  // Preload every season image so switching is instant (no fetch on click).
+  useEffect(() => {
+    Object.values(SEASON_SRC).forEach(src => {
+      const img = new window.Image();
+      img.src = src;
+    });
   }, []);
 
   // Typewriter
