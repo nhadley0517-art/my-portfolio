@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, ReactNode } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import PixelArtBackground from "./PixelArtBackground";
 
 const STATEMENT = "Designing products that\nfeel good to use.";
 const LINES = STATEMENT.split("\n");
@@ -14,6 +15,34 @@ const LINE2_DELAY = 450; // after line 1 types out, before tags + chat fade in (
 const charEase = [0.16, 1, 0.3, 1] as const;
 
 const TAGS = ["Product Design", "Prototyping", "Design Systems"];
+
+type Season = "spring" | "summer" | "fall" | "winter";
+const SEASONS: { id: Season; label: string; color: string }[] = [
+  { id: "spring", label: "Spring", color: "#A3D977" },
+  { id: "summer", label: "Summer", color: "#3FA34D" },
+  { id: "fall",   label: "Fall",   color: "#E0892E" },
+  { id: "winter", label: "Winter", color: "#AFCBE3" },
+];
+const SEASON_SRC: Record<Season, string> = {
+  spring: "/pixelart-spring.png",
+  summer: "/pixelart-summer.png",
+  fall:   "/pixelart-fall.png",
+  winter: "/pixelart-winter.png",
+};
+
+// First title line split into word/space tokens so the typewriter wraps by
+// whole words (breaks only at spaces) and never splits a word mid-letter.
+type Tok = { type: "word" | "space"; chars: { ch: string; idx: number }[] };
+const LINE0_TOKENS: Tok[] = (() => {
+  const tokens: Tok[] = [];
+  let cur: Tok | null = null;
+  [...LINES[0]].forEach((ch, idx) => {
+    const type = ch === " " ? "space" : "word";
+    if (!cur || cur.type !== type) { cur = { type, chars: [] }; tokens.push(cur); }
+    cur.chars.push({ ch, idx });
+  });
+  return tokens;
+})();
 
 const QUICK_PROMPTS = [
   "Recent work",
@@ -150,6 +179,7 @@ export default function Hero() {
   const [showMeta, setShowMeta]         = useState(false);
   const [msgs, setMsgs]                 = useState<Msg[]>([]);
   const [input, setInput]               = useState("");
+  const [season, setSeason]             = useState<Season>("summer");
   const logRef = useRef<HTMLDivElement>(null);
 
   // Keep the conversation scrolled to the newest message — scoped to the chat
@@ -211,7 +241,43 @@ export default function Hero() {
         position: "relative",
       }}
     >
-      <div className="max-w-5xl mx-auto w-full">
+      {/* Framed, rounded, animated pixel-art background (crossfades between seasons) */}
+      <div className="hero-bg-frame">
+        <AnimatePresence>
+          <motion.div
+            key={season}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7, ease: "easeInOut" }}
+            style={{ position: "absolute", inset: 0 }}
+          >
+            <PixelArtBackground src={SEASON_SRC[season]} />
+          </motion.div>
+        </AnimatePresence>
+        <div className="hero-bg-scrim" />
+      </div>
+
+      <div className="max-w-5xl mx-auto w-full" style={{ position: "relative", zIndex: 1 }}>
+        <div className="hero-glass">
+
+        {/* Season switcher — nestled in the panel's top-right corner */}
+        <div className="season-switch" role="group" aria-label="Background season">
+          {SEASONS.map(s => (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setSeason(s.id)}
+              className={"season-btn" + (season === s.id ? " active" : "")}
+              title={s.label}
+              aria-label={s.label}
+              aria-pressed={season === s.id}
+            >
+              <span className="season-ind" style={{ background: s.color }} />
+              <span className="season-name">{s.label}</span>
+            </button>
+          ))}
+        </div>
 
         {/* Eyebrow */}
         <motion.div
@@ -221,8 +287,8 @@ export default function Hero() {
           style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(20px, 3vw, 32px)" }}
         >
           <span className="nh-label">Noah Hadley</span>
-          <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#D1D5DB" }} />
-          <span className="nh-label" style={{ color: "#9CA3AF" }}>Product Designer &amp; Builder</span>
+          <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#4B5563" }} />
+          <span className="nh-label" style={{ color: "#374151" }}>Product Designer &amp; Builder</span>
         </motion.div>
 
         {/* Statement — typewriter with per-character depth.
@@ -235,19 +301,30 @@ export default function Hero() {
             ))}
           </span>
           <span style={{ position: "absolute", inset: 0 }}>
-            {/* Line 1 — types out character by character */}
+            {/* Line 1 — types out word by word so words never break mid-letter */}
             <span style={{ display: "block" }}>
-              {[...LINES[0]].slice(0, progress).map((ch, ci) => (
-                <motion.span
-                  key={ci}
-                  initial={{ opacity: 0, y: "0.4em", filter: "blur(10px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{ duration: 0.5, ease: charEase }}
-                  style={{ display: "inline-block", whiteSpace: "pre" }}
-                >
-                  {ch}
-                </motion.span>
-              ))}
+              {LINE0_TOKENS.map((tok, ti) => {
+                const revealed = tok.chars.filter(c => c.idx < progress);
+                if (revealed.length === 0) return null;
+                // breakable space between words (where wrapping is allowed)
+                if (tok.type === "space") return <span key={ti}> </span>;
+                // word kept on one line
+                return (
+                  <span key={ti} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+                    {revealed.map(c => (
+                      <motion.span
+                        key={c.idx}
+                        initial={{ opacity: 0, y: "0.4em", filter: "blur(10px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        transition={{ duration: 0.5, ease: charEase }}
+                        style={{ display: "inline-block" }}
+                      >
+                        {c.ch}
+                      </motion.span>
+                    ))}
+                  </span>
+                );
+              })}
               {/* cursor trails line 1 while it types */}
               {!showLine2 && <span className="nh-cursor">|</span>}
             </span>
@@ -279,7 +356,7 @@ export default function Hero() {
             <span key={tag} style={{ display: "flex", alignItems: "center" }}>
               <span className="nh-tag">{tag}</span>
               {i < TAGS.length - 1 && (
-                <span style={{ margin: "0 14px", color: "#D1D5DB", fontSize: "11px" }}>/</span>
+                <span style={{ margin: "0 14px", color: "#6B7280", fontSize: "11px" }}>/</span>
               )}
             </span>
           ))}
@@ -367,6 +444,7 @@ export default function Hero() {
                 </div>
               )}
         </motion.div>
+        </div>{/* /hero-glass */}
       </div>
 
       {/* Scroll cue — fills the empty bottom of the centered hero and hints at what's below.
@@ -382,7 +460,7 @@ export default function Hero() {
         <div
           className="max-w-5xl mx-auto"
           style={{
-            borderTop: "1px solid rgba(0,0,0,0.09)",
+            borderTop: "1px solid rgba(255,255,255,0.35)",
             paddingTop: "16px",
             display: "flex",
             alignItems: "center",
@@ -410,6 +488,111 @@ export default function Hero() {
       </motion.div>
 
       <style>{`
+        .hero-bg-frame {
+          position: absolute;
+          top: 12px;
+          bottom: 12px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: calc(100% - 24px);
+          max-width: 1500px;
+          border-radius: 24px;
+          overflow: hidden;
+          z-index: 0;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+          border: 1px solid rgba(0,0,0,0.06);
+        }
+        .hero-bg-scrim {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.06), rgba(0,0,0,0) 26%, rgba(0,0,0,0) 56%, rgba(0,0,0,0.34));
+        }
+        .hero-glass {
+          position: relative;
+          display: block;
+          width: 100%;
+          padding: clamp(44px, 6vw, 72px) clamp(32px, 5vw, 56px);
+          border-radius: 24px;
+          background: rgba(255,255,255,0.42);
+          -webkit-backdrop-filter: blur(5px) saturate(1.25);
+          backdrop-filter: blur(5px) saturate(1.25);
+          box-shadow: 0 34px 80px -24px rgba(0,0,0,0.5), 0 10px 28px -12px rgba(0,0,0,0.28);
+        }
+        .season-switch {
+          position: absolute;
+          top: 22px;
+          right: 22px;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          gap: 9px;
+          padding: 8px 11px;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.6);
+          border: 1px solid rgba(0,0,0,0.07);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        /* Desktop: subtle dots only (label hidden) */
+        .season-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0;
+          padding: 0;
+          border: none;
+          background: none;
+          cursor: pointer;
+          font-family: inherit;
+        }
+        .season-ind {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          opacity: 0.5;
+          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
+          transition: opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .season-btn:hover .season-ind { opacity: 1; transform: scale(1.18); }
+        .season-btn.active .season-ind {
+          opacity: 1;
+          box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.22);
+        }
+        .season-name { display: none; }
+        @media (max-width: 640px) {
+          .hero-bg-frame { top: 8px; bottom: 8px; width: calc(100% - 16px); border-radius: 18px; }
+          /* Tighter glass padding on mobile so the switcher sits higher */
+          .hero-glass { padding: 30px 24px; }
+          /* Mobile: dots only, in bigger circular tap targets, all on one line */
+          .season-switch {
+            position: static;
+            width: auto;
+            margin: 0 0 22px 0;
+            padding: 0;
+            background: none;
+            border: none;
+            box-shadow: none;
+            gap: 10px;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+          }
+          .season-btn {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            justify-content: center;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(0,0,0,0.08);
+          }
+          /* selected = subtle muted-gray container, no ring */
+          .season-btn.active { background: #BFC4CC; border-color: rgba(0,0,0,0.08); }
+          /* thin dark outline keeps even the pale dots (spring/winter) defined on light containers */
+          .season-ind,
+          .season-btn.active .season-ind { box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.22); }
+          .season-ind { width: 14px; height: 14px; opacity: 1; }
+          .season-btn:hover .season-ind { transform: none; }
+          .season-name { display: none; }
+        }
         .nh-label {
           font-size: 11px;
           font-weight: 600;
@@ -430,7 +613,7 @@ export default function Hero() {
           font-weight: 600;
           letter-spacing: 0.13em;
           text-transform: uppercase;
-          color: #9CA3AF;
+          color: #374151;
         }
         .nh-scrollcue {
           display: inline-flex;
@@ -449,6 +632,10 @@ export default function Hero() {
           transition: color 0.15s ease;
         }
         .nh-scrollcue:hover { color: #FD8973; }
+        /* Scroll cue sits over the artwork — force legible white text + shadow */
+        .nh-cue-wrap .nh-label { color: #fff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.85), 0 0 12px rgba(0,0,0,0.55); }
+        .nh-cue-wrap .nh-scrollcue { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.85), 0 0 12px rgba(0,0,0,0.55); }
+        .nh-cue-wrap .nh-scrollcue:hover { color: #fff; }
         .nh-chatlog {
           scrollbar-width: thin;
           scrollbar-color: rgba(0,0,0,0.18) transparent;

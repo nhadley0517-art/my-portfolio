@@ -32,7 +32,7 @@ export default function Nav() {
       <div
         style={{
           position: "fixed",
-          top: "16px",
+          top: "28px",
           left: 0,
           right: 0,
           zIndex: 50,
@@ -58,7 +58,7 @@ export default function Nav() {
             boxShadow: isDark
               ? "0 2px 16px rgba(0,0,0,0.20), 0 1px 3px rgba(0,0,0,0.12)"
               : "0 2px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05)",
-            padding: "6px 8px 6px 28px",
+            padding: "4px 6px 4px 26px",
             gap: "4px",
           }}
         >
@@ -90,7 +90,7 @@ export default function Nav() {
                   background: "none",
                   border: "none",
                   cursor: "pointer",
-                  padding: "7px 14px",
+                  padding: "6px 13px",
                   borderRadius: "100px",
                   transition: "background 0.15s ease, color 0.15s ease",
                 }}
@@ -113,7 +113,7 @@ export default function Nav() {
                   fontWeight: pathname === "/forfun" ? 600 : 500,
                   color: pathname === "/forfun" ? "#FD8973" : linkColor,
                   textDecoration: "none",
-                  padding: "7px 14px",
+                  padding: "6px 13px",
                   borderRadius: "100px",
                   cursor: "pointer",
                   transition: "background 0.15s ease",
@@ -139,7 +139,7 @@ export default function Nav() {
                   color: contactColor,
                   background: contactBg,
                   textDecoration: "none",
-                  padding: "8px 20px",
+                  padding: "6px 18px",
                   borderRadius: "100px",
                   cursor: "pointer",
                   marginLeft: "4px",
@@ -194,7 +194,7 @@ export default function Nav() {
             transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
             style={{
               position: "fixed",
-              top: "72px",
+              top: "80px",
               left: "50%",
               transform: "translateX(-50%)",
               zIndex: 49,
