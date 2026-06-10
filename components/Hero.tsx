@@ -257,7 +257,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
             style={{ position: "absolute", inset: 0 }}
           >
             <PixelArtBackground src={SEASON_SRC[season]} />
