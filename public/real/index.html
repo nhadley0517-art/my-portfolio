@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Real · Redesign Case Study</title>
+<style>
+  :root{
+    --accent:#2d9cf0; --bg:#08090b; --panel:#101216; --panel-2:#161a1f;
+    --line:#23272e; --text:#fff; --dim:#aeb4bd; --muted:#727882;
+    --font:-apple-system,"SF Pro Text","Helvetica Neue",Arial,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);
+    -webkit-font-smoothing:antialiased;}
+  a{color:var(--accent);text-decoration:none;}
+
+  /* hide scrollbars inside the embedded phone previews */
+  iframe{border:0;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+
+  /* ---- Hero ---- */
+  .hero{padding:80px 0 36px;border-bottom:1px solid var(--line);}
+  .hero .mark{display:inline-flex;align-items:center;gap:11px;margin-bottom:26px;}
+  .hero .mark .logo{width:38px;height:38px;border-radius:10px;border:2px solid var(--accent);
+    color:var(--accent);display:flex;align-items:center;justify-content:center;}
+  .hero .mark .logo svg{width:20px;height:20px;}
+  .hero .mark span{font-size:15px;font-weight:700;letter-spacing:.3px;color:var(--dim);}
+  .hero h1{font-size:37px;line-height:1.18;margin:0 0 20px;font-weight:600;letter-spacing:-.5px;max-width:21ch;color:var(--text);}
+  .hero h1 em{color:var(--accent);font-style:normal;font-weight:600;}
+  .hero p{font-size:18px;line-height:1.6;color:var(--dim);max-width:64ch;margin:0;}
+  .hero .meta{display:flex;gap:28px;margin-top:30px;flex-wrap:wrap;}
+  .hero .meta div{font-size:13px;color:var(--muted);}
+  .hero .meta b{display:block;color:var(--text);font-size:15px;font-weight:700;margin-top:3px;}
+
+  /* ---- Section ---- */
+  .case{padding:64px 0;border-bottom:1px solid var(--line);}
+  .case-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px;}
+  .kicker{font-size:12px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--accent);}
+  .case h2{font-size:25px;font-weight:600;letter-spacing:-.3px;margin:7px 0 38px;}
+  .case .lede{font-size:16px;color:var(--dim);line-height:1.65;max-width:68ch;margin:0 0 40px;}
+
+  .case-body{display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;}
+
+  /* phones row */
+  .phones{display:flex;gap:26px;flex-shrink:0;}
+  .phone-col{display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .badge{font-size:13px;font-weight:500;letter-spacing:.1px;
+    padding:4px 13px;border-radius:999px;}
+  .badge.before{background:rgba(230,169,107,.12);color:#d9a36a;}
+  .badge.after{background:rgba(45,156,240,.13);color:var(--accent);}
+
+  .ph{position:relative;width:259px;height:548px;flex-shrink:0;}
+  .ph .device{position:absolute;top:0;left:0;width:399px;height:844px;
+    transform:scale(.6495);transform-origin:top left;
+    border-radius:54px;background:#000;padding:9px;
+    box-shadow:0 0 0 2px #2a2d33,0 26px 60px rgba(0,0,0,.6);}
+  .ph .port{width:100%;height:100%;border-radius:46px;overflow:hidden;position:relative;background:#000;}
+  .ph .notch{position:absolute;top:13px;left:50%;transform:translateX(-50%);
+    width:118px;height:31px;background:#000;border-radius:18px;z-index:5;}
+  .ph iframe{width:381px;height:826px;}
+  .ph .shot{width:381px;height:826px;object-fit:cover;object-position:top;display:block;}
+  /* missing-original placeholder */
+  .ph .missing{width:381px;height:826px;display:flex;flex-direction:column;gap:10px;
+    align-items:center;justify-content:center;text-align:center;padding:0 30px;
+    background:repeating-linear-gradient(45deg,#0e0f12,#0e0f12 12px,#121419 12px,#121419 24px);
+    color:var(--muted);font-size:14px;line-height:1.5;}
+  .ph .missing code{color:var(--dim);font-size:12px;background:#000;padding:3px 7px;border-radius:5px;}
+
+  /* rationale */
+  .rationale{flex:1;min-width:300px;}
+  .problem{background:var(--panel-2);border-radius:16px;
+    padding:20px 22px;margin-bottom:28px;
+    box-shadow:0 10px 30px -8px rgba(0,0,0,.55);}
+  .problem .t{font-size:11px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;
+    color:var(--muted);margin-bottom:8px;}
+  .problem p{margin:0;font-size:15px;line-height:1.65;color:var(--dim);}
+  .changes{list-style:none;margin:0;padding:0;}
+  .changes li{padding:18px 0;border-top:1px solid var(--line);display:flex;gap:15px;}
+  .changes li:first-child{border-top:0;}
+  .changes .n{flex-shrink:0;width:22px;height:22px;color:var(--accent);font-size:13px;font-weight:600;
+    display:flex;align-items:center;justify-content:center;}
+  .changes .c b{font-size:15.5px;font-weight:600;display:block;margin-bottom:5px;color:var(--text);}
+  .changes .c span{font-size:14.5px;line-height:1.65;color:var(--dim);}
+
+  .foot{padding:54px 0 90px;color:var(--muted);font-size:14px;line-height:1.7;}
+  .foot a{font-weight:600;}
+
+  @media (max-width:760px){
+    .hero h1{font-size:34px;} .case-body{gap:32px;}
+    .phones{transform:scale(.86);transform-origin:top left;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="wrap">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="mark">
+        <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M22 3 11 14M22 3l-7 19-4-8-8-4 19-7Z"/></svg></span>
+        <span>Real · concept redesign</span>
+      </div>
+      <h1>Small UX changes that make <em>Real</em> faster to watch with.</h1>
+      <p>An unsolicited redesign of three core screens. Same design system, type,
+         and brand. No rebrand. Each change fixes one specific point of friction
+         while watching a live game. Every "after" below is a working mockup, not
+         a flat image.</p>
+      <div class="meta">
+        <div>Scope<b>3 screens</b></div>
+        <div>Approach<b>Same design system, sharper UX</b></div>
+        <div>Built with<b>Hand-coded HTML / CSS</b></div>
+      </div>
+    </header>
+
+    <!-- ============ CASE 1: SCORES HOME ============ -->
+    <section class="case">
+      <div class="case-head"><span class="kicker">01 · Scores home</span></div>
+      <h2>Finding your sport and event, faster</h2>
+
+      <div class="case-body">
+        <div class="phones">
+          <div class="phone-col">
+            <span class="badge before">Before</span>
+            <div class="ph"><div class="device"><div class="port"><div class="notch"></div>
+              <img class="shot" src="assets/originals/scores-before.png" alt="Scores before"
+                   onerror="this.outerHTML='&lt;div class=missing&gt;Drop the original screenshot here:&lt;code&gt;assets/originals/scores-before.png&lt;/code&gt;&lt;/div&gt;'">
+            </div></div></div>
+          </div>
+          <div class="phone-col">
+            <span class="badge after">After</span>
+            <div class="ph"><div class="device"><div class="port"><div class="notch"></div>
+              <iframe src="screens/scores.html" title="Scores after"></iframe>
+            </div></div></div>
+          </div>
+        </div>
+
+        <div class="rationale">
+          <div class="problem">
+            <div class="t">The problem</div>
+            <p>The scores you came for sit behind two long rows of text tabs.
+               Switching sports means scrolling plain labels: slow to scan, easy
+               to overshoot. And the World Cup is buried mid-scroll.</p>
+          </div>
+          <ul class="changes">
+            <li><span class="n">1</span><div class="c"><b>Sport selector → icon pills</b><span>A recognizable emoji per sport. Scan by shape, not by reading. Shorter than the old text row.</span></div></li>
+            <li><span class="n">2</span><div class="c"><b>World Cup featured callout</b><span>The event people open this screen for, surfaced as a live card. Other leagues stay one tap away.</span></div></li>
+            <li><span class="n">3</span><div class="c"><b>Players / Countries filter</b><span>One toggle switches the ranking between players and national teams. No new screen.</span></div></li>
+            <li><span class="n">4</span><div class="c"><b>Cleaner match cards</b><span>Flag, score, then country name in grey. Live and Final badges sit top-right so names never wrap.</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CASE 2: PLAY DETAIL ============ -->
+    <section class="case">
+      <div class="case-head"><span class="kicker">02 · Play detail</span></div>
+      <h2>The player's night, without leaving the play</h2>
+
+      <div class="case-body">
+        <div class="phones">
+          <div class="phone-col">
+            <span class="badge before">Before</span>
+            <div class="ph"><div class="device"><div class="port"><div class="notch"></div>
+              <img class="shot" src="assets/originals/play-before.png" alt="Play before"
+                   onerror="this.outerHTML='&lt;div class=missing&gt;Drop the original screenshot here:&lt;code&gt;assets/originals/play-before.png&lt;/code&gt;&lt;/div&gt;'">
+            </div></div></div>
+          </div>
+          <div class="phone-col">
+            <span class="badge after">After</span>
+            <div class="ph"><div class="device"><div class="port"><div class="notch"></div>
+              <iframe src="screens/play.html" title="Play after"></iframe>
+            </div></div></div>
+          </div>
+        </div>
+
+        <div class="rationale">
+          <div class="problem">
+            <div class="t">The problem</div>
+            <p>The play is here, but the player's stats for the game are not. A big
+               Performance button dominates the screen and still sends you elsewhere
+               for points, rebounds, assists.</p>
+          </div>
+          <ul class="changes">
+            <li><span class="n">1</span><div class="c"><b>Game-stat card under the play</b><span>PTS, REB, AST up top. FG, 3PT, BLK, STL, MIN below. The box score in one glance.</span></div></li>
+            <li><span class="n">2</span><div class="c"><b>Smaller Performance button</b><span>Still here for the deep dive, now a compact action inside the card, not a banner.</span></div></li>
+            <li><span class="n">3</span><div class="c"><b>Tighter hierarchy</b><span>The play title leads. Attribution lines shrink. Eye goes play, stats, chart.</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CASE 3: COMMENTS ============ -->
+    <section class="case">
+      <div class="case-head"><span class="kicker">03 · Comments</span></div>
+      <h2>Chat that still feels like the game</h2>
+
+      <div class="case-body">
+        <div class="phones">
+          <div class="phone-col">
+            <span class="badge before">Before</span>
+            <div class="ph"><div class="device"><div class="port"><div class="notch"></div>
+              <img class="shot" src="assets/originals/comments-before.png" alt="Comments before"
+                   onerror="this.outerHTML='&lt;div class=missing&gt;Drop the original screenshot here:&lt;code&gt;assets/originals/comments-before.png&lt;/code&gt;&lt;/div&gt;'">
+            </div></div></div>
+          </div>
+          <div class="phone-col">
+            <span class="badge after">After</span>
+            <div class="ph"><div class="device"><div class="port"><div class="notch"></div>
+              <iframe src="screens/comments.html" title="Comments after"></iframe>
+            </div></div></div>
+          </div>
+        </div>
+
+        <div class="rationale">
+          <div class="problem">
+            <div class="t">The problem</div>
+            <p>Opening comments feels like leaving the game. Chat takes the full
+               screen, and the exit is a close button stranded bottom-right, where
+               no one looks for back.</p>
+          </div>
+          <ul class="changes">
+            <li><span class="n">1</span><div class="c"><b>Back moved to top-left</b><span>The expected spot for exit. The scorebug shrinks into a compact game bar.</span></div></li>
+            <li><span class="n">2</span><div class="c"><b>Chat as an in-game sheet</b><span>A panel with a grab handle sits over the game, not in place of it.</span></div></li>
+            <li><span class="n">3</span><div class="c"><b>Chat / Plays / Stats tabs</b><span>Comments become one tab of the live game, so you never feel moved away.</span></div></li>
+            <li><span class="n">4</span><div class="c"><b>Send affordance fixed</b><span>The composer's ✕ becomes an ↑ send arrow.</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="foot">
+      Concept work, made out of enthusiasm for what the team is building. Not
+      affiliated with Real. Open the interactive editor at
+      <a href="index.html">index.html</a> to try any screen live.
+    </footer>
+
+  </div>
+</body>
+</html>

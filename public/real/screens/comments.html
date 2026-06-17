@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=393, initial-scale=1">
+<title>Real — Comments</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<style>
+/* ===========================================================
+   SCREEN: COMMENTS / LIVE GAME
+   =========================================================== */
+
+/* ---- Game bar (compact, back lives top-left) ---- */
+.game-bar { display:flex; align-items:center; gap:10px; padding: 2px 8px 12px; }
+.gb-icon { width:36px; height:36px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  background:none; border:none; color: var(--text); cursor:pointer; }
+.gb-back { font-size:32px; line-height:1; }
+.gb-pip svg { width:21px; height:21px; }
+.gb-score { flex:1; display:flex; align-items:center; justify-content:center; gap:9px; }
+.gh-logo { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; }
+.gh-logo.knicks { background:#1d428a; color:#f58426; }
+.gh-logo.spurs  { background:#0b0b0b; color:#c4cdd5; border:1px solid #3a3f47; }
+.gb-score .pts { font-size:24px; font-weight: var(--fw-heavy); letter-spacing:.5px; }
+.gb-final { font-size:13px; color: var(--text-muted); font-weight:700; padding:0 5px; }
+
+/* ---- Chat sheet: an in-game panel, not a separate screen ---- */
+.chat-sheet {
+  background: var(--surface-1);
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -8px 24px rgba(0,0,0,.5);
+  min-height: 620px;
+}
+.sheet-handle { width:38px; height:5px; border-radius:3px; background:#3a3f47; margin:9px auto 6px; }
+.chat-tabs { display:flex; gap:26px; padding: 2px 18px 0; border-bottom:1px solid var(--hairline); }
+.chat-tab { padding:6px 0 11px; font-size:15px; font-weight:700; color: var(--text-muted); position:relative; cursor:pointer; }
+.chat-tab.on { color: var(--text); }
+.chat-tab.on::after { content:""; position:absolute; left:0; right:0; bottom:-1px; height:2.5px; background: var(--accent); border-radius:2px; }
+.chat-sub { display:flex; align-items:center; justify-content:space-between; padding: 11px 18px 0; }
+.chat-sub .count { color: var(--text-muted); font-size:14px; font-weight:600; }
+.chat-sub .sort { color: var(--accent); font-weight:700; font-size:15px; display:flex; align-items:center; gap:4px; }
+
+/* ---- Comments toolbar ---- */
+.cmt-toolbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 16px 18px 6px;
+}
+.cmt-title { font-size: 21px; font-weight: var(--fw-heavy); display:flex; align-items:center; gap:8px; }
+.cmt-count { color: var(--text); }
+.cmt-live { color: var(--accent); font-size: 19px; font-weight: var(--fw-bold); display:flex; align-items:center; gap:4px; }
+
+/* ---- Comment row ---- */
+.comment { padding: 14px 18px 6px; position: relative; }
+.cmt-head { display: flex; gap: 12px; }
+.cmt-av { width: 44px; height: 44px; font-size:14px; }
+.cmt-body { flex: 1; min-width: 0; }
+.cmt-name {
+  display:flex; align-items:center; gap:7px;
+  font-size: 17px; font-weight: var(--fw-bold);
+}
+.cmt-name .badge { font-size: 15px; }
+.cmt-name .badge.cross {
+  background: #6c3df2; color:#fff; border-radius:5px;
+  width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center;
+  font-size:12px;
+}
+.cmt-text { font-size: 19px; margin-top: 4px; color: var(--text); }
+.cmt-text.big { font-size: 21px; }
+
+/* ---- Stake / hashtag chips ---- */
+.stakes { display:flex; align-items:center; gap:16px; margin-top:12px; flex-wrap:wrap; }
+.stake { display:flex; align-items:center; gap:6px; color: var(--text-muted); font-size:15px; font-weight:600; }
+.stake .pic { width:18px; height:18px; border-radius:50%; }
+.stake .pic.k { background:#1d428a; }
+.stake .pic.s { background:#23262b; }
+.stake .pic.p1{ background:#5a4632; }
+.stake .pic.p2{ background:#3a4a5a; }
+.stake .more { color: var(--text-dim); font-weight:600; }
+
+/* ---- Meta row ---- */
+.meta {
+  display:flex; align-items:center; gap:18px;
+  margin-top: 12px; color: var(--text-muted); font-size:15px;
+}
+.meta .reply { color: var(--accent); font-weight: var(--fw-bold); }
+.meta .dots { letter-spacing:2px; font-weight:700; }
+.meta .general { display:flex; align-items:center; gap:6px; }
+.meta .votes { margin-left:auto; display:flex; align-items:center; gap:16px; }
+.meta .vcount { color: var(--accent); font-weight:700; }
+.meta .caret-up { color: var(--text-dim); font-weight:700; transform: scaleX(1.4); }
+.meta .down { color: var(--text-muted); font-size:18px; }
+.cmt-sub { font-size:13px; color: var(--text-muted); margin-top:2px; }
+
+/* threaded reply line + "view replies" */
+.thread {
+  margin-left: 22px; padding-left: 22px;
+  border-left: 2px solid var(--hairline);
+  padding-top: 8px; padding-bottom: 6px;
+}
+.view-replies { color: var(--text-muted); font-size:16px; }
+.comment.indented { margin-left: 0; }
+.comment.indented .cmt-head { }
+
+/* highlighted (selected) comment */
+.comment.hl { background: #0c1a26; }
+
+/* ---- Bottom composer ---- */
+.composer {
+  position: sticky; bottom: 0;
+  background: var(--surface-1);
+  padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+  display:flex; align-items:center; gap:12px;
+  border-top: 1px solid var(--hairline);
+}
+.composer .logo {
+  width:48px; height:48px; border-radius: var(--radius-md);
+  border: 2px solid var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  color: var(--accent); font-weight: 800; font-size: 22px;
+  flex-shrink:0;
+}
+.composer .me { width:40px; height:40px; font-size:16px; }
+.composer .field {
+  flex:1; height:48px; border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  display:flex; align-items:center; padding:0 18px;
+  color: var(--text-faint); font-size:16px;
+}
+.composer .send {
+  width:48px; height:48px; border-radius:50%;
+  background: var(--accent); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.composer .send svg { width:22px; height:22px; display:block; }
+</style>
+</head>
+<body class="screen">
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <div class="sb-time">6:41 <span class="sb-bell">🔕</span></div>
+    <div class="sb-right">
+      <div class="sb-signal"><i></i><i></i><i></i><i></i></div>
+      <svg class="sb-wifi" viewBox="0 0 17 12" fill="none"><path d="M8.5 11.2 6.6 9.1a3 3 0 0 1 3.8 0L8.5 11.2Z" fill="#fff"/><path d="M4.4 6.9a6 6 0 0 1 8.2 0l-1.3 1.3a4.2 4.2 0 0 0-5.6 0L4.4 6.9Z" fill="#fff"/><path d="M2.2 4.7a9.2 9.2 0 0 1 12.6 0l-1.3 1.3a7.4 7.4 0 0 0-10 0L2.2 4.7Z" fill="#fff"/></svg>
+      <div class="sb-batt"><div class="fill"></div><span class="pct">54</span></div>
+    </div>
+  </div>
+
+  <!-- GAME BAR (compact, back top-left) -->
+  <div class="game-bar">
+    <button class="gb-icon gb-back" aria-label="Back to game">‹</button>
+    <div class="gb-score">
+      <span class="gh-logo knicks">N</span><span class="pts">94</span>
+      <span class="gb-final">Final</span>
+      <span class="pts">90</span><span class="gh-logo spurs">S</span>
+    </div>
+    <button class="gb-icon gb-pip" aria-label="Pop out game">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><rect x="11.5" y="11" width="7.5" height="6" rx="1.4" fill="currentColor" stroke="none"/></svg>
+    </button>
+  </div>
+
+  <!-- CHAT SHEET: in-game panel -->
+  <div class="chat-sheet">
+    <div class="sheet-handle"></div>
+    <div class="chat-tabs">
+      <span class="chat-tab on">Chat</span>
+      <span class="chat-tab">Plays</span>
+      <span class="chat-tab">Stats</span>
+    </div>
+    <div class="chat-sub">
+      <span class="count">💬 206.5k comments</span>
+      <span class="sort">Live <span style="font-size:11px">▾</span></span>
+    </div>
+
+  <!-- COMMENT 1 -->
+  <div class="comment">
+    <div class="cmt-head">
+      <div class="avatar cmt-av">🏈</div>
+      <div class="cmt-body">
+        <div class="cmt-name">_depressedtitansfan_ <span class="badge cross">✝</span></div>
+        <div class="cmt-text big">game tmr</div>
+        <div class="stakes">
+          <span class="stake"><span class="pic k"></span>#11.7k</span>
+          <span class="stake"><span class="pic s"></span>#34.3k</span>
+          <span class="stake"><span class="pic s"></span>#34.4k</span>
+        </div>
+        <div class="meta">
+          <span>43m</span>
+          <span class="reply">reply</span>
+          <span class="dots">•••</span>
+          <span class="general">👥 General</span>
+          <span class="votes"><span class="caret-up">⌃</span><span class="down">👎</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENT 2 -->
+  <div class="comment">
+    <div class="cmt-head">
+      <div class="avatar cmt-av">😂</div>
+      <div class="cmt-body">
+        <div class="cmt-name">john4k <span class="badge">🕶️</span></div>
+        <div class="cmt-text big">Game 7 tomorrow lock in chat</div>
+        <div class="stakes">
+          <span class="stake"><span class="pic p1"></span>#24.1k</span>
+          <span class="stake"><span class="pic p2"></span>#82.9k</span>
+        </div>
+        <div class="meta">
+          <span>43m</span>
+          <span class="reply">reply</span>
+          <span class="dots">•••</span>
+          <span class="general">👥 General</span>
+          <span class="votes"><span class="caret-up">⌃</span><span class="down">👎</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENT 3 (with thread) -->
+  <div class="comment">
+    <div class="cmt-head">
+      <div class="avatar cmt-av">🧑🏻</div>
+      <div class="cmt-body">
+        <div class="cmt-name">cadecunninghamenjoyer</div>
+        <div class="cmt-text big">who else is bored</div>
+        <div class="stakes">
+          <span class="stake"><span class="pic p1"></span>#40.8k</span>
+        </div>
+        <div class="meta">
+          <span>35m</span>
+          <span class="reply">reply</span>
+          <span class="dots">•••</span>
+          <span class="general">👥 General</span>
+          <span class="votes"><span class="vcount">2</span><span class="caret-up">⌃</span><span class="down">👎</span></span>
+        </div>
+        <div class="thread"><span class="view-replies">view 1 reply</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENT 4 -->
+  <div class="comment">
+    <div class="cmt-head">
+      <div class="avatar cmt-av">🏀</div>
+      <div class="cmt-body">
+        <div class="cmt-name">lets_go_bruson</div>
+        <div class="cmt-text big">Hi</div>
+        <div class="stakes">
+          <span class="stake"><span class="pic p1"></span>#40.6k</span>
+        </div>
+        <div class="meta">
+          <span>5m</span>
+          <span class="reply">reply</span>
+          <span class="dots">•••</span>
+          <span class="general">👥 General</span>
+          <span class="votes"><span class="caret-up">⌃</span><span class="down">👎</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENT 5 (highlighted, with thread) -->
+  <div class="comment hl">
+    <div class="cmt-head">
+      <div class="avatar cmt-av">🎩</div>
+      <div class="cmt-body">
+        <div class="cmt-name">victorwembanyama32 <span class="badge">🟢</span></div>
+        <div class="cmt-text big">Game 6 tmr lets go</div>
+        <div class="stakes">
+          <span class="stake"><span class="pic k"></span>#9k</span>
+          <span class="stake"><span class="pic s"></span>#631</span>
+          <span class="stake"><span class="pic p1"></span>#1.5k</span>
+          <span class="stake"><span class="pic p2"></span>#3k</span>
+          <span class="more">+43</span>
+        </div>
+        <div class="cmt-sub">2025-26 champs</div>
+        <div class="meta">
+          <span>35m</span>
+          <span class="reply">reply</span>
+          <span class="dots">•••</span>
+          <span class="general">👥 General</span>
+          <span class="votes"><span class="vcount">1</span><span class="caret-up">⌃</span><span class="down">👎</span></span>
+        </div>
+        <div class="thread"><span class="view-replies">view 2 replies</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENT 6 (peeking) -->
+  <div class="comment hl" style="padding-bottom:14px">
+    <div class="cmt-head">
+      <div class="avatar cmt-av">🧢</div>
+      <div class="cmt-body">
+        <div class="cmt-name">guapany <span class="badge">🤎</span></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /chat-sheet -->
+
+  <!-- COMPOSER -->
+  <div class="composer">
+    <div class="logo"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M22 3 11 14M22 3l-7 19-4-8-8-4 19-7Z"/></svg></div>
+    <div class="avatar me">d</div>
+    <div class="field">To General...</div>
+    <div class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></div>
+  </div>
+
+</body>
+</html>
