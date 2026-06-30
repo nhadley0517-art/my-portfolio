@@ -7,6 +7,38 @@ import { usePathname } from "next/navigation";
 
 const spring = { type: "spring" as const, stiffness: 300, damping: 30 };
 
+const iconProps = {
+  width: 15,
+  height: 15,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
+const WorkIcon = () => (
+  <svg {...iconProps}>
+    <rect x="2" y="7" width="20" height="14" rx="2" />
+    <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+const FunIcon = () => (
+  <svg {...iconProps}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+    <line x1="9" y1="9" x2="9.01" y2="9" />
+    <line x1="15" y1="9" x2="15.01" y2="9" />
+  </svg>
+);
+const ContactIcon = () => (
+  <svg {...iconProps}>
+    <rect x="2" y="4" width="20" height="16" rx="2" />
+    <path d="m2 6 10 7L22 6" />
+  </svg>
+);
+
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -84,6 +116,9 @@ export default function Nav() {
               <button
                 onClick={() => scrollTo("work")}
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
                   fontSize: "14px",
                   fontWeight: isWorkActive ? 600 : 500,
                   color: isWorkActive ? "#FD8973" : linkColor,
@@ -103,12 +138,16 @@ export default function Nav() {
                   (e.currentTarget as HTMLButtonElement).style.color = isWorkActive ? "#FD8973" : linkColor;
                 }}
               >
+                <WorkIcon />
                 Work
               </button>
 
               <Link
                 href="/forfun"
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
                   fontSize: "14px",
                   fontWeight: pathname === "/forfun" ? 600 : 500,
                   color: pathname === "/forfun" ? "#FD8973" : linkColor,
@@ -125,6 +164,7 @@ export default function Nav() {
                   (e.currentTarget as HTMLAnchorElement).style.background = "none";
                 }}
               >
+                <FunIcon />
                 For Fun
               </Link>
 
@@ -134,6 +174,9 @@ export default function Nav() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
                   fontSize: "14px",
                   fontWeight: 600,
                   color: contactColor,
@@ -143,10 +186,9 @@ export default function Nav() {
                   borderRadius: "100px",
                   cursor: "pointer",
                   marginLeft: "4px",
-                  display: "inline-flex",
-                  alignItems: "center",
                 }}
               >
+                <ContactIcon />
                 Contact
               </motion.a>
             </div>
@@ -212,7 +254,9 @@ export default function Nav() {
             <button
               onClick={() => scrollTo("work")}
               style={{
-                display: "block",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
                 width: "100%",
                 textAlign: "left",
                 fontSize: "15px",
@@ -225,13 +269,16 @@ export default function Nav() {
                 cursor: "pointer",
               }}
             >
+              <WorkIcon />
               Work
             </button>
             <Link
               href="/forfun"
               onClick={() => setMenuOpen(false)}
               style={{
-                display: "block",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
                 fontSize: "15px",
                 fontWeight: pathname === "/forfun" ? 600 : 500,
                 color: pathname === "/forfun" ? "#FD8973" : (isDark ? "rgba(255,255,255,0.8)" : "#111827"),
@@ -240,13 +287,16 @@ export default function Nav() {
                 borderRadius: "12px",
               }}
             >
+              <FunIcon />
               For Fun
             </Link>
             <a
               href="mailto:nhadley0517@gmail.com"
               onClick={() => setMenuOpen(false)}
               style={{
-                display: "block",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
                 fontSize: "15px",
                 fontWeight: 600,
                 color: "#FD8973",
@@ -255,6 +305,7 @@ export default function Nav() {
                 borderRadius: "12px",
               }}
             >
+              <ContactIcon />
               Contact
             </a>
           </motion.div>

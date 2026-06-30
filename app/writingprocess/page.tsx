@@ -92,6 +92,13 @@ export default function WritingProcess() {
 
         {/* ── HERO ── */}
         <section className="pt-14 md:pt-20">
+          <ScrollReveal>
+            <div className="px-6 max-w-5xl mx-auto pb-10 md:pb-14">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={HERO_IMAGE} alt="Writing Process Redesign banner" style={{ width: "100%", height: "auto", display: "block", borderRadius: "12px" }} />
+            </div>
+          </ScrollReveal>
+
           <div className="px-6 max-w-5xl mx-auto mb-12">
             <ScrollReveal>
               <span className="badge-shipped inline-flex items-center justify-center gap-[6px] font-semibold rounded-full" style={{ padding: "8px 16px 8px 12px", fontSize: "0.9rem", overflow: "visible", backgroundColor: "#EDE9F6", color: ACCENT }}>
@@ -115,23 +122,32 @@ export default function WritingProcess() {
               </p>
             </ScrollReveal>
 
-            <ScrollReveal delay={0.2}>
-              <div className="flex flex-wrap gap-3">
-                {["Product Design Intern", "Grand Canyon Education / GCU", "8 weeks", "Figma, Illustrator"].map((pill) => (
-                  <span key={pill} className="text-sm font-medium text-[#13181B] border border-[#DDD8D1] bg-white px-4 py-2 rounded-full">
-                    {pill}
-                  </span>
+          </div>
+
+          {/* ── METADATA ── */}
+          <div className="px-6 max-w-5xl mx-auto mt-2 md:mt-4 mb-8 md:mb-14">
+            <ScrollReveal delay={0.1}>
+              <div className="grid grid-cols-2 md:grid-cols-4" style={{ columnGap: "32px", rowGap: "44px" }}>
+                {[
+                  { label: "Role", values: ["Product Design Intern", "Grand Canyon Education"] },
+                  { label: "Duration", values: ["2025", "8 weeks"] },
+                  { label: "Scope", values: ["UX Redesign", "Figma, Illustrator"] },
+                  { label: "Team", values: ["1 designer (me)", "1 PM, 1 dev", "Mentored by 3 senior designers"] },
+                ].map(({ label, values }) => (
+                  <div key={label}>
+                    <p style={{ fontSize: "11px", fontWeight: 500, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "14px" }}>
+                      {label}
+                    </p>
+                    {values.map((v) => (
+                      <p key={v} style={{ fontSize: "15px", fontWeight: 400, color: "#13181B", lineHeight: 1.7 }}>
+                        {v}
+                      </p>
+                    ))}
+                  </div>
                 ))}
               </div>
             </ScrollReveal>
           </div>
-
-          <ScrollReveal>
-            <div className="px-6 max-w-5xl mx-auto py-10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={HERO_IMAGE} alt="Writing Process Redesign banner" style={{ width: "100%", height: "auto", display: "block", borderRadius: "12px" }} />
-            </div>
-          </ScrollReveal>
         </section>
 
         {/* ── 01 — OVERVIEW ── */}

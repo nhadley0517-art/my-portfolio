@@ -18,6 +18,9 @@ const projects: Array<Project & { initialRotate: number; cursorLabel: string }> 
     thumbnailHtml: "/no2-hero.html",
     mobileThumbHtml: "/no2-mobile-thumb.html",
     mediaBg: "#1C1C1E",
+    mediaHeight: 240,
+    status: "Live",
+    collab: "Solo build — design, code, brand & backend",
     initialRotate: -1.5,
   },
   {
@@ -31,7 +34,9 @@ const projects: Array<Project & { initialRotate: number; cursorLabel: string }> 
     color: "#4F46E5",
     video: "/client-profile-demo.mp4",
     mediaBg: "#1E1B4B",
-    mediaHeight: 300,
+    mediaHeight: 290,
+    status: "Shipped",
+    collab: "Founding designer · working with founders",
     initialRotate: 1.2,
   },
   {
@@ -44,13 +49,15 @@ const projects: Array<Project & { initialRotate: number; cursorLabel: string }> 
       "Redesigned GCU's student writing resource into a guided, step-by-step experience students actually want to use.",
     color: "#6B3FA0",
     image: "/wp_thumb.png",
-    mediaHeight: 300,
+    mediaHeight: 290,
+    status: "Shipped",
+    collab: "Internship · collaborated with devs & PMs as the designer",
     initialRotate: -1,
   },
 ];
 
 export default function Projects() {
-  const [featured, ...rest] = projects;
+  const [feature, ...rest] = projects;
 
   return (
     <section
@@ -99,11 +106,11 @@ export default function Projects() {
         {/* Featured card */}
         <div style={{ marginBottom: "16px" }}>
           <ProjectCard
-            project={featured}
+            project={feature}
             featured
             delay={0}
-            initialRotate={featured.initialRotate}
-            cursorLabel={featured.cursorLabel}
+            initialRotate={feature.initialRotate}
+            cursorLabel={feature.cursorLabel}
           />
         </div>
 

@@ -20,6 +20,10 @@ export interface Project {
   mediaBg?: string;
   mediaFit?: "cover" | "contain";
   mediaHeight?: number;
+  /** Short status shown as a pill over the media, e.g. "Shipped", "Live". */
+  status?: string;
+  /** One-line proof of real-world collaboration, e.g. "Founding designer · working with founders". */
+  collab?: string;
 }
 
 interface ProjectCardProps {
@@ -44,7 +48,7 @@ export default function ProjectCard({
   initialRotate = 0,
   cursorLabel,
 }: ProjectCardProps) {
-  const { slug, title, year, tags, description, color, video, image, thumbnailHtml, mobileThumbHtml, placeholderLabel, comingSoon, mediaBg, mediaFit = "cover", mediaHeight } = project;
+  const { slug, title, year, description, color, video, image, thumbnailHtml, mobileThumbHtml, placeholderLabel, comingSoon, mediaBg, mediaFit = "cover", mediaHeight, status, collab } = project;
   const rgb = hexToRgb(color);
   const [hovered, setHovered] = useState(false);
 
@@ -79,6 +83,9 @@ export default function ProjectCard({
       onHoverStart={handleHoverStart}
       onHoverEnd={handleHoverEnd}
       style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
         borderRadius: "16px",
         overflow: "hidden",
         background: "#FFFFFF",
@@ -90,7 +97,7 @@ export default function ProjectCard({
     >
       {/* Media */}
       <div
-        style={{ overflow: "hidden", background: mediaBg ?? `rgba(${rgb}, 0.07)`, ...(mediaHeight && !featured ? { height: `${mediaHeight}px` } : {}) }}
+        style={{ position: "relative", overflow: "hidden", background: mediaBg ?? `rgba(${rgb}, 0.07)`, ...(mediaHeight && !featured ? { height: `${mediaHeight}px` } : {}) }}
         className={`${featured ? "card-media--featured" : "card-media--regular"}${mediaHeight && !featured ? " card-media--custom-height" : ""}`}
       >
         {thumbnailHtml ? (
@@ -162,19 +169,32 @@ export default function ProjectCard({
       </div>
 
       {/* Content */}
-      <div style={{ padding: featured ? "28px 32px 32px" : "22px 24px 26px" }}>
-        {/* Tags */}
-        <p
-          style={{
-            fontSize: "11px",
-            fontWeight: 500,
-            color: "#9CA3AF",
-            letterSpacing: "0.02em",
-            margin: "0 0 10px",
-          }}
-        >
-          {tags.join(" · ")}
-        </p>
+      <div style={{ flex: featured ? "0 0 auto" : 1, display: "flex", flexDirection: "column", padding: featured ? "28px 32px 32px" : "22px 24px 26px" }}>
+        {/* Status chip — proof this is real, shipped work */}
+        {status && !comingSoon && (
+          <span
+            style={{
+              alignSelf: "flex-start",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "4px 11px 4px 8px",
+              borderRadius: "999px",
+              background: "rgba(16,185,129,0.10)",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.03em",
+              color: "#047857",
+              marginBottom: "12px",
+            }}
+          >
+            <span
+              className="status-dot"
+              style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#10B981" }}
+            />
+            {status}
+          </span>
+        )}
 
         {/* Title */}
         <h3
@@ -202,8 +222,33 @@ export default function ProjectCard({
           {description}
         </p>
 
+        {/* Collaboration line — who I worked with, proof of real teams */}
+        {collab && (
+          <p
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "12.5px",
+              color: "#4B5563",
+              lineHeight: 1.5,
+              margin: "auto 0 16px",
+              paddingTop: "14px",
+              borderTop: "1px solid rgba(0,0,0,0.06)",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span>{collab}</span>
+          </p>
+        )}
+
         {/* Footer row */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", ...(collab ? {} : { marginTop: "auto" }) }}>
           <span style={{ fontSize: "13px", color: "#9CA3AF" }}>{year}</span>
 
           {comingSoon ? (
@@ -236,6 +281,11 @@ export default function ProjectCard({
       </div>
 
       <style>{`
+        @keyframes status-pulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.55); }
+          50%      { box-shadow: 0 0 0 4px rgba(52,211,153,0); }
+        }
+        .status-dot { animation: status-pulse 2s ease-in-out infinite; }
         .card-media--featured { height: 460px; }
         .card-media--regular  { height: 220px; }
         .card-title--featured { font-size: 24px; }
@@ -257,7 +307,7 @@ export default function ProjectCard({
   if (comingSoon || !slug) return inner;
 
   return (
-    <Link href={slug} style={{ textDecoration: "none", display: "block" }}>
+    <Link href={slug} style={{ textDecoration: "none", display: "block", height: "100%" }}>
       {inner}
     </Link>
   );

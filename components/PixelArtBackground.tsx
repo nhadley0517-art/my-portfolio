@@ -94,12 +94,28 @@ export default function PixelArtBackground({ src }: { src: string }) {
     let raf = 0;
     let disposed = false;
     let imgW = 1, imgH = 1;
+    let texReady = false;
+    let start = performance.now();
+
+    // Draw a single frame at the current time. Kept separate so resize() can
+    // redraw synchronously — resizing the canvas reallocates (and clears) the
+    // drawing buffer, so without an immediate redraw the background flashes
+    // transparent for a frame. That's what caused the flicker while the hero
+    // grew during the chat-open transition.
+    const drawFrame = () => {
+      const t = (performance.now() - start) / 1000;
+      gl.uniform1f(uTime, t);
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform2f(uImg, imgW, imgH);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr));
       canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr));
       gl.viewport(0, 0, canvas.width, canvas.height);
+      if (texReady) drawFrame(); // redraw in the same tick — no empty frame
     };
     const ro = new ResizeObserver(() => resize());
     ro.observe(canvas);
@@ -119,15 +135,12 @@ export default function PixelArtBackground({ src }: { src: string }) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 
+      texReady = true;
+      start = performance.now();
       resize();
-      const start = performance.now();
       const loop = () => {
         if (disposed) return;
-        const t = (performance.now() - start) / 1000;
-        gl.uniform1f(uTime, t);
-        gl.uniform2f(uRes, canvas.width, canvas.height);
-        gl.uniform2f(uImg, imgW, imgH);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        drawFrame();
         raf = requestAnimationFrame(loop);
       };
       loop();

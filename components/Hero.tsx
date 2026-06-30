@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PixelArtBackground from "./PixelArtBackground";
+import PixelSnow from "./PixelSnow";
+import ScrambledText from "./ScrambledText";
 
 const STATEMENT = "Designing products that\nfeel good to use.";
 const LINES = STATEMENT.split("\n");
@@ -258,11 +260,29 @@ export default function Hero() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
+            className="hero-bg-art"
             style={{ position: "absolute", inset: 0 }}
           >
             <PixelArtBackground src={SEASON_SRC[season]} />
           </motion.div>
         </AnimatePresence>
+        {/* Soft-focus + grain so the low-res crop reads as an intentional, dreamy backdrop */}
+        <div className="hero-bg-grain" />
+        {/* Pixel snow drifting over the scene — matches the pixel-art aesthetic */}
+        <div className="hero-bg-snow">
+          <PixelSnow
+            color="#ffffff"
+            density={0.16}
+            speed={0.5}
+            pixelResolution={240}
+            minFlakeSize={2.0}
+            brightness={1.6}
+            depthFade={7}
+            farPlane={16}
+            direction={112}
+            variant="round"
+          />
+        </div>
         <div className="hero-bg-scrim" />
       </div>
 
@@ -360,14 +380,9 @@ export default function Hero() {
           aria-hidden={!showMeta}
           style={{ display: "flex", alignItems: "center", flexWrap: "wrap", marginTop: "clamp(20px, 3vw, 28px)" }}
         >
-          {TAGS.map((tag, i) => (
-            <span key={tag} style={{ display: "flex", alignItems: "center" }}>
-              <span className="nh-tag">{tag}</span>
-              {i < TAGS.length - 1 && (
-                <span style={{ margin: "0 14px", color: "#6B7280", fontSize: "11px" }}>/</span>
-              )}
-            </span>
-          ))}
+          <ScrambledText className="nh-tags-scramble" radius={70} duration={0.9} speed={0.4}>
+            {TAGS.join("   /   ")}
+          </ScrambledText>
         </motion.div>
 
         {/* Chat — always present (reserves space), fades in place as one cohesive search element */}
@@ -420,37 +435,45 @@ export default function Hero() {
                 </button>
               </form>
 
-              {/* Answers — a fixed-height context window. The page grows once when
-                  the first message appears; after that, the conversation scrolls
-                  inside this box instead of growing the page. */}
-              {msgs.length > 0 && (
-                <div ref={logRef} className="nh-chatlog" style={{ height: "260px", overflowY: "auto", marginTop: "16px" }}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px", minHeight: "100%", justifyContent: "flex-end", paddingRight: "4px" }}>
-                    {msgs.map((m, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, ease: charEase }}
-                        style={{
-                          alignSelf: m.role === "user" ? "flex-end" : "flex-start",
-                          maxWidth: "92%",
-                          flexShrink: 0,
-                          padding: "12px 16px",
-                          borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                          background: m.role === "user" ? "#111827" : "#fff",
-                          color: m.role === "user" ? "#fff" : "#1F2937",
-                          fontSize: "14px",
-                          lineHeight: 1.65,
-                          boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
-                        }}
-                      >
-                        {m.content}
-                      </motion.div>
-                    ))}
-                  </div>
+              {/* Answers — a context window that eases open the first time a
+                  question is asked, so the hero grows smoothly instead of
+                  snapping. After that, the conversation scrolls inside the box. */}
+              <div
+                ref={logRef}
+                className="nh-chatlog"
+                style={{
+                  height: msgs.length > 0 ? 280 : 0,
+                  opacity: msgs.length > 0 ? 1 : 0,
+                  marginTop: msgs.length > 0 ? 16 : 0,
+                  overflowY: "auto",
+                  pointerEvents: msgs.length > 0 ? "auto" : "none",
+                }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", justifyContent: "flex-start", paddingRight: "4px", paddingTop: "4px" }}>
+                  {msgs.map((m, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.45, ease: charEase, delay: i === 0 ? 0.2 : 0 }}
+                      style={{
+                        alignSelf: m.role === "user" ? "flex-end" : "flex-start",
+                        maxWidth: "92%",
+                        flexShrink: 0,
+                        padding: "12px 16px",
+                        borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                        background: m.role === "user" ? "#111827" : "#fff",
+                        color: m.role === "user" ? "#fff" : "#1F2937",
+                        fontSize: "14px",
+                        lineHeight: 1.65,
+                        boxShadow: "0 1px 6px rgba(0,0,0,0.06)",
+                      }}
+                    >
+                      {m.content}
+                    </motion.div>
+                  ))}
                 </div>
-              )}
+              </div>
         </motion.div>
         </div>{/* /hero-glass */}
       </div>
@@ -510,10 +533,35 @@ export default function Hero() {
           box-shadow: 0 10px 40px rgba(0,0,0,0.12);
           border: 1px solid rgba(0,0,0,0.06);
         }
+        /* Soft-focus on the artwork to mask the low-res crop; the slight scale
+           keeps the blur from revealing soft edges inside the rounded frame. */
+        .hero-bg-art {
+          filter: blur(2px) saturate(1.05);
+          transform: scale(1.06);
+        }
+        /* Fine film grain layered over the art — sells the soft focus as a
+           deliberate, textured look rather than a quality problem. */
+        .hero-bg-grain {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 1;
+          opacity: 0.5;
+          mix-blend-mode: overlay;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+          background-size: 180px 180px;
+        }
+        .hero-bg-snow {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          pointer-events: none;
+        }
         .hero-bg-scrim {
           position: absolute;
           inset: 0;
           pointer-events: none;
+          z-index: 1;
           background: linear-gradient(to bottom, rgba(0,0,0,0.06), rgba(0,0,0,0) 26%, rgba(0,0,0,0) 56%, rgba(0,0,0,0.34));
         }
         .hero-glass {
@@ -623,6 +671,19 @@ export default function Hero() {
           text-transform: uppercase;
           color: #374151;
         }
+        .nh-tags-scramble p {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.13em;
+          text-transform: uppercase;
+          color: #374151;
+          font-family: inherit;
+          white-space: pre;
+        }
+        .nh-tags-scramble .scramble-char { will-change: contents; }
+        @media (max-width: 640px) {
+          .nh-tags-scramble p { white-space: normal; }
+        }
         .nh-scrollcue {
           display: inline-flex;
           align-items: center;
@@ -647,6 +708,13 @@ export default function Hero() {
         .nh-chatlog {
           scrollbar-width: thin;
           scrollbar-color: rgba(0,0,0,0.18) transparent;
+          transition:
+            height     0.6s cubic-bezier(0.16, 1, 0.3, 1),
+            margin-top 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity    0.45s ease-out;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .nh-chatlog { transition: none; }
         }
         .nh-chatlog::-webkit-scrollbar { width: 6px; }
         .nh-chatlog::-webkit-scrollbar-track { background: transparent; }

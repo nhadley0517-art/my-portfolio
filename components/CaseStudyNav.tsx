@@ -45,7 +45,7 @@ export default function CaseStudyNav({ sections, accentColor, card = false }: Ca
   if (card) {
     return (
       <nav
-        className="hidden min-[1330px]:flex fixed left-6 z-40 flex-col"
+        className="hidden min-[1440px]:flex fixed left-6 z-40 flex-col"
         style={{
           top: "120px",
           background: "#fff",
@@ -109,7 +109,7 @@ export default function CaseStudyNav({ sections, accentColor, card = false }: Ca
   // Original floating style
   return (
     <nav
-      className="hidden min-[1330px]:flex fixed left-6 z-40 flex-col gap-0.5"
+      className="hidden min-[1440px]:flex fixed left-6 z-40 flex-col gap-0.5"
       style={{ top: "120px" }}
       aria-label="Page sections"
     >
