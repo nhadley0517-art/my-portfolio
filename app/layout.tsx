@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Poppins, Geist, Geist_Mono } from "next/font/google";
-import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -53,7 +52,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <CustomCursor />
           {children}
         </body>
     </html>

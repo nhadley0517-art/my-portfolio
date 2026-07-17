@@ -31,7 +31,6 @@ interface ProjectCardProps {
   featured?: boolean;
   delay?: number;
   initialRotate?: number;
-  cursorLabel?: string;
 }
 
 function hexToRgb(hex: string): string {
@@ -46,7 +45,6 @@ export default function ProjectCard({
   featured = false,
   delay = 0,
   initialRotate = 0,
-  cursorLabel,
 }: ProjectCardProps) {
   const { slug, title, year, description, color, video, image, thumbnailHtml, mobileThumbHtml, placeholderLabel, comingSoon, mediaBg, mediaFit = "cover", mediaHeight, status, collab } = project;
   const rgb = hexToRgb(color);
@@ -55,16 +53,10 @@ export default function ProjectCard({
   const handleHoverStart = () => {
     if (comingSoon) return;
     setHovered(true);
-    document.dispatchEvent(
-      new CustomEvent("cursor-enter", {
-        detail: { label: cursorLabel ?? title, color },
-      })
-    );
   };
 
   const handleHoverEnd = () => {
     setHovered(false);
-    document.dispatchEvent(new CustomEvent("cursor-leave"));
   };
 
   const inner = (
@@ -89,9 +81,6 @@ export default function ProjectCard({
         borderRadius: "16px",
         overflow: "hidden",
         background: "#FFFFFF",
-        border: "1px solid rgba(0,0,0,0.07)",
-        boxShadow: "0 1px 8px rgba(0,0,0,0.05)",
-        cursor: comingSoon ? "default" : "none",
         transition: "background 0.3s ease",
       }}
     >

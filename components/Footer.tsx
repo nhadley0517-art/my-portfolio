@@ -12,7 +12,7 @@ export default function Footer() {
             Noah Hadley
           </p>
           <p style={{ fontSize: "12px", color: "#9CA3AF", marginTop: "4px" }}>
-            © {year} — Designed &amp; built with care.
+            © {year} — Designed &amp; built by me!
           </p>
         </div>
 

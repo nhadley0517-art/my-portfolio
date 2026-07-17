@@ -5,11 +5,10 @@ import ProjectCard, { type Project } from "@/components/ProjectCard";
 
 const ease = [0.25, 0.46, 0.45, 0.94] as const;
 
-const projects: Array<Project & { initialRotate: number; cursorLabel: string }> = [
+const projects: Array<Project & { initialRotate: number }> = [
   {
     slug: "/no2",
     title: "No. 2",
-    cursorLabel: "No. 2",
     year: "2026",
     tags: ["iOS Development", "Branding", "Solo Build"],
     description:
@@ -26,7 +25,6 @@ const projects: Array<Project & { initialRotate: number; cursorLabel: string }> 
   {
     slug: "/cove",
     title: "Cove",
-    cursorLabel: "Cove",
     year: "2026",
     tags: ["Field Service CRM", "Founding Designer", "AI-native"],
     description:
@@ -42,7 +40,6 @@ const projects: Array<Project & { initialRotate: number; cursorLabel: string }> 
   {
     slug: "/writingprocess",
     title: "Writing Process Redesign",
-    cursorLabel: "Writing Process",
     year: "2025",
     tags: ["Product Design", "Internship"],
     description:
@@ -63,7 +60,7 @@ export default function Projects() {
     <section
       id="work"
       style={{ background: "#f4f4f5" }}
-      className="px-6 md:px-10 lg:px-16 py-[72px] md:py-[100px]"
+      className="px-6 md:px-10 lg:px-16 pt-[72px] md:pt-[100px] pb-[40px]"
     >
       <div className="max-w-5xl mx-auto">
         {/* Label */}
@@ -110,7 +107,6 @@ export default function Projects() {
             featured
             delay={0}
             initialRotate={feature.initialRotate}
-            cursorLabel={feature.cursorLabel}
           />
         </div>
 
@@ -122,7 +118,6 @@ export default function Projects() {
               project={project}
               delay={0.15 + i * 0.15}
               initialRotate={project.initialRotate}
-              cursorLabel={project.cursorLabel}
             />
           ))}
         </div>

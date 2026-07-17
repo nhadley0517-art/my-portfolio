@@ -16,7 +16,19 @@
       "Bash(npx next *)",
       "Bash(npx tsc *)",
       "Bash(npx eslint *)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:jackiezhang.co.za)",
+      "WebFetch(domain:trevorschulte.xyz)",
+      "WebFetch(domain:www.luissoma.com)",
+      "WebFetch(domain:www.baothiento.com)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Read(//c/Users/noahh/OneDrive/Desktop/**)",
+      "Bash(file \"C:/Users/noahh/OneDrive/Desktop/noah-x-banner.png\")",
+      "Bash(xxd)",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(git rm *)",
+      "Bash(cd \"C:/Users/noahh/OneDrive/Desktop/my-portfolio\" && echo \"=== full tree of public/real ===\" && find public/real -type f | sort && echo \"=== diff vs HEAD \\(content\\) ===\" && git diff HEAD --stat -- public/real/ && echo \"\\(empty above = identical to committed\\)\" && echo \"=== index.html mtime ===\" && stat -c '%y %n' public/real/index.html public/real/screens/*.html 2>/dev/null)",
+      "Bash(find \"C:/Users/noahh/OneDrive/Desktop\" -maxdepth 1 -iname \"*portfolio*hero*\" 2>/dev/null; find \"C:/Users/noahh/Desktop\" -maxdepth 1 -iname \"*portfolio*hero*\" 2>/dev/null)"
     ]
   }
 }

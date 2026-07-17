@@ -8,8 +8,8 @@
 <title>Real · Redesign Case Study</title>
 <style>
   :root{
-    --accent:#2d9cf0; --bg:#08090b; --panel:#101216; --panel-2:#161a1f;
-    --line:#23272e; --text:#fff; --dim:#aeb4bd; --muted:#727882;
+    --accent:#0EA5E9; --bg:#ffffff; --panel:#F7F7F5; --panel-2:#FAFAF8;
+    --line:#E4E1DB; --text:#0B0F12; --dim:#8A8F98; --muted:#9CA3AF;
     --font:-apple-system,"SF Pro Text","Helvetica Neue",Arial,system-ui,sans-serif;
   }
   *{box-sizing:border-box;}
@@ -29,7 +29,7 @@
     color:var(--accent);display:flex;align-items:center;justify-content:center;}
   .hero .mark .logo svg{width:20px;height:20px;}
   .hero .mark span{font-size:15px;font-weight:700;letter-spacing:.3px;color:var(--dim);}
-  .hero h1{font-size:37px;line-height:1.18;margin:0 0 20px;font-weight:600;letter-spacing:-.5px;max-width:21ch;color:var(--text);}
+  .hero h1{font-size:37px;line-height:1.14;margin:0 0 20px;font-weight:700;letter-spacing:-.8px;max-width:21ch;color:var(--text);}
   .hero h1 em{color:var(--accent);font-style:normal;font-weight:600;}
   .hero p{font-size:18px;line-height:1.6;color:var(--dim);max-width:64ch;margin:0;}
   .hero .meta{display:flex;gap:28px;margin-top:30px;flex-wrap:wrap;}
@@ -58,7 +58,7 @@
   .ph .device{position:absolute;top:0;left:0;width:399px;height:844px;
     transform:scale(.6495);transform-origin:top left;
     border-radius:54px;background:#000;padding:9px;
-    box-shadow:0 0 0 2px #2a2d33,0 26px 60px rgba(0,0,0,.6);}
+    box-shadow:0 0 0 1px rgba(0,0,0,.08),0 30px 60px -20px rgba(0,0,0,.28);}
   .ph .port{width:100%;height:100%;border-radius:46px;overflow:hidden;position:relative;background:#000;}
   .ph .notch{position:absolute;top:13px;left:50%;transform:translateX(-50%);
     width:118px;height:31px;background:#000;border-radius:18px;z-index:5;}
@@ -67,15 +67,15 @@
   /* missing-original placeholder */
   .ph .missing{width:381px;height:826px;display:flex;flex-direction:column;gap:10px;
     align-items:center;justify-content:center;text-align:center;padding:0 30px;
-    background:repeating-linear-gradient(45deg,#0e0f12,#0e0f12 12px,#121419 12px,#121419 24px);
+    background:repeating-linear-gradient(45deg,#F7F7F5,#F7F7F5 12px,#F0EFEA 12px,#F0EFEA 24px);
     color:var(--muted);font-size:14px;line-height:1.5;}
-  .ph .missing code{color:var(--dim);font-size:12px;background:#000;padding:3px 7px;border-radius:5px;}
+  .ph .missing code{color:var(--dim);font-size:12px;background:#fff;padding:3px 7px;border-radius:5px;border:1px solid var(--line);}
 
   /* rationale */
   .rationale{flex:1;min-width:300px;}
-  .problem{background:var(--panel-2);border-radius:16px;
+  .problem{background:var(--panel-2);border-radius:20px;
     padding:20px 22px;margin-bottom:28px;
-    box-shadow:0 10px 30px -8px rgba(0,0,0,.55);}
+    border:1px solid rgba(0,0,0,.05);}
   .problem .t{font-size:11px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;
     color:var(--muted);margin-bottom:8px;}
   .problem p{margin:0;font-size:15px;line-height:1.65;color:var(--dim);}
@@ -86,9 +86,6 @@
     display:flex;align-items:center;justify-content:center;}
   .changes .c b{font-size:15.5px;font-weight:600;display:block;margin-bottom:5px;color:var(--text);}
   .changes .c span{font-size:14.5px;line-height:1.65;color:var(--dim);}
-
-  .foot{padding:54px 0 90px;color:var(--muted);font-size:14px;line-height:1.7;}
-  .foot a{font-weight:600;}
 
   @media (max-width:760px){
     .hero h1{font-size:34px;} .case-body{gap:32px;}
@@ -233,13 +230,6 @@
         </div>
       </div>
     </section>
-
-    <!-- FOOTER -->
-    <footer class="foot">
-      Concept work, made out of enthusiasm for what the team is building. Not
-      affiliated with Real. Open the interactive editor at
-      <a href="index.html">index.html</a> to try any screen live.
-    </footer>
 
   </div>
 </body>

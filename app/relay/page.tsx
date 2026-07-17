@@ -533,7 +533,7 @@ export default function Relay() {
         <section className="px-6 py-12 border-t border-[#DDD8D1]">
           <div className="max-w-5xl mx-auto flex items-center justify-between">
             <a
-              href="/univo"
+              href="/archive/univo"
               className="group flex items-center gap-2 text-sm font-semibold text-[#7D8A93] hover:text-[#13181B] transition-colors"
             >
               <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>

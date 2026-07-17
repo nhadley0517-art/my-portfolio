@@ -13,9 +13,15 @@
   --gradient-dusk: linear-gradient(135deg, #FFBF65 0%, #FD8973 50%, #003A6C 100%);
 
   /* New tokens */
-  --cream: #F8F8FA;
+  --cream: #f4f4f5;
   --graphite: #13181B;
   --coral: #FD8973;
+
+  /* Shared "levitating overlay" chrome — used by every bento-grid modal
+     (experience cards, dome posters, archive projects) so all three share
+     one consistent look. */
+  --overlay-backdrop-bg: rgba(244, 244, 245, 0.5);
+  --overlay-backdrop-blur: blur(9px) saturate(1.15);
 }
 
 @theme inline {
