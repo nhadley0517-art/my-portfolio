@@ -40,6 +40,13 @@ export default function FooterArt({ children }: { children?: ReactNode }) {
         .footer-art-wrap {
           position: relative;
           width: 100%;
+          /* The reveal animation starts at scale(1.03) — applied the
+             instant this mounts, not just while it's actually animating —
+             and a transform's visual bounds can inflate the page's
+             scrollable width if nothing clips it. This was the site-wide
+             horizontal-scroll bug: happening from first paint, well before
+             the footer ever scrolls into view. */
+          overflow: hidden;
         }
         .footer-art-frame {
           position: relative;
