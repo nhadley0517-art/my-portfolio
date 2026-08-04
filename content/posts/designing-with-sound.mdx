@@ -1,0 +1,46 @@
+export const meta = {
+  slug: "designing-with-sound",
+  title: "Sound is the most underused material in interface design",
+  blurb: "Most UI sound is bad because it is decorative. The good kind confirms something you already believed was happening.",
+  date: "2026-07-28",
+  readingTime: "3 min",
+  tag: "Craft",
+};
+
+Almost every interface I use is silent, and the few that are not usually make
+me want to turn the volume off. That is a strange outcome for a material with
+this much potential.
+
+The problem is not sound. It is that most UI sound is decorative — added at
+the end, applied everywhere, tuned to be noticed. Once a sound is asking for
+attention, it is competing with the thing it was supposed to support.
+
+## Confirmation, not decoration
+
+The sounds that work do one job: they confirm something the interface already
+told you visually. A toggle that clicks is not adding information. It is
+agreeing with you.
+
+That framing kills most candidates immediately. Scroll does not need a sound.
+Hovering does not need a sound. Loading almost never needs a sound. What
+benefits is the small set of moments where you committed to something and want
+to know it landed.
+
+## Restraint is the whole technique
+
+On this site there are exactly two. Switching the season on the background
+plays a toggle. Opening a project plays a soft press. That is it.
+
+I built more than two and removed the rest, which is the part I would repeat.
+Every sound I cut made the two that remain feel more intentional. A sound that
+fires constantly becomes noise no matter how well designed it is.
+
+## Why synthesis matters
+
+These are generated live with the Web Audio API rather than loaded as audio
+files — no network request, no format negotiation, a few kilobytes total. That
+is not just a performance nicety. It means the sound can respond to state
+instead of being a fixed recording, which is the part I want to explore next.
+
+Sound is not a finishing touch. It is a channel most interfaces leave
+completely empty.

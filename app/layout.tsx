@@ -27,7 +27,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.noahhadley.com"),
-  title: "Noah Hadley — Product Designer",
+  title: "Noah Hadley",
   description:
     "Product designer and builder. New grad. Open to full-time roles May 2026.",
   openGraph: {

@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import CaseStudyNav from "@/components/CaseStudyNav";
+import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
 
 const COVE_SECTIONS = [
   { id: "brief",         label: "Brief" },
@@ -43,22 +44,8 @@ function AutoplayVideo({ src }: { src: string }) {
       loop
       muted
       playsInline
-      style={{ width: "100%", borderRadius: "12px", display: "block" }}
+      style={{ width: "100%", borderRadius: "4px", display: "block" }}
     />
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-4 mb-12">
-      <span
-        className="text-[11px] font-semibold uppercase tracking-[0.14em] whitespace-nowrap"
-        style={{ color: ACCENT }}
-      >
-        {children}
-      </span>
-      <div className="h-px flex-1 bg-[#DDD8D1]" />
-    </div>
   );
 }
 
@@ -76,7 +63,7 @@ function Placeholder({
       style={{
         aspectRatio: ratio,
         width: "100%",
-        borderRadius: "12px",
+        borderRadius: "4px",
         border: `1px dashed ${dark ? "rgba(165,180,252,0.45)" : "rgba(79,70,229,0.32)"}`,
         background: dark ? DARK : "rgba(79,70,229,0.05)",
         display: "flex",
@@ -90,8 +77,6 @@ function Placeholder({
         style={{
           fontSize: "12px",
           fontWeight: 700,
-          letterSpacing: "0.16em",
-          textTransform: "uppercase",
           color: dark ? ACCENT_SOFT : ACCENT,
         }}
       >
@@ -209,7 +194,7 @@ function TokenGroup({
       }}
     >
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12, marginBottom: 18 }}>
-        <p style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.12em" }}>{label}</p>
+        <p style={{ fontSize: 12, fontWeight: 500, color: "#9CA3AF" }}>{label}</p>
         {caption && <p style={{ fontSize: 11, color: "#C4C4C4", fontFamily: MONO }}>{caption}</p>}
       </div>
       {children}
@@ -219,36 +204,51 @@ function TokenGroup({
 
 function Ramp({ swatches, highlight }: { swatches: { step: string; hex: string }[]; highlight?: string }) {
   return (
-    <div style={{ display: "flex", gap: 6 }}>
-      {swatches.map((s) => {
-        const active = s.step === highlight;
-        return (
-          <div key={s.step} style={{ flex: 1, minWidth: 0 }}>
-            <div
-              style={{
-                height: 44,
-                borderRadius: 8,
-                background: s.hex,
-                border: "1px solid rgba(0,0,0,0.06)",
-                boxShadow: active ? `0 0 0 2px #fff, 0 0 0 4px ${s.hex}` : "none",
-              }}
-            />
-            <p
-              style={{
-                fontSize: 10,
-                color: active ? "#13181B" : "#9CA3AF",
-                fontWeight: active ? 700 : 500,
-                fontFamily: MONO,
-                textAlign: "center",
-                marginTop: 9,
-              }}
-            >
-              {s.step}
-            </p>
-          </div>
-        );
-      })}
-    </div>
+    <>
+      {/* Flex-shrinking 11 swatches into a fixed-width mobile screen crushes
+          them down to a sliver too thin to read as a color or a label — a
+          horizontal scroll with a floor width keeps every swatch legible
+          instead. Desktop still lays out as one full-width row. */}
+      <div className="ramp-row">
+        {swatches.map((s) => {
+          const active = s.step === highlight;
+          return (
+            <div key={s.step} className="ramp-swatch">
+              <div
+                style={{
+                  height: 44,
+                  borderRadius: 8,
+                  background: s.hex,
+                  border: "1px solid rgba(0,0,0,0.06)",
+                  boxShadow: active ? `0 0 0 2px #fff, 0 0 0 4px ${s.hex}` : "none",
+                }}
+              />
+              <p
+                style={{
+                  fontSize: 10,
+                  color: active ? "#13181B" : "#9CA3AF",
+                  fontWeight: active ? 700 : 500,
+                  fontFamily: MONO,
+                  textAlign: "center",
+                  marginTop: 9,
+                }}
+              >
+                {s.step}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+      <style>{`
+        .ramp-row { display: flex; gap: 6px; }
+        .ramp-swatch { flex: 1; min-width: 0; }
+        @media (max-width: 700px) {
+          .ramp-row { overflow-x: auto; scrollbar-width: none; }
+          .ramp-row::-webkit-scrollbar { display: none; }
+          .ramp-swatch { flex: 0 0 34px; }
+        }
+      `}</style>
+    </>
   );
 }
 
@@ -319,22 +319,20 @@ const AI_SUBSECTIONS: { title: string; placeholder: string; video?: string; body
 ];
 
 
-export default function CoveContent() {
-  return (
-    <>
-      <Nav />
-      <CaseStudyNav sections={COVE_SECTIONS} accentColor={ACCENT} card />
-      <main className="pt-[72px]">
+export default function CoveContent({ variant = "page", onClose }: CaseStudyContentProps) {
+  const isOverlay = variant === "overlay";
 
+  const body = (
+    <>
         {/* ── HERO ── */}
         <section className="pt-14 md:pt-20">
           <ScrollReveal>
-            <div className="px-6 max-w-5xl mx-auto py-6">
+            <div className="max-w-5xl mx-auto py-6">
               <AutoplayVideo src="/creating-a-booking-demo.mp4" />
             </div>
           </ScrollReveal>
 
-          <div className="px-6 max-w-5xl mx-auto mt-16 md:mt-20 mb-0">
+          <div className="max-w-5xl mx-auto mt-16 md:mt-20 mb-0">
             <ScrollReveal delay={0.05}>
               <h1 className="text-[clamp(40px,7vw,72px)] font-medium tracking-[-0.02em] leading-[1.1] text-[#13181B] mb-5">
                 Cove
@@ -342,14 +340,14 @@ export default function CoveContent() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-lg font-semibold max-w-2xl" style={{ color: ACCENT }}>
+              <p className="text-lg font-medium max-w-2xl" style={{ color: "#8A8F98" }}>
                 A field service CRM built for the businesses that keep everything running.
               </p>
             </ScrollReveal>
           </div>
 
           {/* ── METADATA BLOCK ── */}
-          <div className="px-6 max-w-5xl mx-auto mt-14 md:mt-16 mb-8 md:mb-14">
+          <div className="max-w-5xl mx-auto mt-14 md:mt-16 mb-8 md:mb-14">
             <ScrollReveal delay={0.15}>
               <div
                 className="grid grid-cols-2 md:grid-cols-4"
@@ -362,8 +360,6 @@ export default function CoveContent() {
                         fontSize: "11px",
                         fontWeight: 500,
                         color: "#9CA3AF",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.14em",
                         marginBottom: "14px",
                       }}
                     >
@@ -412,36 +408,21 @@ export default function CoveContent() {
               </p>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {PROBLEM_CARDS.map((card, i) => (
                 <ScrollReveal key={card} delay={0.1 + i * 0.05}>
                   <div
                     style={{
-                      background: "#fff",
-                      border: "1px solid #E5E7EB",
-                      borderRadius: "14px",
-                      padding: "24px",
+                      background: "#FAFAFA",
+                      borderRadius: "4px",
+                      padding: "22px 20px",
                       height: "100%",
                     }}
                   >
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "28px",
-                        height: "28px",
-                        borderRadius: "8px",
-                        background: "rgba(79,70,229,0.1)",
-                        color: ACCENT,
-                        fontSize: "12px",
-                        fontWeight: 700,
-                        marginBottom: "16px",
-                      }}
-                    >
+                    <p style={{ fontSize: "12px", fontWeight: 300, color: "#A8ABB2", margin: "0 0 12px" }}>
                       {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <p style={{ fontSize: "15px", fontWeight: 600, color: "#13181B", lineHeight: 1.4 }}>
+                    </p>
+                    <p style={{ fontSize: "15px", fontWeight: 400, color: "#13181B", lineHeight: 1.5 }}>
                       {card}
                     </p>
                   </div>
@@ -479,7 +460,7 @@ export default function CoveContent() {
                 style={{
                   background: "#fff",
                   border: "1px solid #E5E7EB",
-                  borderRadius: "16px",
+                  borderRadius: "4px",
                   padding: "clamp(24px, 4vw, 40px)",
                   boxShadow: "0 1px 2px rgba(16,12,40,0.04)",
                 }}
@@ -621,7 +602,7 @@ export default function CoveContent() {
               {PRODUCT_SUBSECTIONS.map((sub, i) => (
                 <ScrollReveal key={sub.title} delay={0.05}>
                   <div>
-                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "8px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", marginBottom: "8px" }}>
                       {String(i + 1).padStart(2, "0")}
                     </p>
                     <h4 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px" }}>
@@ -666,7 +647,7 @@ export default function CoveContent() {
               {AI_SUBSECTIONS.map((sub, i) => (
                 <ScrollReveal key={sub.title} delay={0.05}>
                   <div>
-                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "8px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", marginBottom: "8px" }}>
                       {String(i + 1).padStart(2, "0")}
                     </p>
                     <h4 style={{ fontSize: "clamp(20px, 2.4vw, 26px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "24px" }}>
@@ -713,7 +694,7 @@ export default function CoveContent() {
 
             <ScrollReveal delay={0.2}>
               <div className="rounded-2xl p-8 md:p-10" style={{ background: DARK }}>
-                <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: ACCENT_SOFT, marginBottom: "16px" }}>
+                <p style={{ fontSize: "11px", fontWeight: 600, color: ACCENT_SOFT, marginBottom: "16px" }}>
                   What I would do next
                 </p>
                 <p style={{ fontSize: "15px", lineHeight: 1.85, color: "rgba(244,244,245,0.78)", maxWidth: "600px" }}>
@@ -725,30 +706,22 @@ export default function CoveContent() {
           </div>
         </section>
 
-        {/* ── BOTTOM NAVIGATION ── */}
-        <section className="px-6 py-12">
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <a
-              href="/no2"
-              className="group flex items-center gap-2 text-sm font-semibold text-[#7D8A93] hover:text-[#13181B] transition-colors"
-            >
-              <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
-              No. 2
-            </a>
-            <a
-              href="/writingprocess"
-              className="group flex items-center gap-2 text-sm font-semibold transition-colors"
-              style={{ color: "#13181B" }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = ACCENT)}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#13181B")}
-            >
-              Writing Process Redesign
-              <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-            </a>
-          </div>
-        </section>
+        <CaseStudyBottomNav
+          isOverlay={isOverlay}
+          onClose={onClose}
+          nextHref="/writingprocess"
+          nextLabel="Writing Process Redesign"
+        />
+    </>
+  );
 
-      </main>
+  if (isOverlay) return <div className="cs-body">{body}</div>;
+
+  return (
+    <>
+      <Nav sections={COVE_SECTIONS} accentColor={ACCENT} />
+      <CaseStudyNav sections={COVE_SECTIONS} accentColor={ACCENT} card />
+      <main className="pt-[72px] cs-body">{body}</main>
       <Footer />
     </>
   );

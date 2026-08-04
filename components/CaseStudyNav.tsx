@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 interface Section {
   id: string;
@@ -50,7 +51,7 @@ export default function CaseStudyNav({ sections, accentColor, card = false }: Ca
           top: "120px",
           background: "#fff",
           border: "1px solid rgba(0,0,0,0.07)",
-          borderRadius: "14px",
+          borderRadius: "4px",
           padding: "6px",
           boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
           minWidth: "152px",
@@ -61,45 +62,53 @@ export default function CaseStudyNav({ sections, accentColor, card = false }: Ca
           const isActive = activeId === id;
           const isHovered = hoverId === id;
           return (
-            <button
-              key={id}
-              onClick={() => scrollTo(id)}
-              onMouseEnter={() => setHoverId(id)}
-              onMouseLeave={() => setHoverId(null)}
-              aria-label={`Go to ${label}`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "7px 10px",
-                borderRadius: "8px",
-                border: "none",
-                cursor: "pointer",
-                textAlign: "left",
-                fontSize: "13px",
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? "#13181B" : isHovered ? "#4B5563" : "#9CA3AF",
-                background: isActive
-                  ? `rgba(${hexToRgb(accent)}, 0.08)`
-                  : isHovered
-                  ? "rgba(0,0,0,0.03)"
-                  : "transparent",
-                transition: "background 0.12s ease, color 0.12s ease",
-                whiteSpace: "nowrap",
-              }}
-            >
-              <span
+            <div key={id} style={{ position: "relative" }}>
+              {/* Same shared sliding pill as the mobile menu — one element
+                  Framer physically animates between items via layoutId,
+                  instead of each item toggling its own tinted background. */}
+              {isActive && (
+                <motion.span
+                  layoutId="cs-nav-pill"
+                  style={{ position: "absolute", inset: 0, background: "rgba(19,24,27,0.07)", borderRadius: "4px" }}
+                  transition={{ type: "spring", stiffness: 520, damping: 40, mass: 0.9 }}
+                />
+              )}
+              <button
+                onClick={() => scrollTo(id)}
+                onMouseEnter={() => setHoverId(id)}
+                onMouseLeave={() => setHoverId(null)}
+                aria-label={`Go to ${label}`}
                 style={{
-                  width: "4px",
-                  height: "4px",
-                  borderRadius: "50%",
-                  flexShrink: 0,
-                  background: isActive ? accent : "transparent",
-                  transition: "background 0.12s ease",
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  width: "100%",
+                  padding: "7px 10px",
+                  borderRadius: "4px",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  fontSize: "13px",
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? "#13181B" : isHovered ? "#4B5563" : "#9CA3AF",
+                  background: isHovered && !isActive ? "rgba(0,0,0,0.03)" : "transparent",
+                  transition: "color 0.12s ease",
+                  whiteSpace: "nowrap",
                 }}
-              />
-              {label}
-            </button>
+              >
+                <span
+                  style={{
+                    width: "4px",
+                    height: "4px",
+                    borderRadius: "50%",
+                    flexShrink: 0,
+                    background: accent,
+                  }}
+                />
+                {label}
+              </button>
+            </div>
           );
         })}
       </nav>
@@ -133,11 +142,4 @@ export default function CaseStudyNav({ sections, accentColor, card = false }: Ca
       })}
     </nav>
   );
-}
-
-function hexToRgb(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `${r}, ${g}, ${b}`;
 }

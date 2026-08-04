@@ -1,0 +1,52 @@
+export const meta = {
+  slug: "shipping-an-app-in-two-weeks",
+  title: "What shipping an app in two weeks actually taught me",
+  blurb: "Designing it was the easy part. Learning what I was actually asking engineers to build was the part that changed how I work.",
+  date: "2026-07-14",
+  readingTime: "4 min",
+  tag: "Building",
+};
+
+Before No. 2, I was a designer who wrote specs. I knew what a good interface
+looked like, I knew how to argue for one, and I knew how to hand it off. What
+I did not know was what happened after the handoff.
+
+Two weeks of building an app end to end changed that, and not in the way I
+expected. The design was not the hard part. The hard part was everything I
+had been quietly waving my hand at for years.
+
+## The spec I did not understand I was writing
+
+The first time I wrote "users should only see their own logs," I thought I had
+written a requirement. I had actually written a database policy, a session
+strategy, and an entire class of bugs I did not know existed yet.
+
+Row-level security is not a detail an engineer adds at the end. It shapes how
+the data is modeled from the first table. I had been putting that sentence in
+specs for a year without knowing it meant anything.
+
+## Cost is a design constraint
+
+The original plan ran every log through an AI model. It felt obviously
+correct: better insights, less work for the user, the kind of thing that demos
+well.
+
+Then I did the arithmetic. At a third of a cent per call, once a day, ten
+thousand users comes out to about eleven thousand dollars a year — before a
+single dollar of revenue exists to pay for it.
+
+So I built a rule-based engine that runs on the device instead. It costs
+nothing, it works offline, and the health data never leaves the phone. AI moved
+to a phase-two premium feature, where someone is actually paying for it.
+
+That was not a technical compromise. It was a better product decision, and I
+only found it because I was close enough to the implementation to see the bill.
+
+## What I would tell my earlier self
+
+Learning the backend did not make me a worse designer or turn me into a
+mediocre engineer. It made my specs concrete. When I ask for something now, I
+know roughly what it costs, where it breaks, and what I am really trading away.
+
+The gap between "almost right" and "actually right" is where most of the hours
+went. It is also the only part anyone notices.

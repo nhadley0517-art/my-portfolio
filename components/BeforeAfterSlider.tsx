@@ -57,7 +57,7 @@ export default function BeforeAfterSlider({
         position: "relative",
         userSelect: "none",
         cursor: "col-resize",
-        borderRadius: "12px",
+        borderRadius: "4px",
         overflow: "hidden",
       }}
     >

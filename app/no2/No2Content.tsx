@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import CaseStudyNav from "@/components/CaseStudyNav";
+import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
 
 const NO2_SECTIONS = [
   { id: "overview",  label: "Overview" },
@@ -38,33 +39,20 @@ function AutoplayVideo({ src, style }: { src: string; style?: React.CSSPropertie
   return <video ref={videoRef} src={src} loop muted playsInline style={style} />;
 }
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-4 mb-12">
-      <span
-        className="text-[11px] font-semibold uppercase tracking-[0.14em] whitespace-nowrap"
-        style={{ color: ACCENT }}
-      >
-        {children}
-      </span>
-      <div className="h-px flex-1 bg-[#DDD8D1]" />
-    </div>
-  );
-}
-
 function Callout({ label, heading, body, delay = 0 }: { label: string; heading: string; body: string; delay?: number }) {
   return (
     <ScrollReveal delay={delay}>
-      <div style={{ paddingBottom: "72px" }}>
-        <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "16px" }}>{label}</p>
-        <p style={{ fontSize: "clamp(22px, 2.8vw, 28px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "20px", maxWidth: "680px" }}>{heading}</p>
-        <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px" }}>{body}</p>
+      <div style={{ paddingBottom: "80px" }}>
+        <p style={{ fontSize: "11px", fontWeight: 500, color: "#9CA3AF", marginBottom: "18px" }}>{label}</p>
+        <p style={{ fontSize: "clamp(19px, 2.1vw, 23px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.38, marginBottom: "20px", maxWidth: "640px" }}>{heading}</p>
+        <p style={{ fontSize: "15px", color: "#6B7280", lineHeight: 1.85, maxWidth: "600px" }}>{body}</p>
       </div>
     </ScrollReveal>
   );
 }
 
-export default function No2Content() {
+export default function No2Content({ variant = "page", onClose }: CaseStudyContentProps) {
+  const isOverlay = variant === "overlay";
   const [isMobile, setIsMobile] = React.useState(false);
   React.useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -73,11 +61,8 @@ export default function No2Content() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  return (
+  const body = (
     <>
-      <Nav />
-      <CaseStudyNav sections={NO2_SECTIONS} accentColor={ACCENT} card />
-      <main className="pt-[72px]">
         <style>{`
           @media (max-width: 768px) {
             /* hero iframe swap */
@@ -99,19 +84,16 @@ export default function No2Content() {
         {/* ── HERO ── */}
         <section className="pt-14 md:pt-20">
           <ScrollReveal>
-            <div className="px-6 max-w-5xl mx-auto pb-10 md:pb-14">
-              <iframe src="/no2-hero.html" scrolling="no" className="hero-desktop" style={{ width: "100%", height: "500px", border: "none", borderRadius: "16px" }} />
-              <iframe src="/no2-thumb.html" scrolling="no" className="hero-mobile" style={{ width: "100%", height: "300px", border: "none", borderRadius: "16px" }} />
+            <div className="max-w-5xl mx-auto pb-10 md:pb-14">
+              <iframe src="/no2-hero.html" scrolling="no" className="hero-desktop" style={{ width: "100%", height: "500px", border: "none", borderRadius: "4px" }} />
+              <iframe src="/no2-thumb.html" scrolling="no" className="hero-mobile" style={{ width: "100%", height: "300px", border: "none", borderRadius: "4px" }} />
             </div>
           </ScrollReveal>
 
-          <div className="px-6 max-w-5xl mx-auto mb-12">
+          <div className="max-w-5xl mx-auto mb-12">
             <ScrollReveal>
-              <span className="badge-shipped inline-flex items-center justify-center gap-[6px] bg-[#DCFCE7] text-[#16A34A] font-semibold rounded-full" style={{ padding: "8px 16px 8px 12px", fontSize: "0.9rem", overflow: "visible" }}>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <circle cx="7" cy="7" r="7" fill="#16A34A" />
-                  <path d="M4 7l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "7px 12px", borderRadius: "4px", background: "#fff", fontSize: "13px", fontWeight: 400, color: "#4B5563" }}>
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: ACCENT, flexShrink: 0 }} />
                 Live on the App Store
               </span>
             </ScrollReveal>
@@ -123,7 +105,7 @@ export default function No2Content() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <p className="text-lg font-semibold mb-8 max-w-2xl" style={{ color: ACCENT }}>
+              <p className="text-lg font-medium mb-8 max-w-2xl" style={{ color: "#8A8F98" }}>
                 A gut health iOS app designed and built solo in two weeks. Live on the App Store.
               </p>
             </ScrollReveal>
@@ -131,7 +113,7 @@ export default function No2Content() {
           </div>
 
           {/* ── METADATA ── */}
-          <div className="px-6 max-w-5xl mx-auto mt-2 md:mt-4 mb-8 md:mb-14">
+          <div className="max-w-5xl mx-auto mt-2 md:mt-4 mb-8 md:mb-14">
             <ScrollReveal delay={0.1}>
               <div className="grid grid-cols-2 md:grid-cols-4" style={{ columnGap: "32px", rowGap: "44px" }}>
                 {[
@@ -141,7 +123,7 @@ export default function No2Content() {
                   { label: "Team", values: ["Solo build"] },
                 ].map(({ label, values }) => (
                   <div key={label}>
-                    <p style={{ fontSize: "11px", fontWeight: 500, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "14px" }}>
+                    <p style={{ fontSize: "11px", fontWeight: 500, color: "#9CA3AF", marginBottom: "14px" }}>
                       {label}
                     </p>
                     {values.map((v) => (
@@ -257,7 +239,7 @@ export default function No2Content() {
             <ScrollReveal>
               {isMobile ? (
                 <div style={{background:'#F8F9FA', borderRadius:'12px', padding:'24px'}}>
-                  <p style={{fontSize:'11px', fontWeight:'700', color:'#9CA3AF', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'16px'}}>Competitor Landscape</p>
+                  <p style={{fontSize:'11px', fontWeight:'700', color:'#9CA3AF', marginBottom:'16px'}}>Competitor Landscape</p>
                   <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
                     {[
                       {name:'GI Monitor', desc:'Clinical-grade, doctor-facing, complex UI'},
@@ -369,15 +351,15 @@ export default function No2Content() {
                   </p>
                 </ScrollReveal>
                 <ScrollReveal>
-                  <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: "16px" }}>First iterations</p>
+                  <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", marginBottom: "16px" }}>First iterations</p>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="n2-iter-img" style={{ maxWidth: "280px", margin: "0 auto" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/home-screen-first-iteration.png" alt="Home screen first iteration" style={{ width: "100%", borderRadius: "16px", display: "block" }} />
+                      <img src="/home-screen-first-iteration.png" alt="Home screen first iteration" style={{ width: "100%", borderRadius: "4px", display: "block" }} />
                     </div>
                     <div className="n2-iter-img" style={{ maxWidth: "280px", margin: "0 auto" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/calendar-screen-first-iteration.png" alt="Calendar screen first iteration" style={{ width: "100%", borderRadius: "16px", display: "block" }} />
+                      <img src="/calendar-screen-first-iteration.png" alt="Calendar screen first iteration" style={{ width: "100%", borderRadius: "4px", display: "block" }} />
                     </div>
                   </div>
                 </ScrollReveal>
@@ -438,7 +420,7 @@ export default function No2Content() {
                     </div>
                     <div className="n2-feat-vid" style={{ maxWidth: "280px", margin: "0 auto" }}>
                       {feature.videoSrc ? (
-                        <AutoplayVideo src={feature.videoSrc} style={{ width: "100%", borderRadius: "16px", display: "block" }} />
+                        <AutoplayVideo src={feature.videoSrc} style={{ width: "100%", borderRadius: "4px", display: "block" }} />
                       ) : (
                         <>
                           {isMobile ? (
@@ -449,7 +431,7 @@ export default function No2Content() {
                               <a href="/doctor-pdf.pdf" target="_blank" style={{display:'inline-block', background:'#1C1C1E', color:'#fff', fontWeight:'600', fontSize:'14px', padding:'12px 24px', borderRadius:'10px', textDecoration:'none'}}>View PDF →</a>
                             </div>
                           ) : (
-                            <div style={{ borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", maxWidth: "420px", margin: "0 auto" }}>
+                            <div style={{ borderRadius: "4px", overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", maxWidth: "420px", margin: "0 auto" }}>
                               <iframe src="/doctor-pdf.pdf" style={{ width: "100%", height: "600px", border: "none", display: "block" }} />
                             </div>
                           )}
@@ -473,7 +455,7 @@ export default function No2Content() {
             <div className="space-y-16">
               <ScrollReveal delay={0.1}>
                 <div style={{ paddingBottom: "16px" }}>
-                  <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "16px" }}>Design Decision</p>
+                  <p style={{ fontSize: "11px", fontWeight: 600, color: "#9CA3AF", marginBottom: "16px" }}>Design Decision</p>
                   <h3 style={{ fontSize: "clamp(22px, 2.8vw, 30px)", fontWeight: 500, color: "#13181B", letterSpacing: "-0.02em", lineHeight: 1.3, marginBottom: "20px", maxWidth: "680px" }}>
                     The carousel slowed people down. The list didn&apos;t.
                   </h3>
@@ -483,15 +465,17 @@ export default function No2Content() {
                   <p style={{ fontSize: "15px", color: "#4B5563", lineHeight: 1.85, maxWidth: "600px", marginBottom: "40px" }}>
                     The icons weren&apos;t just aesthetic. &ldquo;Mushy&rdquo; or &ldquo;watery&rdquo; means different things to different people — a small illustration anchors the meaning instantly. The result: average logging time dropped from around a minute to under 20 seconds.
                   </p>
+                  {/* Weight, not hue, carries the before/after contrast here —
+                      the improved number is the dark one. */}
                   <div style={{ display: "flex", gap: "40px", alignItems: "flex-start" }}>
                     <div>
-                      <p style={{ fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 800, color: "#E05252", lineHeight: 1 }}>~1 min</p>
-                      <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#9CA3AF", marginTop: "8px" }}>Carousel</p>
+                      <p style={{ fontSize: "clamp(24px, 2.6vw, 34px)", fontWeight: 600, color: "#C4C4C4", lineHeight: 1, letterSpacing: "-0.02em" }}>~1 min</p>
+                      <p style={{ fontSize: "11px", fontWeight: 500, color: "#9CA3AF", marginTop: "10px" }}>Carousel</p>
                     </div>
-                    <div style={{ width: "1px", background: "#E5E7EB", alignSelf: "stretch", margin: "4px 0" }} />
+                    <div style={{ width: "1px", background: "#EAEAED", alignSelf: "stretch", margin: "4px 0" }} />
                     <div>
-                      <p style={{ fontSize: "clamp(28px, 3.5vw, 44px)", fontWeight: 800, color: ACCENT, lineHeight: 1 }}>~20 sec</p>
-                      <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#9CA3AF", marginTop: "8px" }}>List view</p>
+                      <p style={{ fontSize: "clamp(24px, 2.6vw, 34px)", fontWeight: 600, color: "#13181B", lineHeight: 1, letterSpacing: "-0.02em" }}>~20 sec</p>
+                      <p style={{ fontSize: "11px", fontWeight: 500, color: "#9CA3AF", marginTop: "10px" }}>List view</p>
                     </div>
                   </div>
                 </div>
@@ -543,7 +527,7 @@ export default function No2Content() {
 
             <ScrollReveal>
               <div style={{ width: "100%", overflowX: "hidden" }}>
-                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "12px", display: "block", height: isMobile ? "1175px" : "580px" }} />
+                <iframe src="/5-roadmap.html" scrolling="no" style={{ width: "100%", border: "none", borderRadius: "4px", display: "block", height: isMobile ? "1175px" : "580px" }} />
               </div>
             </ScrollReveal>
           </div>
@@ -583,27 +567,22 @@ export default function No2Content() {
           </div>
         </section>
 
-        {/* ── BOTTOM NAVIGATION ── */}
-        <section className="px-6 py-12 border-t border-[#DDD8D1]">
-          <div className="max-w-5xl mx-auto flex items-center justify-between">
-            <a
-              href="/#work"
-              className="group flex items-center gap-2 text-sm font-semibold text-[#7D8A93] hover:text-[#13181B] transition-colors"
-            >
-              <span className="group-hover:-translate-x-1 transition-transform duration-200">←</span>
-              Back to all work
-            </a>
-            <a
-              href="/cove"
-              className="group flex items-center gap-2 text-sm font-semibold text-[#13181B] hover:text-[#7EB77F] transition-colors"
-            >
-              Cove
-              <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
-            </a>
-          </div>
-        </section>
+        <CaseStudyBottomNav
+          isOverlay={isOverlay}
+          onClose={onClose}
+          nextHref="/cove"
+          nextLabel="Cove"
+        />
+    </>
+  );
 
-      </main>
+  if (isOverlay) return <div className="cs-body">{body}</div>;
+
+  return (
+    <>
+      <Nav sections={NO2_SECTIONS} accentColor={ACCENT} />
+      <CaseStudyNav sections={NO2_SECTIONS} accentColor={ACCENT} card />
+      <main className="pt-[72px] cs-body">{body}</main>
       <Footer />
     </>
   );

@@ -124,7 +124,7 @@ export default function ForFun() {
                     width: "100%",
                     maxHeight: "75vh",
                     objectFit: "contain",
-                    borderRadius: "16px",
+                    borderRadius: "4px",
                     boxShadow: "0 40px 80px rgba(0,0,0,0.6)",
                     display: "block",
                     margin: "0 auto",

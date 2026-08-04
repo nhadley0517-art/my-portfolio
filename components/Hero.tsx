@@ -1,57 +1,125 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { play } from "cuelume";
-import PixelArtBackground from "./PixelArtBackground";
-import PixelSnow from "./PixelSnow";
-import ScrambledText from "./ScrambledText";
+import { useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import BusinessCard from "./BusinessCard";
 
-const STATEMENT = "Designing products that\nget out of the way.";
-const LINES = STATEMENT.split("\n");
-const TYPE_SPEED = 40;
-const TYPE_JITTER = 16;
-const TYPE_DELAY = 320;
-const LINE2_DELAY = 450; // after line 1 types out, before tags fade in (line 2 slides in during this)
+type BioChunk = { text: string; strong?: boolean };
 
-// Apple-ish settle: soft, decelerating, never bouncy
-const charEase = [0.16, 1, 0.3, 1] as const;
-
-const TAGS = ["Product Design", "Prototyping", "Design Systems"];
-
-type Season = "spring" | "summer" | "fall" | "winter";
-const SEASONS: { id: Season; label: string; color: string }[] = [
-  { id: "spring", label: "Spring", color: "#A3D977" },
-  { id: "summer", label: "Summer", color: "#3FA34D" },
-  { id: "fall",   label: "Fall",   color: "#E0892E" },
-  { id: "winter", label: "Winter", color: "#AFCBE3" },
+// Each paragraph's last two words are joined with a non-breaking space so
+// the final line never leaves a single word stranded alone.
+const BIO_PARAGRAPHS: BioChunk[][] = [
+  [
+    { text: "Noah Hadley", strong: true },
+    { text: "is a" },
+    { text: "product designer", strong: true },
+    { text: "who graduated from Grand Canyon University in April 2026. He cares about how things feel to use, not just how they look. He designs end to end across web and mobile, uses Claude Code and Cursor as a core part of his workflow, and recently shipped a" },
+    { text: "solo iOS app", strong: true },
+    { text: "built completely from scratch in two weeks." },
+  ],
+  [
+    { text: "He previously interned at Canyon Creative, designing client-facing products in an agency environment, and at Grand Canyon Education, where he led a full platform redesign for tens of thousands of students." },
+  ],
+  [
+    { text: "He's actively looking for" },
+    { text: "full-time product design roles,", strong: true },
+    { text: "open to remote, hybrid, or relocation." },
+  ],
 ];
-const SEASON_SRC: Record<Season, string> = {
-  spring: "/pixelart-spring.webp",
-  summer: "/pixelart-summer.webp",
-  fall:   "/pixelart-fall.webp",
-  winter: "/pixelart-winter.webp",
-};
 
-// First title line split into word/space tokens so the typewriter wraps by
-// whole words (breaks only at spaces) and never splits a word mid-letter.
-type Tok = { type: "word" | "space"; chars: { ch: string; idx: number }[] };
-const LINE0_TOKENS: Tok[] = (() => {
-  const tokens: Tok[] = [];
-  let cur: Tok | null = null;
-  [...LINES[0]].forEach((ch, idx) => {
-    const type = ch === " " ? "space" : "word";
-    if (!cur || cur.type !== type) { cur = { type, chars: [] }; tokens.push(cur); }
-    cur.chars.push({ ch, idx });
-  });
-  return tokens;
-})();
+const BIO_PARAGRAPHS_WORDS = BIO_PARAGRAPHS.map((chunks) =>
+  chunks.flatMap((c) => c.text.split(" ").map((word) => ({ word, strong: c.strong })))
+);
+
+// Both card images are 1050x600 — the real 3.5x2in business card proportion.
+// Everything sizes off this so the card is never subtly stretched.
+const CARD_RATIO = 1050 / 600;
+
+/* Sizing is expressed as CSS math rather than read off `window`. Reading the
+   viewport during render is what caused a hydration mismatch — the server has
+   no window, so it emitted a different height than the client. `vh`/`vw` units
+   are resolved by the browser itself, so the exact same string is correct on
+   both, there's no wrong-size frame before a JS effect corrects it, and window
+   resizes are handled for free without a listener. */
+
+/** Resting height of the hero section: taller than the content strictly needs,
+ *  because the card is centered in the stage below the bio, so a deeper
+ *  resting section is what drops it clear of the text. Never taller than the
+ *  viewport, or the section would shrink as you scroll instead of growing. */
+const HERO_REST_H = "min(100vh, max(68vh, 840px))";
+
+const CARD_SMALL_W = "300px";
+/** The grown card, capped three ways: by viewport width, by the source
+ *  image's own native size (so it's never upscaled), and — the cap that
+ *  actually binds on short screens — by the vertical room left under the bio,
+ *  so the card and its shadow can't overflow the section's `overflow: hidden`
+ *  and get sliced off. The 520px covers the bio block plus the section's
+ *  padding, with margin so the card never lands flush against the clip edge. */
+const CARD_LARGE_W =
+  `max(${CARD_SMALL_W}, min(100vw - 260px, 660px, calc(max(180px, 100vh - 520px) * ${CARD_RATIO})))`;
+
+/** Mobile doesn't scroll-jack at all, so it just needs one fixed size —
+ *  the desktop formula's constants (260px of side margin) are tuned for a
+ *  much wider stage and read as cramped down here. 48px matches the
+ *  page's own mobile edge margin. */
+const CARD_MOBILE_W = "min(420px, calc(100vw - 48px))";
+
+/** Linear interpolation between two CSS lengths, driven by scroll progress. */
+const lerpCss = (from: string, to: string, p: number) => `calc(${from} + (${to} - ${from}) * ${p})`;
+
+function HeroBio() {
+  return (
+    // Word-by-word reveal on load — reads as the text generating in, not
+    // just fading up as one static block. One shared stagger across all
+    // three paragraphs, so it plays as one continuous sequence rather than
+    // three separate ones.
+    <motion.div
+      variants={{ visible: { transition: { staggerChildren: 0.016 } } }}
+      initial="hidden"
+      animate="visible"
+    >
+      {BIO_PARAGRAPHS_WORDS.map((words, pi) => (
+        <p key={pi} className="hero-bio">
+          {words.map((item, i) => (
+            <span key={i} className="hero-bio-word-wrap">
+              <motion.span
+                className={"hero-bio-word" + (item.strong ? " is-strong" : "")}
+                variants={{
+                  hidden: { opacity: 0, y: 6, filter: "blur(4px)" },
+                  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+                }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {item.word}
+              </motion.span>
+              {i < words.length - 1 ? " " : ""}
+            </span>
+          ))}
+        </p>
+      ))}
+    </motion.div>
+  );
+}
 
 export default function Hero() {
-  const [progress, setProgress]         = useState(0); // characters revealed in line 1
-  const [showLine2, setShowLine2]       = useState(false);
-  const [showMeta, setShowMeta]         = useState(false);
-  const [season, setSeason]             = useState<Season>("summer");
+
+  // Scroll-linked growth: the card starts small and scales up as the user
+  // scrolls through this wrapper, while the section itself stays pinned
+  // (`position: sticky`). No spring/smoothing on these values — a direct
+  // algebraic map off scrollYProgress means the card's size always matches
+  // scroll position exactly, with nothing left to settle.
+  const scrollWrapRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: scrollWrapRef, offset: ["start start", "end end"] });
+
+  // The section needs a concrete (not min-) height so the bio can sit at a
+  // fixed size up top while the card stage below it (flex: 1) has room to
+  // grow into.
+  const heroHeight = useTransform(scrollYProgress, (p) => lerpCss(HERO_REST_H, "100vh", p));
+  const cardWidth = useTransform(scrollYProgress, (p) => lerpCss(CARD_SMALL_W, CARD_LARGE_W, p));
+  const cardHeight = useTransform(
+    scrollYProgress,
+    (p) => `calc((${lerpCss(CARD_SMALL_W, CARD_LARGE_W, p)}) / ${CARD_RATIO})`
+  );
 
   // Keep the page pinned to the hero on load (don't let the browser restore
   // a previous scroll position or jump to an anchor).
@@ -60,420 +128,128 @@ export default function Hero() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Preload every season image so switching is instant (no fetch on click).
+  // Preload the back face so the first flip doesn't show a blank plane.
   useEffect(() => {
-    Object.values(SEASON_SRC).forEach(src => {
-      const img = new window.Image();
-      img.src = src;
-    });
-  }, []);
-
-  // Typewriter
-  useEffect(() => {
-    let idx = 0;
-    let t: ReturnType<typeof setTimeout>;
-
-    const tick = () => {
-      idx++;
-      setProgress(idx);
-      if (idx < LINES[0].length) {
-        t = setTimeout(tick, TYPE_SPEED + (Math.random() * TYPE_JITTER * 2 - TYPE_JITTER));
-      } else {
-        // line 1 done — slide line 2 in as a block, then reveal tags
-        setShowLine2(true);
-        setTimeout(() => setShowMeta(true), LINE2_DELAY);
-      }
-    };
-
-    const init = setTimeout(tick, TYPE_DELAY);
-    return () => { clearTimeout(init); clearTimeout(t); };
+    const img = new window.Image();
+    img.src = "/Business-card-back.png";
   }, []);
 
   return (
-    <section
-      className="px-6 md:px-10 lg:px-16"
-      style={{
-        background: "#f4f4f5",
-        minHeight: "92vh",
-        display: "flex",
-        alignItems: "center",
-        paddingTop: "28px",
-        paddingBottom: "64px",
-        boxSizing: "border-box",
-        position: "relative",
-      }}
-    >
-      {/* Framed, rounded, animated pixel-art background (crossfades between seasons) */}
-      <div className="hero-bg-frame">
-        <AnimatePresence>
-          <motion.div
-            key={season}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-            className="hero-bg-art"
-            style={{ position: "absolute", inset: 0 }}
-          >
-            <PixelArtBackground src={SEASON_SRC[season]} />
-          </motion.div>
-        </AnimatePresence>
-        {/* Soft-focus + grain so the low-res crop reads as an intentional, dreamy backdrop */}
-        <div className="hero-bg-grain" />
-        {/* Pixel snow drifting over the scene — matches the pixel-art aesthetic */}
-        <div className="hero-bg-snow">
-          <PixelSnow
-            color="#ffffff"
-            density={0.16}
-            speed={0.5}
-            pixelResolution={240}
-            minFlakeSize={2.0}
-            brightness={1.6}
-            depthFade={7}
-            farPlane={16}
-            direction={112}
-            variant="round"
-          />
-        </div>
-        <div className="hero-bg-scrim" />
-      </div>
-
-      <div className="max-w-5xl mx-auto w-full" style={{ position: "relative", zIndex: 1 }}>
-        <div className="hero-glass">
-
-        {/* Season switcher — nestled in the panel's top-right corner */}
-        <div className="season-switch" role="group" aria-label="Background season">
-          {SEASONS.map(s => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => { play("toggle"); setSeason(s.id); }}
-              className={"season-btn" + (season === s.id ? " active" : "")}
-              title={s.label}
-              aria-label={s.label}
-              aria-pressed={season === s.id}
-            >
-              <span className="season-ind" style={{ background: s.color }} />
-              <span className="season-name">{s.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(20px, 3vw, 32px)" }}
-        >
-          <span className="nh-label">Noah Hadley</span>
-          <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: "#4B5563" }} />
-          <span className="nh-label" style={{ color: "#374151" }}>Product Designer &amp; Builder</span>
-        </motion.div>
-
-        {/* Statement — typewriter with per-character depth.
-            A hidden copy of the full statement reserves the exact height + width
-            so the title types in place without ever reflowing the layout. */}
-        <h1 className="nh-statement" style={{ position: "relative" }}>
-          <span aria-hidden style={{ visibility: "hidden" }}>
-            {STATEMENT.split("\n").map((ln, i) => (
-              <span key={i} style={{ display: "block" }}>{ln}</span>
-            ))}
-          </span>
-          <span style={{ position: "absolute", inset: 0 }}>
-            {/* Line 1 — types out word by word so words never break mid-letter */}
-            <span style={{ display: "block" }}>
-              {LINE0_TOKENS.map((tok, ti) => {
-                const revealed = tok.chars.filter(c => c.idx < progress);
-                if (revealed.length === 0) return null;
-                // breakable space between words (where wrapping is allowed)
-                if (tok.type === "space") return <span key={ti}> </span>;
-                // word kept on one line
-                return (
-                  <span key={ti} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
-                    {revealed.map(c => (
-                      <motion.span
-                        key={c.idx}
-                        initial={{ opacity: 0, y: "0.4em", filter: "blur(10px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        transition={{ duration: 0.5, ease: charEase }}
-                        style={{ display: "inline-block" }}
-                      >
-                        {c.ch}
-                      </motion.span>
-                    ))}
-                  </span>
-                );
-              })}
-              {/* cursor trails line 1 while it types */}
-              {!showLine2 && <span className="nh-cursor">|</span>}
-            </span>
-
-            {/* Line 2 — slides in as a whole block once line 1 finishes */}
-            <span style={{ display: "block" }}>
-              {showLine2 && (
-                <motion.span
-                  initial={{ opacity: 0, y: "0.5em", filter: "blur(10px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{ duration: 0.55, ease: charEase }}
-                  style={{ display: "inline-block", whiteSpace: "pre" }}
-                >
-                  {LINES[1]}
-                </motion.span>
-              )}
-            </span>
-          </span>
-        </h1>
-
-        {/* Discipline tags — always present (reserves space), fades in place */}
-        <motion.div
-          animate={{ opacity: showMeta ? 1 : 0, y: showMeta ? 0 : 6 }}
-          transition={{ duration: 0.55, ease: charEase }}
-          aria-hidden={!showMeta}
-          style={{ display: "flex", alignItems: "center", flexWrap: "wrap", marginTop: "clamp(20px, 3vw, 28px)" }}
-        >
-          <ScrambledText className="nh-tags-scramble" radius={70} duration={0.9} speed={0.4}>
-            {TAGS.join("   /   ")}
-          </ScrambledText>
-        </motion.div>
-        </div>{/* /hero-glass */}
-      </div>
-
-      {/* Scroll cue — fills the empty bottom of the centered hero and hints at what's below.
-          Absolutely positioned so it never affects the centered content. */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showMeta ? 1 : 0 }}
-        transition={{ duration: 0.6, delay: showMeta ? 0.35 : 0, ease: charEase }}
-        aria-hidden={!showMeta}
-        className="nh-cue-wrap px-6 md:px-10 lg:px-16"
-        style={{ position: "absolute", left: 0, right: 0, bottom: "32px", pointerEvents: showMeta ? "auto" : "none" }}
-      >
-        <div
-          className="max-w-5xl mx-auto"
+    <section id="welcome">
+      {/* Desktop: the scroll-jack growth sequence, entirely unchanged.
+          Hidden below the mobile breakpoint via CSS only — nothing here
+          reads the viewport in JS, so there's no hydration risk and no
+          behavior change for desktop. */}
+      <div ref={scrollWrapRef} className="hero-desktop-scroll" style={{ position: "relative", height: "190vh" }}>
+        <motion.section
+          className="hero-section"
           style={{
-            borderTop: "1px solid rgba(255,255,255,0.35)",
-            paddingTop: "16px",
+            background: "#f4f4f5",
+            height: heroHeight,
+            boxSizing: "border-box",
+            position: "sticky",
+            top: 0,
+            overflow: "hidden",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "16px",
+            flexDirection: "column",
           }}
         >
-          <span className="nh-label" style={{ color: "#9CA3AF" }}>Open to full-time roles</span>
-          <button
-            type="button"
-            onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
-            className="nh-scrollcue"
-            tabIndex={showMeta ? 0 : -1}
-          >
-            Selected Work
-            <motion.span
-              animate={{ y: [0, 4, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-              style={{ display: "inline-block" }}
+          {/* Bio — fixed at the top of the sticky section, so it stays
+              visible and never moves for the entire hero scroll sequence;
+              only the image stage below it grows. Uses .site-container
+              directly so it's centered in exactly the same column as every
+              other section, rather than a separately-maintained formula. */}
+          <div className="site-container hero-bio-wrap">
+            <HeroBio />
+          </div>
+
+          {/* The business card — a real CSS 3D object you can turn over.
+              Only its stage is scroll-sized; the card's own tilt/turn
+              transforms live inside BusinessCard, so the two never fight
+              over the same element's transform. */}
+          <div className="hero-image-stage">
+            <motion.div
+              className="hero-card-stage"
+              style={{ width: cardWidth, height: cardHeight }}
             >
-              ↓
-            </motion.span>
-          </button>
+              <BusinessCard />
+            </motion.div>
+          </div>
+        </motion.section>
+      </div>
+
+      {/* Mobile: no scroll-jack, no pin — the card just renders at its full
+          size right away and the section takes only the height its content
+          needs, so scrolling past the hero is one normal scroll like every
+          other section instead of a dead zone spent growing an image. */}
+      <div className="hero-mobile-static">
+        <div className="site-container hero-bio-wrap">
+          <HeroBio />
         </div>
-      </motion.div>
+        <div className="hero-image-stage">
+          <div className="hero-card-stage hero-card-stage--mobile">
+            <BusinessCard />
+          </div>
+        </div>
+      </div>
 
       <style>{`
-        .hero-bg-frame {
-          position: absolute;
-          top: 12px;
-          bottom: 12px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: calc(100% - 24px);
-          max-width: 1500px;
-          border-radius: 24px;
-          overflow: hidden;
-          z-index: 0;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.12);
-          border: 1px solid rgba(0,0,0,0.06);
+        /* No horizontal padding here — the bio uses .site-container
+           directly, and the image stage centers its box within this
+           section's full width, which shares the same center line as
+           .site-container since both center within the same site-main. */
+        .hero-section {
+          padding-top: 108px;
+          /* Deeper than it looks like it needs to be — the card's ground
+             shadow and "drag to turn" hint both sit *outside* the card's
+             own box, and the section clips its overflow. */
+          padding-bottom: 56px;
         }
-        /* Soft-focus on the artwork to mask the low-res crop; the slight scale
-           keeps the blur from revealing soft edges inside the rounded frame. */
-        .hero-bg-art {
-          filter: blur(2px) saturate(1.05);
-          transform: scale(1.06);
-        }
-        /* Fine film grain layered over the art — sells the soft focus as a
-           deliberate, textured look rather than a quality problem. */
-        .hero-bg-grain {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 1;
-          opacity: 0.5;
-          mix-blend-mode: overlay;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          background-size: 180px 180px;
-        }
-        .hero-bg-snow {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          pointer-events: none;
-        }
-        .hero-bg-scrim {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 1;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.06), rgba(0,0,0,0) 26%, rgba(0,0,0,0) 56%, rgba(0,0,0,0.34));
-        }
-        .hero-glass {
-          position: relative;
-          display: block;
-          width: 100%;
-          padding: clamp(44px, 6vw, 72px) clamp(32px, 5vw, 56px);
-          border-radius: 24px;
-          background: rgba(255,255,255,0.52);
-          -webkit-backdrop-filter: blur(11px) saturate(1.28);
-          backdrop-filter: blur(11px) saturate(1.28);
-          box-shadow: 0 34px 80px -24px rgba(0,0,0,0.5), 0 10px 28px -12px rgba(0,0,0,0.28);
-        }
-        .season-switch {
-          position: absolute;
-          top: 22px;
-          right: 22px;
-          z-index: 2;
+        .hero-image-stage {
+          flex: 1;
+          min-height: 0;
           display: flex;
           align-items: center;
-          gap: 9px;
-          padding: 8px 11px;
-          border-radius: 999px;
-          background: rgba(255,255,255,0.6);
-          border: 1px solid rgba(0,0,0,0.07);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          justify-content: center;
+          position: relative;
         }
-        /* Desktop: subtle dots only (label hidden) */
-        .season-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 0;
-          padding: 0;
-          border: none;
-          background: none;
-          cursor: pointer;
-          font-family: inherit;
+        .hero-card-stage { position: relative; flex-shrink: 0; }
+        .hero-card-stage--mobile {
+          width: ${CARD_MOBILE_W};
+          height: calc(${CARD_MOBILE_W} / ${CARD_RATIO});
         }
-        .season-ind {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          opacity: 0.5;
-          box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15);
-          transition: opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
-        }
-        .season-btn:hover .season-ind { opacity: 1; transform: scale(1.18); }
-        .season-btn.active .season-ind {
-          opacity: 1;
-          box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(0,0,0,0.22);
-        }
-        .season-name { display: none; }
-        @media (max-width: 640px) {
-          .hero-bg-frame { top: 8px; bottom: 8px; width: calc(100% - 16px); border-radius: 18px; }
-          /* Tighter glass padding on mobile so the switcher sits higher */
-          .hero-glass { padding: 30px 24px; }
-          /* Mobile: dots only, in bigger circular tap targets, all on one line */
-          .season-switch {
-            position: static;
-            width: auto;
-            margin: 0 0 22px 0;
-            padding: 0;
-            background: none;
-            border: none;
-            box-shadow: none;
-            gap: 10px;
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-          }
-          .season-btn {
-            width: 38px;
-            height: 38px;
-            padding: 0;
-            justify-content: center;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.7);
-            border: 1px solid rgba(0,0,0,0.08);
-          }
-          /* selected = subtle muted-gray container, no ring */
-          .season-btn.active { background: #BFC4CC; border-color: rgba(0,0,0,0.08); }
-          /* thin dark outline keeps even the pale dots (spring/winter) defined on light containers */
-          .season-ind,
-          .season-btn.active .season-ind { box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.22); }
-          .season-ind { width: 14px; height: 14px; opacity: 1; }
-          .season-btn:hover .season-ind { transform: none; }
-          .season-name { display: none; }
-        }
-        .nh-label {
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: #111827;
-        }
-        .nh-statement {
-          font-size: clamp(30px, 4.2vw, 50px);
-          font-weight: 500;
-          color: #111827;
-          line-height: 1.34;
-          letter-spacing: -0.02em;
-          margin: 0;
-        }
-        .nh-tags-scramble p {
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.13em;
-          text-transform: uppercase;
-          color: #374151;
-          font-family: inherit;
-          white-space: pre;
-        }
-        .nh-tags-scramble .scramble-char { will-change: contents; }
-        @media (max-width: 640px) {
-          .nh-tags-scramble p { white-space: normal; }
-        }
-        .nh-scrollcue {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: none;
-          border: none;
-          padding: 0;
-          cursor: pointer;
-          font-family: inherit;
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: #111827;
-          transition: color 0.15s ease;
-        }
-        .nh-scrollcue:hover { color: #FD8973; }
-        /* Scroll cue sits over the artwork — force legible white text + shadow */
-        .nh-cue-wrap .nh-label { color: #fff !important; text-shadow: 0 1px 3px rgba(0,0,0,0.85), 0 0 12px rgba(0,0,0,0.55); }
-        .nh-cue-wrap .nh-scrollcue { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.85), 0 0 12px rgba(0,0,0,0.55); }
-        .nh-cue-wrap .nh-scrollcue:hover { color: #fff; }
-        /* Hide the cue when the viewport is too short to fit it below the centered content */
-        @media (max-height: 720px), (max-width: 640px) {
-          .nh-cue-wrap { display: none !important; }
-        }
-        .nh-cursor {
-          display: inline-block;
-          color: #FD8973;
+        /* Flex items with auto cross-axis margins shrink-wrap to content
+           instead of stretching first — explicit width forces it to fill
+           the row before max-width caps it, so it centers exactly like
+           every other section's plain-block .site-container does. */
+        .hero-bio-wrap { flex-shrink: 0; width: 100%; padding-bottom: clamp(56px, 7vw, 100px); }
+        .hero-bio {
+          font-size: 16px;
           font-weight: 300;
-          margin-left: 2px;
-          transform: translateY(-0.02em);
-          animation: nh-blink 0.8s steps(1) infinite;
+          line-height: 1.7;
+          letter-spacing: -0.005em;
+          color: #6B7280;
+          max-width: 840px;
+          margin: 0 0 16px;
         }
-        @keyframes nh-blink {
-          0%, 50%   { opacity: 1; }
-          50.01%, 100% { opacity: 0; }
+        .hero-bio:last-child { margin-bottom: 0; }
+        .hero-bio-word-wrap { display: inline; }
+        .hero-bio-word { display: inline-block; }
+        /* Key facts (name, role, standout details) pulled out of the
+           body gray — same size and weight shift the site already uses
+           to separate a title from surrounding copy. */
+        .hero-bio-word.is-strong { color: #13181B; font-weight: 400; }
+
+        .hero-mobile-static {
+          display: none;
+        }
+        @media (max-width: 700px) {
+          .hero-desktop-scroll { display: none; }
+          .hero-mobile-static {
+            display: flex;
+            flex-direction: column;
+            padding: 96px 0 64px;
+          }
         }
       `}</style>
     </section>

@@ -24,6 +24,82 @@
   --overlay-backdrop-blur: blur(9px) saturate(1.15);
 }
 
+/* Case studies share one generous horizontal rhythm instead of each section
+   declaring its own px-6. Scoped to `.cs-body > section` so it outranks the
+   utility class without needing !important or per-section edits. */
+.cs-body > section {
+  padding-left: clamp(28px, 7vw, 104px);
+  padding-right: clamp(28px, 7vw, 104px);
+}
+/* Inside the overlay the card is the frame, so the inset is a share of the
+   card's own width rather than the viewport's — keeping the work comfortably
+   inside its container instead of pressed against the edges. */
+.bento-overlay-scroll .cs-body > section {
+  padding-left: clamp(28px, 12%, 116px);
+  padding-right: clamp(28px, 12%, 116px);
+}
+/* Below this, case studies and archive projects (both routed pages and
+   overlay content) match the home page's own mobile margin (.site-container's
+   24px floor) instead of their wider desktop-tuned clamp floors. */
+@media (max-width: 700px) {
+  .cs-body > section,
+  .bento-overlay-scroll .cs-body > section {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* ── Home page layout ─────────────────────────────────────────────
+   One set of margins and one vertical rhythm for every section, so the
+   page reads as a single column of quiet blocks rather than a stack of
+   independently-spaced components. */
+:root {
+  --side-nav-width: 210px;
+}
+
+/* SideNav + main sit in a flex row so the nav can be position:sticky and
+   naturally stop at the bottom of main's content — a sticky element can
+   never render past its own containing block, so it never overlaps the
+   Footer (which sits outside this row entirely). */
+.page-row {
+  display: flex;
+}
+
+.site-main {
+  flex: 1;
+  min-width: 0;
+  /* Matches --side-nav-width exactly (not eyeballed) — .site-container
+     centers within this box, and only an equal left/right pad here makes
+     that centered column land on the page's true center, since the nav
+     otherwise eats into the left side only. */
+  padding-right: var(--side-nav-width);
+}
+.site-container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding-left: clamp(24px, 4vw, 56px);
+  padding-right: clamp(24px, 4vw, 56px);
+}
+.site-section {
+  padding-top: clamp(64px, 8vw, 112px);
+  padding-bottom: clamp(64px, 8vw, 112px);
+}
+/* Footer sits outside .page-row, so it needs its own matching inset instead
+   of relying on flex layout for it. */
+.footer-inset {
+  padding-left: var(--side-nav-width);
+}
+
+@media (max-width: 900px) {
+  .page-row { flex-direction: column; }
+  .site-main { padding-right: 0; }
+  .footer-inset { padding-left: 0; }
+  .site-section {
+    padding-top: clamp(48px, 10vw, 80px);
+    padding-bottom: clamp(48px, 10vw, 80px);
+  }
+}
+
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--fg);
@@ -42,6 +118,10 @@ body {
   background: var(--cream);
   color: var(--fg);
   font-family: var(--font-poppins), system-ui, sans-serif;
+  /* Poppins reads noticeably heavier than most UI sans fonts at 400 —
+     dropping the baseline weight to Light keeps body copy feeling thin
+     and minimal instead of bold-by-default. */
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   /* Hide scrollbar globally */
   scrollbar-width: none;
@@ -55,6 +135,13 @@ section {
   scroll-margin-top: var(--nav-height);
 }
 
+/* No orphaned last lines — the browser reflows to avoid a paragraph or
+   heading ending with a single stray word/short line, at any viewport
+   width, without needing hand-tuned nbsp joins per line of copy. */
+p, li, h1, h2, h3, h4, h5, h6, blockquote {
+  text-wrap: pretty;
+}
+
 ::selection {
   background: var(--accent);
   color: #fff;
@@ -63,15 +150,6 @@ section {
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
-}
-
-@keyframes shipped-glow {
-  0%, 100% { box-shadow: 0 0 0px rgba(34, 197, 94, 0.4); }
-  50%       { box-shadow: 0 0 12px rgba(34, 197, 94, 0.7); }
-}
-
-.badge-shipped {
-  animation: shipped-glow 2s ease-in-out infinite;
 }
 
 /* Hide snap-scroll track scrollbar (webkit) */

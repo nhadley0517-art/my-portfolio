@@ -16,7 +16,7 @@ function HeroVisual({ project }: { project: ArchiveProjectData & { hero: NonNull
         muted
         loop
         playsInline
-        style={{ width: "100%", borderRadius: "16px", display: "block" }}
+        style={{ width: "100%", borderRadius: "4px", display: "block" }}
       >
         <source src={project.hero.src} />
       </video>
@@ -28,7 +28,7 @@ function HeroVisual({ project }: { project: ArchiveProjectData & { hero: NonNull
     <img
       src={project.hero.src}
       alt={project.hero.alt ?? project.title}
-      style={{ width: "100%", height: "auto", display: "block", borderRadius: "16px" }}
+      style={{ width: "100%", height: "auto", display: "block", borderRadius: "4px" }}
     />
   );
 }
@@ -54,9 +54,21 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
 
   const content = (
     <>
+        {/* Mobile only — the sole exit was previously the "Back to the
+            archive" link at the very bottom, which on a long project meant
+            scrolling all the way down just to leave. Sticky so it stays
+            reachable from wherever you've scrolled to. */}
+        <div className="archive-back-row">
+          {isOverlay ? (
+            <button type="button" onClick={onClose} className="archive-back-arrow" aria-label="Back to the archive">←</button>
+          ) : (
+            <Link href="/#archive" className="archive-back-arrow" aria-label="Back to the archive">←</Link>
+          )}
+        </div>
+
         {/* ── Hero ── */}
         <section className={isOverlay ? "pt-10 md:pt-12" : "pt-14 md:pt-20"}>
-          <div className="px-6 max-w-5xl mx-auto mb-10">
+          <div className="max-w-5xl mx-auto mb-10">
             <ScrollReveal>
               <p
                 style={{
@@ -87,7 +99,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
 
           {project.hero && (
             <ScrollReveal delay={0.1}>
-              <div className="px-6 max-w-5xl mx-auto">
+              <div className="max-w-5xl mx-auto">
                 <HeroVisual project={{ ...project, hero: project.hero }} />
               </div>
             </ScrollReveal>
@@ -144,7 +156,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
                       </div>
                     )}
 
-                    <div style={{ background: "#F7F7F5", borderRadius: "16px", padding: "18px 20px", marginBottom: "20px" }}>
+                    <div style={{ background: "#F7F7F5", borderRadius: "4px", padding: "18px 20px", marginBottom: "20px" }}>
                       <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "#9CA3AF", marginBottom: "8px" }}>
                         The problem
                       </p>
@@ -261,7 +273,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
                     <img
                       src={img.src}
                       alt={img.alt ?? project.title}
-                      style={{ width: "100%", height: "auto", display: "block", borderRadius: "16px" }}
+                      style={{ width: "100%", height: "auto", display: "block", borderRadius: "4px" }}
                     />
                   </ScrollReveal>
                 ))}
@@ -323,6 +335,33 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
         </section>
 
       <style>{`
+        .archive-back-row { display: none; }
+        @media (max-width: 700px) {
+          .archive-back-row {
+            display: block;
+            position: sticky;
+            top: 12px;
+            z-index: 40;
+            padding: 12px 0 0 24px;
+          }
+          .archive-back-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin: -8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.9);
+            color: #A8ABB2;
+            font-size: 17px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.15s ease;
+          }
+          .archive-back-arrow:hover { color: #6B7280; }
+        }
         .screen-badge {
           font-size: 11px; font-weight: 600; color: #9CA3AF; margin: 0 0 8px;
         }
@@ -378,13 +417,13 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
   );
 
   if (isOverlay) {
-    return <div className="px-4">{content}</div>;
+    return <div className="cs-body">{content}</div>;
   }
 
   return (
     <>
       <Nav />
-      <main className="pt-[72px]">{content}</main>
+      <main className="pt-[72px] cs-body">{content}</main>
       <Footer />
     </>
   );

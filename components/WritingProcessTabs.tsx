@@ -52,7 +52,7 @@ export default function WritingProcessTabs() {
               width: "100%",
               height: "auto",
               display: "block",
-              borderRadius: "12px",
+              borderRadius: "4px",
             }}
           />
         </AnimatePresence>
