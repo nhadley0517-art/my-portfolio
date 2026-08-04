@@ -1,18 +1,14 @@
 import FooterArt from "@/components/FooterArt";
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-
   return (
     <footer style={{ background: "#f4f4f5" }} className="footer-inset pt-3">
-      {/* One consolidated pill instead of a spread-out row — everything the
-          footer needs to say, sitting directly on the art itself rather
-          than as a separate "section" stacked under it. */}
+      {/* Minimal — just enough to say who this is and how to reach him,
+          sitting directly on the art itself rather than as a separate
+          "section" stacked under it. */}
       <FooterArt>
         <div className="footer-pill">
           <span className="footer-pill-name">Noah Hadley</span>
-          <span className="footer-pill-copy">© {year} Designed &amp; built by me!</span>
-          <span className="footer-pill-roles">Open to full-time roles.</span>
           <a
             href="mailto:nhadley0517@gmail.com"
             className="footer-pill-contact"
@@ -25,11 +21,8 @@ export default function Footer() {
       <style>{`
         .footer-pill {
           display: flex;
-          flex-wrap: wrap;
           align-items: center;
-          justify-content: center;
           gap: 18px;
-          row-gap: 8px;
           padding: 14px 22px;
           background: #fff;
           border-radius: 4px;
@@ -42,11 +35,6 @@ export default function Footer() {
           font-size: 14px;
           letter-spacing: -0.02em;
         }
-        .footer-pill-copy,
-        .footer-pill-roles {
-          font-size: 12px;
-          color: #9CA3AF;
-        }
         .footer-pill-contact {
           font-size: 12px;
           font-weight: 500;
@@ -55,6 +43,12 @@ export default function Footer() {
           transition: color 0.15s ease;
         }
         .footer-pill-contact:hover { color: #111827; }
+
+        @media (max-width: 700px) {
+          .footer-pill { gap: 12px; padding: 8px 14px; }
+          .footer-pill-name { font-size: 12px; }
+          .footer-pill-contact { font-size: 11px; }
+        }
       `}</style>
     </footer>
   );

@@ -40,7 +40,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 7%;
+      /* Phones are already sized to fill most of the row (max-width below),
+         so a wide gap here was what pushed the outer two flush against the
+         container edge — less gap between them leaves more margin on the
+         outside instead, since the group is centered as a whole. */
+      gap: 3%;
       height: 100%;
       padding: 0;
     }

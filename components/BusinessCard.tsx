@@ -35,10 +35,17 @@ const settleSpring = { type: "spring" as const, stiffness: 170, damping: 20, mas
  *
  *  Drag turns it (Y accumulates freely so it can be spun through multiple
  *  full turns); on release it settles onto whichever face it's nearest, which
- *  is what makes it feel like an object with weight rather than a slider. */
-export default function BusinessCard() {
+ *  is what makes it feel like an object with weight rather than a slider.
+ *
+ *  On mobile (`mobile` prop, set by Hero's separate mobile card instance),
+ *  drag-to-rotate and hover-tilt are dropped entirely — a thumb dragging a
+ *  3D object while also trying to scroll the page read as fighting the
+ *  interaction, not playing with it. Mobile gets a plain tap-to-flip instead,
+ *  and the wrapper allows normal vertical scrolling through it. */
+export default function BusinessCard({ mobile = false }: { mobile?: boolean }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const dragStart = useRef<{ x: number; y: number; rx: number; ry: number } | null>(null);
+  const tapStart = useRef<{ x: number; y: number } | null>(null);
   // The rotation the card settles to — always a multiple of 180 (a whole
   // number of half-turns), so hover tilt can be applied relative to whichever
   // face is currently showing instead of snapping back to the front.
@@ -142,16 +149,30 @@ export default function BusinessCard() {
     animate(rx, 0, settleSpring);
   };
 
+  // Mobile: track where the tap started, and only flip if the pointer
+  // barely moved before release — a real scroll swipe (large movement)
+  // just does nothing here and lets the page scroll normally underneath.
+  const handleTapDown = (e: React.PointerEvent) => {
+    tapStart.current = { x: e.clientX, y: e.clientY };
+  };
+  const handleTapUp = (e: React.PointerEvent) => {
+    const start = tapStart.current;
+    tapStart.current = null;
+    if (!start) return;
+    const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
+    if (moved < 10) flip();
+  };
+
   return (
     <div
       ref={wrapRef}
-      className={"bcard-wrap" + (dragging ? " is-dragging" : "") + (lit ? " is-lit" : "")}
-      onPointerMove={handleMove}
-      onPointerEnter={() => setLit(true)}
-      onPointerLeave={handleLeave}
-      onPointerDown={handleDown}
-      onPointerUp={handleUp}
-      onPointerCancel={handleUp}
+      className={"bcard-wrap" + (mobile ? " bcard-wrap--mobile" : "") + (dragging ? " is-dragging" : "") + (lit ? " is-lit" : "")}
+      onPointerMove={mobile ? undefined : handleMove}
+      onPointerEnter={mobile ? undefined : () => setLit(true)}
+      onPointerLeave={mobile ? undefined : handleLeave}
+      onPointerDown={mobile ? handleTapDown : handleDown}
+      onPointerUp={mobile ? handleTapUp : handleUp}
+      onPointerCancel={mobile ? () => { tapStart.current = null; } : handleUp}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -160,7 +181,11 @@ export default function BusinessCard() {
       }}
       role="button"
       tabIndex={0}
-      aria-label="Noah Hadley's business card. Drag to turn it over, or press Enter to flip."
+      aria-label={
+        mobile
+          ? "Noah Hadley's business card. Tap to flip."
+          : "Noah Hadley's business card. Drag to turn it over, or press Enter to flip."
+      }
     >
       <motion.div
         className="bcard-shadow"
@@ -182,7 +207,7 @@ export default function BusinessCard() {
       </motion.div>
 
       <span className={"bcard-hint" + (touched ? " is-gone" : "")} aria-hidden>
-        Drag to turn
+        {mobile ? "Tap to flip" : "Drag to turn"}
       </span>
 
       <style>{`
@@ -202,6 +227,10 @@ export default function BusinessCard() {
         }
         .bcard-wrap.is-dragging { cursor: grabbing; }
         .bcard-wrap:focus-visible { outline: 2px solid #13181B; outline-offset: 14px; border-radius: 4px; }
+        /* No drag interaction on mobile, so nothing needs to claim touch
+           gestures — letting the page scroll normally through the card is
+           what a plain tap-target should do. */
+        .bcard-wrap--mobile { touch-action: manipulation; cursor: pointer; }
 
         .bcard {
           position: relative;

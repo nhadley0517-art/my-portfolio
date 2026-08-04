@@ -188,7 +188,7 @@ export default function Hero() {
         </div>
         <div className="hero-image-stage">
           <div className="hero-card-stage hero-card-stage--mobile">
-            <BusinessCard />
+            <BusinessCard mobile />
           </div>
         </div>
       </div>

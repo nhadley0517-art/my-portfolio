@@ -59,11 +59,12 @@ export default function Nav({
   };
 
   const scrollToSection = (id: string) => {
+    // scrollIntoView + the global `section { scroll-margin-top }` rule is
+    // the same pattern SideNav uses for its own links — more reliable than
+    // a manually computed window.scrollTo offset, and automatically
+    // accounts for the sticky bar's height instead of a hardcoded number.
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     setOpen(false);
-    const el = document.getElementById(id);
-    if (!el) return;
-    const offsetTop = el.getBoundingClientRect().top + window.scrollY - 88;
-    window.scrollTo({ top: offsetTop, behavior: "smooth" });
   };
 
   return (
