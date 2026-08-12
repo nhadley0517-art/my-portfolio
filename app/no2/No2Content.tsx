@@ -85,7 +85,7 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
         <section className="pt-14 md:pt-20">
           <ScrollReveal>
             <div className="max-w-5xl mx-auto pb-10 md:pb-14">
-              <iframe src="/no2-hero.html" scrolling="no" className="hero-desktop" style={{ width: "100%", height: "500px", border: "none", borderRadius: "4px" }} />
+              <iframe src="/no2-hero.html" scrolling="no" className="hero-desktop" style={{ width: "100%", aspectRatio: "1200 / 630", border: "none", borderRadius: "4px" }} />
               <iframe src="/no2-thumb.html" scrolling="no" className="hero-mobile" style={{ width: "100%", height: "300px", border: "none", borderRadius: "4px" }} />
             </div>
           </ScrollReveal>

@@ -179,7 +179,14 @@ export default function SelectedWork() {
 
         .sw-thumbs {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          /* Plain 1fr is really minmax(auto, 1fr) — "auto" lets each track's
+             minimum be pulled by that item's own intrinsic/min-content size,
+             and an <iframe> (No. 2's thumb) has a different default
+             intrinsic size than a <video> or <img>, so the three columns
+             drifted apart at narrower widths instead of staying equal.
+             minmax(0, 1fr) ignores content size entirely — always exactly
+             equal thirds. */
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 20px;
           width: calc(100% + 60px);
         }

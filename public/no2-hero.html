@@ -5,16 +5,24 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* Fluid from edge to edge — the outer embed (No2Content.tsx) sizes this
+       iframe with width:100% and a fixed 1200/630 aspect-ratio, so this
+       document's own viewport always keeps that ratio too. Everything below
+       is sized in %/aspect-ratio off that viewport instead of hardcoded
+       pixels, so the scene scales down cleanly instead of getting clipped
+       (a fixed 1200x630 canvas rendered inside a narrower iframe box used to
+       just crop off the right and bottom, which is what read as "circular"
+       squished phones and a disappearing side phone). */
     html, body {
-      width: 1200px;
-      height: 630px;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
       background: #1C1C1E;
     }
 
     .container {
-      width: 1200px;
-      height: 630px;
+      width: 100%;
+      height: 100%;
       position: relative;
       display: flex;
       align-items: center;
@@ -23,8 +31,11 @@
 
     .glow {
       position: absolute;
-      width: 560px;
-      height: 560px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 45%;
+      height: 150%;
       border-radius: 50%;
       background: radial-gradient(ellipse at center, rgba(126, 183, 127, 0.15) 0%, transparent 70%);
       pointer-events: none;
@@ -52,33 +63,44 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 32px;
+      gap: 3%;
+      height: 100%;
       margin: 0 auto;
     }
 
     .screen {
-      border-radius: 6px;
+      border-radius: 11px;
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       flex-shrink: 0;
     }
 
+    /* Same "contain" pattern as no2-thumb.html: auto on both axes plus a
+       max on both, with aspect-ratio holding the phone shape — whichever
+       bound (height or width) is tighter wins, so the scene shrinks as a
+       whole instead of any one phone clipping or distorting. */
     .screen-side {
-      width: 230px;
-      height: 498px;
+      height: auto;
+      width: auto;
+      max-height: 78%;
+      max-width: 22%;
+      aspect-ratio: 9 / 19.5;
     }
 
     .screen-center {
-      width: 276px;
-      height: 598px;
+      height: auto;
+      width: auto;
+      max-height: 94%;
+      max-width: 26%;
+      aspect-ratio: 9 / 19.5;
     }
 
     .screen-left {
-      transform: rotate(-1deg) translateY(30px);
+      transform: rotate(-1deg) translateY(5%);
     }
 
     .screen-right {
-      transform: rotate(1deg) translateY(30px);
+      transform: rotate(1deg) translateY(5%);
     }
 
     .screen video {
@@ -86,14 +108,6 @@
       height: 100%;
       object-fit: cover;
       display: block;
-    }
-
-    @media (max-width: 768px) {
-      html, body { width: 100%; height: 100%; }
-      .container { width: 100%; height: 100%; }
-      .screen-left, .screen-right { display: none; }
-      .screens { gap: 0; align-items: center; justify-content: center; height: 100%; padding: 0; }
-      .screen-center { width: 75%; height: auto; aspect-ratio: 9 / 19.5; transform: none; }
     }
   </style>
 </head>

@@ -57,6 +57,34 @@
       min-width: 0;
     }
 
+    /* Regular desktop only (the plateaued ~276px-wide thumb, matching the
+       same 1300px cutoff the home page's Selected Work grid itself uses)
+       — everything else that shares the default 11px above (mobile, both
+       the home thumb and the case-study hero) stays untouched. Gated by
+       the same ctx class mechanism as the small-desktop override below. */
+    body.ctx-desktop .phone { border-radius: 10px; }
+
+    /* This file is also embedded (much smaller) as the home page's Selected
+       Work thumbnail, which shrinks a lot at both tablet AND "small desktop"
+       widths — the desktop sidebar is still reserving space (or the 3-col
+       row just hasn't gone full-width yet), so the phones themselves can
+       drop under ~50px wide. 11px fixed stayed constant while the phone
+       shrank, so it grew to be half the phone's width — a blob, not a
+       phone. This only matches when the IFRAME's own rendered width is
+       small too, so the regular-desktop thumb (~276px) and the mobile hero
+       (~300px+) are untouched.
+
+       Tablet and small-desktop widths land on overlapping IFRAME pixel
+       sizes (e.g. iPad landscape at 1024px outer renders a narrower thumb
+       than a 768px-wide tablet does), so the iframe's own width alone can't
+       tell them apart — a body class set from the outer page's real
+       viewport width below does that instead, matching the same 900px
+       cutoff the site's own SideNav uses to switch to its mobile layout. */
+    @media (max-width: 260px) {
+      .phone { border-radius: 4px; }
+      body.ctx-small-desktop .phone { border-radius: 4px; }
+    }
+
     /* Sized by height alone on a wide container, but this same file gets
        embedded as the mobile hero thumbnail at widths as narrow as ~200px —
        height-only sizing there forces all 3 phones far wider than the row
@@ -112,5 +140,22 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Same-origin parent (this file only ever lives inside this site's own
+    // pages), so we can read the real outer viewport width directly instead
+    // of guessing from this iframe's own rendered size — see the .phone
+    // comment above for why that's necessary.
+    (function () {
+      function syncContext() {
+        var w;
+        try { w = window.parent.innerWidth; } catch (e) { w = window.innerWidth; }
+        document.body.classList.toggle('ctx-small-desktop', w > 900 && w <= 1300);
+        document.body.classList.toggle('ctx-desktop', w > 1300);
+      }
+      syncContext();
+      window.addEventListener('resize', syncContext);
+    })();
+  </script>
 </body>
 </html>
