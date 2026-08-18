@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1120 720" width="100%" style="display:block" role="img"
+     aria-labelledby="sys-t sys-d">
+  <title id="sys-t">Where No. 2 data lives</title>
+  <desc id="sys-d">Everything a user logs stays in on-device storage. The only data that crosses to a server is the account session for sign in. The logs table on the server is built but unused.</desc>
+
+  <defs>
+    <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="9" flood-color="#1E2722" flood-opacity="0.07"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6FA383"/>
+    </marker>
+    <marker id="arrowN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B7BEB7"/>
+    </marker>
+    <marker id="arrowC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C57A57"/>
+    </marker>
+    <style>
+    text { font-family:'NunitoX', 'Nunito', system-ui, sans-serif; }
+    .zone  { font-size:14px; font-weight:700; letter-spacing:0.1px; fill:#8C948C; }
+    .mark  { font-size:15px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .chip  { font-size:16px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .chipA { font-size:16px; font-weight:700; letter-spacing:-0.2px; fill:#2E4D3E; }
+    .h     { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#1E2722; }
+    .hMute { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#8C948C; }
+    .hClay { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#7A4235; }
+    .hMoss { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#2E4D3E; }
+    .lead  { font-size:20px; font-weight:700; letter-spacing:-0.4px; fill:#1E2722; }
+    .sub   { font-size:14px; font-weight:400; fill:#5A655D; }
+    .subMute { font-size:13.5px; font-weight:400; fill:#B7BEB7; }
+    .subClay { font-size:13.5px; font-weight:400; fill:#C57A57; }
+    .subMoss { font-size:13.5px; font-weight:400; fill:#6FA383; }
+    .eyebrow { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#8C948C; }
+    .eyeClay { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#C57A57; }
+    .eyeMoss { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#6FA383; }
+    .tag   { font-size:12px; font-weight:700; letter-spacing:0.3px; fill:#6FA383; }
+    .tagN  { font-size:12px; font-weight:700; letter-spacing:0.3px; fill:#8C948C; }
+    .badge { font-size:13px; font-weight:700; fill:#7A4235; }
+    .badgeM { font-size:13px; font-weight:700; fill:#2E4D3E; }
+    .nodeLbl { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .nodeMute { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#8C948C; }
+    .cardH { font-size:16px; font-weight:700; letter-spacing:-0.3px; fill:#1E2722; }
+    .cap   { font-size:15px; font-weight:400; fill:#8C948C; }
+    .capB  { font-weight:700; fill:#5A655D; }
+    .stat  { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#1E2722; }
+    .statClay { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#C57A57; }
+    .statMoss { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#6FA383; }
+    .statSub { font-size:16px; font-weight:400; fill:#5A655D; }
+    .fine  { font-size:13px; font-weight:400; fill:#B7BEB7; }
+    .workL { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .workS { font-size:12.5px; font-weight:400; fill:#8C948C; }
+    .brkClay { font-size:14px; font-weight:700; fill:#7A4235; }
+    .brkMute { font-size:14px; font-weight:700; fill:#8C948C; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="660" rx="28" fill="#F4F6F8"/>
+
+  <text x="72" y="104" class="zone">On your phone</text>
+  <text x="700" y="104" class="zone">On a server</text>
+
+  <line x1="606" y1="136" x2="606" y2="588" stroke="#C9D0D6" stroke-width="1"/>
+
+  <g>
+    <rect x="72" y="136" width="430" height="452" rx="28" fill="#FFFFFF" filter="url(#lift)"/>
+    <text x="104" y="172" class="mark">No. 2</text>
+  </g>
+
+  <g>
+    <rect x="104" y="192" width="366" height="56" rx="16" fill="#D9E7DD"/>
+    <text x="128" y="226" class="chipA">Your account</text>
+  </g>
+
+  <g>
+    <rect x="104" y="284" width="366" height="52" rx="14" fill="#F4F6F8"/>
+    <text x="128" y="316" class="chip">Your logs</text>
+  </g>
+  <g>
+    <rect x="104" y="348" width="366" height="52" rx="14" fill="#F4F6F8"/>
+    <text x="128" y="380" class="chip">Streaks and insights</text>
+  </g>
+  <g>
+    <rect x="104" y="412" width="366" height="52" rx="14" fill="#F4F6F8"/>
+    <text x="128" y="444" class="chip">Doctor PDF export</text>
+  </g>
+
+  <g>
+    <path d="M 249 470 L 249 500" stroke="#DCE1E6" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M 244 500 L 249 506 L 254 500" fill="none" stroke="#B7BEB7" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 325 506 L 325 476" stroke="#DCE1E6" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M 320 476 L 325 470 L 330 476" fill="none" stroke="#B7BEB7" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="249" cy="470" r="3.5" fill="#8C948C" opacity="0">
+      <animate attributeName="cy" dur="2.4s" repeatCount="indefinite"
+               values="470;500;500" keyTimes="0;0.55;1"/>
+      <animate attributeName="opacity" dur="2.4s" repeatCount="indefinite"
+               values="0;1;1;0;0" keyTimes="0;0.08;0.47;0.57;1"/>
+    </circle>
+    <circle cx="325" cy="506" r="3.5" fill="#8C948C" opacity="0">
+      <animate attributeName="cy" dur="2.4s" begin="1.2s" repeatCount="indefinite"
+               values="506;476;476" keyTimes="0;0.55;1"/>
+      <animate attributeName="opacity" dur="2.4s" begin="1.2s" repeatCount="indefinite"
+               values="0;1;1;0;0" keyTimes="0;0.08;0.47;0.57;1"/>
+    </circle>
+  </g>
+
+  <g>
+    <rect x="104" y="512" width="366" height="52" rx="14" fill="#FFFFFF"
+          stroke="#D9E7DD" stroke-width="1.5"/>
+    <text x="128" y="544" class="chip">On-device storage</text>
+  </g>
+
+  <g>
+    <path id="acct" d="M 502 220 Q 601 300 700 278" fill="none"
+          stroke="#6FA383" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)"/>
+    <rect x="542" y="196" width="118" height="26" rx="13" fill="#FFFFFF"/>
+    <text x="601" y="213" class="tag" text-anchor="middle">sign in only</text>
+    <circle r="4.5" fill="#6FA383" opacity="0">
+      <animateMotion dur="5s" repeatCount="indefinite" keyPoints="0;1;1"
+                     keyTimes="0;0.32;1" calcMode="linear">
+        <mpath href="#acct" xlink:href="#acct"/>
+      </animateMotion>
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+               values="0;1;1;0;0" keyTimes="0;0.04;0.28;0.33;1"/>
+    </circle>
+  </g>
+
+  <g>
+    <rect x="700" y="216" width="348" height="124" rx="20" fill="#FFFFFF" filter="url(#lift)"/>
+    <text x="728" y="268" class="h">Account and session</text>
+    <text x="728" y="296" class="sub">Email, password, Apple sign in</text>
+  </g>
+
+  <g>
+    <rect x="700" y="384" width="348" height="124" rx="20" fill="none"
+          stroke="#B7BEB7" stroke-width="1.5" stroke-dasharray="6 7"/>
+    <text x="728" y="432" class="hMute">Logs table</text>
+    <text x="728" y="458" class="subMute">Schema and row-level security are built.</text>
+    <text x="728" y="478" class="subMute">Nothing writes to it yet.</text>
+  </g>
+  <text x="560" y="700" class="cap" text-anchor="middle">Accounts touch a server. <tspan class="capB">Your logs never do.</tspan></text>
+</svg>

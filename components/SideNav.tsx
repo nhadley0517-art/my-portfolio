@@ -34,9 +34,16 @@ export default function SideNav() {
         top: document.getElementById(s.id)?.getBoundingClientRect().top ?? Infinity,
       }));
       const passed = positions.filter((p) => p.top <= THRESHOLD);
-      const current = passed.length
+      let current = passed.length
         ? passed.reduce((a, b) => (b.top > a.top ? b : a))
         : positions[0];
+      // Near the bottom of the page, the last section's own top edge may
+      // never be able to cross THRESHOLD if there isn't enough scroll room
+      // left below it — without this, the final section (e.g. Sandbox)
+      // could never register as active, and clicking it from further up
+      // would appear to land on the section just above instead.
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (atBottom) current = positions[positions.length - 1];
       setActive(current.id);
     };
 
@@ -62,8 +69,18 @@ export default function SideNav() {
   }, []);
 
   const scrollTo = (id: string) => {
-    setOpen(false);
+    // Set directly instead of waiting for the scroll-spy — browsers
+    // coalesce/throttle 'scroll' events during a smooth animated scroll, and
+    // the last one to fire can land short of a long jump's real target,
+    // which is what read as the pill landing one section above whatever was
+    // actually clicked. We already know which section the user meant.
+    setActive(id);
+    // Scroll BEFORE closing the sheet, not after — closing it first
+    // unmounts the sheet mid-click and can shift the page's layout (and
+    // therefore the target's position) out from under scrollIntoView
+    // before it's had a chance to act on it.
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setOpen(false);
   };
 
   return (

@@ -23,6 +23,13 @@ export interface OverlayEntry {
    *  the overlay at all. Desktop is unaffected. */
   route?: string;
   render: (ctx: { close: () => void }) => ReactNode;
+  /** Optional companion panel rendered as a sibling of the main shell, not
+   *  inside it — the 3 case studies use this for their section legend.
+   *  Keeping it outside the shell means it never competes with the shell's
+   *  own content for width (the content's own centering stays untouched)
+   *  and it never scrolls away, since it sits outside the shell's scroll
+   *  region entirely. */
+  sidePanel?: () => ReactNode;
 }
 
 export type OverlayRegistry = Record<string, OverlayEntry>;
@@ -31,6 +38,7 @@ interface OverlayState {
   content: ReactNode;
   variant: BentoOverlayVariant;
   key: string;
+  sidePanel?: ReactNode;
 }
 
 interface BentoOverlayCtx {
@@ -106,6 +114,7 @@ export function BentoOverlayProvider({
         content: entry.render({ close }),
         variant: entry.variant,
         key: `slug-${slug}`,
+        sidePanel: entry.sidePanel?.(),
       };
     },
     [registry, close]
@@ -183,6 +192,15 @@ export function BentoOverlayProvider({
   return (
     <Ctx.Provider value={{ open, openSlug, close }}>
       {children}
+      {/* Its own separate portal, not a descendant of the backdrop/panel
+          tree below — Framer Motion sets transform/will-change inline on
+          animated elements even for an opacity-only animation, and any
+          transformed ancestor turns a fixed-positioned descendant into one
+          that's fixed relative to *that ancestor* instead of the real
+          viewport. Being a fully independent sibling under document.body
+          sidesteps that regardless of which ancestor in the other tree
+          ends up tainted. */}
+      {mounted && state?.sidePanel && createPortal(state.sidePanel, document.body)}
       {mounted &&
         createPortal(
           <AnimatePresence>
@@ -255,7 +273,12 @@ export function BentoOverlayProvider({
         }
         /* Same shell as .card, just noticeably roomier — for the 3 case
            studies, whose 16:9 screenshots and mockups read as cramped at
-           the 880px width used by archive projects and writing. */
+           the 880px width used by archive projects and writing. Owns its
+           own centered width regardless of whether an entry also has a
+           sidePanel — the content shell staying centered is the priority,
+           not fitting a legend in beside it at every width. The sidePanel
+           (case studies' section legend) is fixed-positioned on its own
+           and doesn't participate in this box's layout at all. */
         .bento-overlay-shell.wide {
           background: #f4f4f5;
           border-radius: 4px;

@@ -38,6 +38,11 @@ export default function Nav({
         if (!el) continue;
         if (el.getBoundingClientRect().top <= 130) current = id;
       }
+      // Same bottom-of-page fix as SideNav — the last section's top edge
+      // may never cross the threshold if there's no scroll room left below
+      // it, which would otherwise make it permanently unreachable.
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      if (atBottom) current = sections[sections.length - 1].id;
       setActiveId(current);
     };
     let ticking = false;
@@ -59,6 +64,11 @@ export default function Nav({
   };
 
   const scrollToSection = (id: string) => {
+    // Set directly instead of waiting for the scroll-spy — same fix as
+    // SideNav/CaseStudyNav. Smooth-scroll 'scroll' events get coalesced by
+    // the browser and can land short of a long jump's real target, which
+    // read as the pill settling one section above whatever was clicked.
+    setActiveId(id);
     // scrollIntoView + the global `section { scroll-margin-top }` rule is
     // the same pattern SideNav uses for its own links — more reliable than
     // a manually computed window.scrollTo offset, and automatically

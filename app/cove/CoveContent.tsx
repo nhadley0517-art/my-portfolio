@@ -7,7 +7,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import CaseStudyNav from "@/components/CaseStudyNav";
 import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
 
-const COVE_SECTIONS = [
+export const COVE_SECTIONS = [
   { id: "brief",         label: "Brief" },
   { id: "problem",       label: "Problem" },
   { id: "design-system", label: "Design System" },
@@ -16,7 +16,7 @@ const COVE_SECTIONS = [
   { id: "reflection",    label: "Reflection" },
 ];
 
-const ACCENT = "#4F46E5";       // brand / primary-600
+export const ACCENT = "#4F46E5";       // brand / primary-600
 const ACCENT_SOFT = "#A5B4FC";  // primary-300, accent on dark surfaces
 const DARK = "#1E1B4B";         // primary-950
 const MONO = "var(--font-geist-mono), ui-monospace, monospace";

@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1120 520" width="100%" style="display:block" role="img"
+     aria-labelledby="ship-t ship-d">
+  <title id="ship-t">What it actually took to ship an update</title>
+  <desc id="ship-d">The release pipeline runs from build to submit to Apple processing to store listing to review to live. Three separate snags stopped the release, and none of them were problems with the app code.</desc>
+
+  <defs>
+    <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="9" flood-color="#1E2722" flood-opacity="0.07"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6FA383"/>
+    </marker>
+    <marker id="arrowN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B7BEB7"/>
+    </marker>
+    <marker id="arrowC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C57A57"/>
+    </marker>
+    <style>
+    text { font-family:'NunitoX', 'Nunito', system-ui, sans-serif; }
+    .zone  { font-size:14px; font-weight:700; letter-spacing:0.1px; fill:#8C948C; }
+    .mark  { font-size:15px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .chip  { font-size:16px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .chipA { font-size:16px; font-weight:700; letter-spacing:-0.2px; fill:#2E4D3E; }
+    .h     { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#1E2722; }
+    .hMute { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#8C948C; }
+    .hClay { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#7A4235; }
+    .hMoss { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#2E4D3E; }
+    .lead  { font-size:20px; font-weight:700; letter-spacing:-0.4px; fill:#1E2722; }
+    .sub   { font-size:14px; font-weight:400; fill:#5A655D; }
+    .subMute { font-size:13.5px; font-weight:400; fill:#B7BEB7; }
+    .subClay { font-size:13.5px; font-weight:400; fill:#C57A57; }
+    .subMoss { font-size:13.5px; font-weight:400; fill:#6FA383; }
+    .eyebrow { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#8C948C; }
+    .eyeClay { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#C57A57; }
+    .eyeMoss { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#6FA383; }
+    .tag   { font-size:12px; font-weight:700; letter-spacing:0.3px; fill:#6FA383; }
+    .tagN  { font-size:12px; font-weight:700; letter-spacing:0.3px; fill:#8C948C; }
+    .badge { font-size:13px; font-weight:700; fill:#7A4235; }
+    .badgeM { font-size:13px; font-weight:700; fill:#2E4D3E; }
+    .nodeLbl { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .nodeMute { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#8C948C; }
+    .cardH { font-size:16px; font-weight:700; letter-spacing:-0.3px; fill:#1E2722; }
+    .cap   { font-size:15px; font-weight:400; fill:#8C948C; }
+    .capB  { font-weight:700; fill:#5A655D; }
+    .stat  { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#1E2722; }
+    .statClay { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#C57A57; }
+    .statMoss { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#6FA383; }
+    .statSub { font-size:16px; font-weight:400; fill:#5A655D; }
+    .fine  { font-size:13px; font-weight:400; fill:#B7BEB7; }
+    .workL { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .workS { font-size:12.5px; font-weight:400; fill:#8C948C; }
+    .brkClay { font-size:14px; font-weight:700; fill:#7A4235; }
+    .brkMute { font-size:14px; font-weight:700; fill:#8C948C; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="460" rx="28" fill="#F4F6F8"/>
+
+  <path d="M 130 130 L 990 130" stroke="#E8ECEF" stroke-width="3" stroke-linecap="round"/>
+  <path id="pipe" d="M 130 130 L 990 130" stroke="#1E2722" stroke-width="3"
+        stroke-linecap="round" stroke-dasharray="860" stroke-dashoffset="860">
+    <animate attributeName="stroke-dashoffset" dur="8s" repeatCount="indefinite"
+             values="860.0;860.0;688.0;713.8;688.0;516.0;344.0;369.8;344.0;172.0;0.0;0.0;860.0;860.0"
+             keyTimes="0;0.08;0.16;0.20;0.24;0.32;0.40;0.44;0.48;0.56;0.64;0.95;0.96;1"/>
+  </path>
+
+
+  <circle cx="130" cy="130" r="11" fill="#FAEDE9"
+          stroke="#C57A57" stroke-width="2"/>
+  <text x="130" y="176" class="nodeLbl" text-anchor="middle">Build</text>
+
+  <circle cx="302" cy="130" r="11" fill="#FAEDE9"
+          stroke="#C57A57" stroke-width="2"/>
+  <text x="302" y="176" class="nodeLbl" text-anchor="middle">Submit</text>
+
+  <circle cx="474" cy="130" r="9" fill="#FFFFFF"
+          stroke="#B7BEB7" stroke-width="2"/>
+  <text x="474" y="176" class="nodeMute" text-anchor="middle">Processing</text>
+
+  <circle cx="646" cy="130" r="11" fill="#FAEDE9"
+          stroke="#C57A57" stroke-width="2"/>
+  <text x="646" y="176" class="nodeLbl" text-anchor="middle">Listing</text>
+
+  <circle cx="818" cy="130" r="9" fill="#FFFFFF"
+          stroke="#B7BEB7" stroke-width="2"/>
+  <text x="818" y="176" class="nodeMute" text-anchor="middle">Review</text>
+
+  <circle cx="990" cy="130" r="13" fill="#FFFFFF" stroke="#B7BEB7" stroke-width="2"/>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="0;0;1;1;0;0" keyTimes="0;0.64;0.68;0.9;0.95;1"/>
+    <circle cx="990" cy="130" r="13" fill="#1E2722"/>
+    <path d="M 985 130 l 3.4 3.4 l 6.2 -6.6" fill="none" stroke="#FFFFFF"
+          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="990" y="176" class="nodeLbl" text-anchor="middle">Live</text>
+
+
+  <circle cx="130" cy="130" r="11" fill="none" stroke="#C57A57" stroke-width="2" opacity="0">
+    <animate attributeName="r" dur="8s" repeatCount="indefinite"
+             values="11;11;26;11;11" keyTimes="0;0.005;0.08;0.085;1"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="0;0.7;0;0;0" keyTimes="0;0.005;0.08;0.085;1"/>
+  </circle>
+
+  <circle cx="302" cy="130" r="11" fill="none" stroke="#C57A57" stroke-width="2" opacity="0">
+    <animate attributeName="r" dur="8s" repeatCount="indefinite"
+             values="11;11;26;11;11" keyTimes="0;0.16;0.24;0.245;1"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="0;0.7;0;0;0" keyTimes="0;0.16;0.24;0.245;1"/>
+  </circle>
+
+  <circle cx="646" cy="130" r="11" fill="none" stroke="#C57A57" stroke-width="2" opacity="0">
+    <animate attributeName="r" dur="8s" repeatCount="indefinite"
+             values="11;11;26;11;11" keyTimes="0;0.4;0.48;0.485;1"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="0;0.7;0;0;0" keyTimes="0;0.4;0.48;0.485;1"/>
+  </circle>
+
+  <circle r="5.5" fill="#1E2722">
+    <animateMotion dur="8s" repeatCount="indefinite"
+                   keyPoints="0;0;0.2;0.17;0.2;0.4;0.6;0.57;0.6;0.8;1;1;1;1" keyTimes="0;0.08;0.16;0.20;0.24;0.32;0.40;0.44;0.48;0.56;0.64;0.95;0.96;1" calcMode="linear">
+      <mpath href="#pipe" xlink:href="#pipe"/>
+    </animateMotion>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="1;1;0;0;1" keyTimes="0;0.9;0.95;0.97;1"/>
+  </circle>
+
+
+  <g>
+    <rect x="72" y="230" width="300" height="180" rx="20" fill="#FFFFFF" filter="url(#lift)"/>
+    
+  <circle cx="106" cy="268" r="14" fill="none" stroke="#C57A57" stroke-width="2" opacity="0">
+    <animate attributeName="r" dur="8s" repeatCount="indefinite"
+             values="14;14;29;14;14" keyTimes="0;0.005;0.08;0.085;1"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="0;0.7;0;0;0" keyTimes="0;0.005;0.08;0.085;1"/>
+  </circle>
+    <circle cx="106" cy="268" r="14" fill="#FAEDE9"/>
+    <text x="106" y="273" class="badge" text-anchor="middle">1</text>
+    <text x="100" y="322" class="cardH">The upload kept failing.</text>
+    <text x="100" y="350" class="subMute">A dead file from an old refactor</text>
+    <text x="100" y="371" class="subMute">had corrupted in cloud sync.</text>
+    <circle cx="105" cy="391" r="5.5" fill="none" stroke="#C57A57" stroke-width="1.6"/>
+    <circle cx="123" cy="391" r="5.5" fill="#6FA383"/>
+    <text x="138" y="396" class="fine">two builds</text>
+  </g>
+
+  <g>
+    <rect x="410" y="230" width="300" height="180" rx="20" fill="#FFFFFF" filter="url(#lift)"/>
+    
+  <circle cx="444" cy="268" r="14" fill="none" stroke="#C57A57" stroke-width="2" opacity="0">
+    <animate attributeName="r" dur="8s" repeatCount="indefinite"
+             values="14;14;29;14;14" keyTimes="0;0.16;0.24;0.245;1"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="0;0.7;0;0;0" keyTimes="0;0.16;0.24;0.245;1"/>
+  </circle>
+    <circle cx="444" cy="268" r="14" fill="#FAEDE9"/>
+    <text x="444" y="273" class="badge" text-anchor="middle">2</text>
+    <text x="438" y="322" class="cardH">Submit had nowhere to go.</text>
+    <text x="438" y="350" class="subMute">The App Store Connect ID was</text>
+    <text x="438" y="371" class="subMute">missing from the submit profile.</text>
+    <circle cx="443" cy="391" r="5.5" fill="none" stroke="#C57A57" stroke-width="1.6"/>
+    <circle cx="461" cy="391" r="5.5" fill="#6FA383"/>
+    <text x="476" y="396" class="fine">two submits</text>
+  </g>
+
+  <g>
+    <rect x="748" y="230" width="300" height="180" rx="20" fill="#FFFFFF" filter="url(#lift)"/>
+    
+  <circle cx="782" cy="268" r="14" fill="none" stroke="#C57A57" stroke-width="2" opacity="0">
+    <animate attributeName="r" dur="8s" repeatCount="indefinite"
+             values="14;14;29;14;14" keyTimes="0;0.4;0.48;0.485;1"/>
+    <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+             values="0;0.7;0;0;0" keyTimes="0;0.4;0.48;0.485;1"/>
+  </circle>
+    <circle cx="782" cy="268" r="14" fill="#FAEDE9"/>
+    <text x="782" y="273" class="badge" text-anchor="middle">3</text>
+    <text x="776" y="322" class="cardH">Screenshots bounced back.</text>
+    <text x="776" y="350" class="subMute">Rendered at 6.7 inch. Apple wanted</text>
+    <text x="776" y="371" class="subMute">the 6.9 inch master.</text>
+    <circle cx="781" cy="391" r="5.5" fill="none" stroke="#C57A57" stroke-width="1.6"/>
+    <circle cx="799" cy="391" r="5.5" fill="#6FA383"/>
+    <text x="814" y="396" class="fine">two renders</text>
+  </g>
+  <text x="560" y="500" class="cap" text-anchor="middle"><tspan class="capB">None of these were code problems.</tspan> Every one of them stopped the release.</text>
+</svg>

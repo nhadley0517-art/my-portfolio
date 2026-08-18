@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 1120 730" width="100%" style="display:block" role="img"
+     aria-labelledby="log-t log-d">
+  <title id="log-t">Full log versus quick log</title>
+  <desc id="log-d">The full log flow is four screens: Bristol type, symptoms, frequency, and notes. Quick log saves the entry from a single tap on the Bristol type.</desc>
+
+  <defs>
+    <filter id="lift" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="9" flood-color="#1E2722" flood-opacity="0.07"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6FA383"/>
+    </marker>
+    <marker id="arrowN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B7BEB7"/>
+    </marker>
+    <marker id="arrowC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#C57A57"/>
+    </marker>
+    <style>
+    text { font-family:'NunitoX', 'Nunito', system-ui, sans-serif; }
+    .zone  { font-size:14px; font-weight:700; letter-spacing:0.1px; fill:#8C948C; }
+    .mark  { font-size:15px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .chip  { font-size:16px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .chipA { font-size:16px; font-weight:700; letter-spacing:-0.2px; fill:#2E4D3E; }
+    .h     { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#1E2722; }
+    .hMute { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#8C948C; }
+    .hClay { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#7A4235; }
+    .hMoss { font-size:19px; font-weight:700; letter-spacing:-0.4px; fill:#2E4D3E; }
+    .lead  { font-size:20px; font-weight:700; letter-spacing:-0.4px; fill:#1E2722; }
+    .sub   { font-size:14px; font-weight:400; fill:#5A655D; }
+    .subMute { font-size:13.5px; font-weight:400; fill:#B7BEB7; }
+    .subClay { font-size:13.5px; font-weight:400; fill:#C57A57; }
+    .subMoss { font-size:13.5px; font-weight:400; fill:#6FA383; }
+    .eyebrow { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#8C948C; }
+    .eyeClay { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#C57A57; }
+    .eyeMoss { font-size:13px; font-weight:700; letter-spacing:0.1px; fill:#6FA383; }
+    .tag   { font-size:12px; font-weight:700; letter-spacing:0.3px; fill:#6FA383; }
+    .tagN  { font-size:12px; font-weight:700; letter-spacing:0.3px; fill:#8C948C; }
+    .badge { font-size:13px; font-weight:700; fill:#7A4235; }
+    .badgeM { font-size:13px; font-weight:700; fill:#2E4D3E; }
+    .nodeLbl { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .nodeMute { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#8C948C; }
+    .cardH { font-size:16px; font-weight:700; letter-spacing:-0.3px; fill:#1E2722; }
+    .cap   { font-size:15px; font-weight:400; fill:#8C948C; }
+    .capB  { font-weight:700; fill:#5A655D; }
+    .stat  { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#1E2722; }
+    .statClay { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#C57A57; }
+    .statMoss { font-size:56px; font-weight:700; letter-spacing:-2px; fill:#6FA383; }
+    .statSub { font-size:16px; font-weight:400; fill:#5A655D; }
+    .fine  { font-size:13px; font-weight:400; fill:#B7BEB7; }
+    .workL { font-size:14px; font-weight:700; letter-spacing:-0.2px; fill:#1E2722; }
+    .workS { font-size:12.5px; font-weight:400; fill:#8C948C; }
+    .brkClay { font-size:14px; font-weight:700; fill:#7A4235; }
+    .brkMute { font-size:14px; font-weight:700; fill:#8C948C; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1120" height="670" rx="28" fill="#F4F6F8"/>
+
+  <text x="72" y="92" class="lead">Full log</text>
+  <text x="72" y="118" class="sub">Four screens, when you want the whole picture</text>
+
+
+  <g>
+    <rect x="150" y="150" width="110" height="140" rx="18" fill="#FFFFFF"
+          stroke="#E8ECEF" stroke-width="1.5"/>
+    
+    <rect x="162" y="164" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="162" y="192" width="86" height="22" rx="7" fill="#D9E7DD"/>
+    <rect x="162" y="220" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="162" y="248" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="150" y="150" width="110" height="140" rx="18" fill="none"
+          stroke="#1E2722" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.02;0.88;0.94;1"/>
+    </rect>
+    <text x="205" y="322" class="nodeLbl" text-anchor="middle">Bristol type</text>
+  </g>
+
+  <path d="M 268 220 L 312 220" fill="none" stroke="#B7BEB7" stroke-width="1.8"
+        stroke-linecap="round" marker-end="url(#arrowN)"/>
+
+  <g>
+    <rect x="320" y="150" width="110" height="140" rx="18" fill="#FFFFFF"
+          stroke="#E8ECEF" stroke-width="1.5"/>
+    
+    <rect x="332" y="164" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="332" y="192" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="332" y="234" width="86" height="6" rx="3" fill="#F4F6F8"/>
+    <circle cx="366" cy="237" r="8" fill="#6FA383"/>
+    <rect x="320" y="150" width="110" height="140" rx="18" fill="none"
+          stroke="#1E2722" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.130;0.155;0.88;0.94;1"/>
+    </rect>
+    <text x="375" y="322" class="nodeLbl" text-anchor="middle">Symptoms</text>
+  </g>
+
+  <path d="M 438 220 L 482 220" fill="none" stroke="#B7BEB7" stroke-width="1.8"
+        stroke-linecap="round" marker-end="url(#arrowN)"/>
+
+  <g>
+    <rect x="490" y="150" width="110" height="140" rx="18" fill="#FFFFFF"
+          stroke="#E8ECEF" stroke-width="1.5"/>
+    
+    <circle cx="514" cy="214" r="12" fill="#F4F6F8"/>
+    <rect x="532" y="194" width="26" height="40" rx="8" fill="#F4F6F8"/>
+    <circle cx="576" cy="214" r="12" fill="#F4F6F8"/>
+    <rect x="490" y="150" width="110" height="140" rx="18" fill="none"
+          stroke="#1E2722" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.260;0.285;0.88;0.94;1"/>
+    </rect>
+    <text x="545" y="322" class="nodeLbl" text-anchor="middle">Frequency</text>
+  </g>
+
+  <path d="M 608 220 L 652 220" fill="none" stroke="#B7BEB7" stroke-width="1.8"
+        stroke-linecap="round" marker-end="url(#arrowN)"/>
+
+  <g>
+    <rect x="660" y="150" width="110" height="140" rx="18" fill="#FFFFFF"
+          stroke="#E8ECEF" stroke-width="1.5"/>
+    
+    <rect x="672" y="174" width="86" height="9" rx="4.5" fill="#F4F6F8"/>
+    <rect x="672" y="191" width="70" height="9" rx="4.5" fill="#F4F6F8"/>
+    <rect x="672" y="208" width="78" height="9" rx="4.5" fill="#F4F6F8"/>
+    <rect x="660" y="150" width="110" height="140" rx="18" fill="none"
+          stroke="#1E2722" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.390;0.415;0.88;0.94;1"/>
+    </rect>
+    <text x="715" y="322" class="nodeLbl" text-anchor="middle">Notes</text>
+  </g>
+
+  <path d="M 778 220 L 838 220" fill="none" stroke="#B7BEB7" stroke-width="1.8"
+        stroke-linecap="round" marker-end="url(#arrowN)"/>
+
+  <circle cx="876" cy="220" r="24" fill="#EAEDF1"/>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.520;0.545;0.88;0.94;1"/>
+    <circle cx="876" cy="220" r="24" fill="#1E2722"/>
+    <path d="M 867 220 l 6 6 l 11.5 -12" fill="none" stroke="#FFFFFF"
+          stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="876" y="322" class="nodeLbl" text-anchor="middle">Saved</text>
+
+  <text x="72" y="404" class="lead">Quick log</text>
+  <text x="72" y="430" class="sub">One tap, when you already know</text>
+
+  <g>
+
+  <g>
+    <rect x="150" y="462" width="110" height="140" rx="18" fill="#FFFFFF"
+          stroke="#E8ECEF" stroke-width="1.5"/>
+    
+    <rect x="162" y="476" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="162" y="504" width="86" height="22" rx="7" fill="#D9E7DD"/>
+    <rect x="162" y="532" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="162" y="560" width="86" height="22" rx="7" fill="#F4F6F8"/>
+    <rect x="150" y="462" width="110" height="140" rx="18" fill="none"
+          stroke="#1E2722" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;1;1;0;0" keyTimes="0;0.02;0.88;0.94;1"/>
+    </rect>
+    <text x="205" y="634" class="nodeLbl" text-anchor="middle">Tap your type</text>
+  </g>
+    <circle cx="205" cy="515" r="24" fill="none" stroke="#6FA383" stroke-width="2.5" opacity="0">
+      <animate attributeName="r" dur="5s" repeatCount="indefinite"
+               values="16;16;40;16;16" keyTimes="0;0.02;0.16;0.161;1"/>
+      <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+               values="0;0.85;0;0;0" keyTimes="0;0.02;0.16;0.161;1"/>
+    </circle>
+  </g>
+
+  <path d="M 268 532 L 296 532" fill="none" stroke="#B7BEB7" stroke-width="1.8"
+        stroke-linecap="round" marker-end="url(#arrowN)"/>
+
+  <circle cx="334" cy="532" r="24" fill="#EAEDF1"/>
+  <g opacity="0">
+    <animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0;0" keyTimes="0;0.100;0.125;0.88;0.94;1"/>
+    <circle cx="334" cy="532" r="24" fill="#1E2722"/>
+    <path d="M 325 532 l 6 6 l 11.5 -12" fill="none" stroke="#FFFFFF"
+          stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="334" y="634" class="nodeLbl" text-anchor="middle">Saved</text>
+  <text x="560" y="710" class="cap" text-anchor="middle">Same entry either way. <tspan class="capB">One path assumes you already know.</tspan></text>
+</svg>

@@ -7,7 +7,7 @@ import WritingProcessTabs from "@/components/WritingProcessTabs";
 import CaseStudyNav from "@/components/CaseStudyNav";
 import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
 
-const WP_SECTIONS = [
+export const WP_SECTIONS = [
   { id: "overview",        label: "Overview" },
   { id: "problem",         label: "Problem" },
   { id: "research",        label: "Research" },
@@ -17,7 +17,7 @@ const WP_SECTIONS = [
   { id: "outcome",         label: "Outcome" },
 ];
 
-const ACCENT = "#6B3FA0";
+export const ACCENT = "#6B3FA0";
 
 const HERO_IMAGE = "https://framerusercontent.com/images/zZ2hHER48PtEN221uFQgkjWkY.png";
 const PROBLEM_IMAGES = [

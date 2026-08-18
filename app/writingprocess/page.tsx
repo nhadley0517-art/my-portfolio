@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import WritingProcessContent from "./WritingProcessContent";
+import { DesktopOverlayRedirect } from "@/components/CaseStudyShell";
 
 export const metadata: Metadata = {
   title: "Writing Process Redesign — Noah Hadley",
@@ -8,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function WritingProcessPage() {
-  return <WritingProcessContent />;
+  return (
+    <>
+      <DesktopOverlayRedirect slug="writing-process" />
+      <WritingProcessContent />
+    </>
+  );
 }

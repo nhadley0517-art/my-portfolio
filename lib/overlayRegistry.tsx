@@ -1,9 +1,10 @@
 import type { OverlayRegistry } from "@/components/BentoOverlay";
 import ArchiveProjectPage from "@/components/ArchiveProjectPage";
 import { ARCHIVE_PROJECTS } from "@/lib/archiveProjectsData";
-import No2Content from "@/app/no2/No2Content";
-import CoveContent from "@/app/cove/CoveContent";
-import WritingProcessContent from "@/app/writingprocess/WritingProcessContent";
+import { CaseStudySidePanel } from "@/components/CaseStudyShell";
+import No2Content, { NO2_SECTIONS, ACCENT as NO2_ACCENT } from "@/app/no2/No2Content";
+import CoveContent, { COVE_SECTIONS, ACCENT as COVE_ACCENT } from "@/app/cove/CoveContent";
+import WritingProcessContent, { WP_SECTIONS, ACCENT as WP_ACCENT } from "@/app/writingprocess/WritingProcessContent";
 import WritingPost from "@/components/WritingPost";
 import WritingIndex from "@/components/WritingIndex";
 import { POSTS } from "@/content/posts";
@@ -20,16 +21,19 @@ export const OVERLAY_REGISTRY: OverlayRegistry = {
     variant: "wide",
     route: "/no2",
     render: ({ close }) => <No2Content variant="overlay" onClose={close} />,
+    sidePanel: () => <CaseStudySidePanel sections={NO2_SECTIONS} accentColor={NO2_ACCENT} />,
   },
   cove: {
     variant: "wide",
     route: "/cove",
     render: ({ close }) => <CoveContent variant="overlay" onClose={close} />,
+    sidePanel: () => <CaseStudySidePanel sections={COVE_SECTIONS} accentColor={COVE_ACCENT} />,
   },
   "writing-process": {
     variant: "wide",
     route: "/writingprocess",
     render: ({ close }) => <WritingProcessContent variant="overlay" onClose={close} />,
+    sidePanel: () => <CaseStudySidePanel sections={WP_SECTIONS} accentColor={WP_ACCENT} />,
   },
   ...Object.fromEntries(
     ARCHIVE_PROJECTS.map((project) => [
