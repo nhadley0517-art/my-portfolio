@@ -63,17 +63,16 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
 
   const content = (
     <>
-        {/* Mobile only — the sole exit was previously the "Back to the
-            archive" link at the very bottom, which on a long project meant
-            scrolling all the way down just to leave. Sticky so it stays
-            reachable from wherever you've scrolled to. */}
-        <div className="archive-back-row">
-          {isOverlay ? (
-            <button type="button" onClick={onClose} className="archive-back-arrow" aria-label="Back to the archive">←</button>
-          ) : (
+        {/* Mobile, standalone page only — the sole exit was otherwise the
+            "Back to the archive" link at the very bottom, which on a long
+            project meant scrolling all the way down just to leave. Sticky
+            so it stays reachable from wherever you've scrolled to. In the
+            overlay the fixed close X already does this job. */}
+        {!isOverlay && (
+          <div className="archive-back-row">
             <Link href="/#archive" className="archive-back-arrow" aria-label="Back to the archive">←</Link>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* ── Hero ── */}
         <section className={isOverlay ? "pt-10 md:pt-12" : "pt-14 md:pt-20"}>

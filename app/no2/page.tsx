@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import No2Content from "./No2Content";
-import { DesktopOverlayRedirect } from "@/components/CaseStudyShell";
+import { OverlayRedirect } from "@/components/CaseStudyShell";
 
 export const metadata: Metadata = {
   title: "No. 2 — Noah Hadley",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function No2Page() {
   return (
     <>
-      <DesktopOverlayRedirect slug="no2" />
+      <OverlayRedirect slug="no2" />
       <No2Content />
     </>
   );

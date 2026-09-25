@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { sfx } from "@/lib/sounds";
 
@@ -17,11 +16,6 @@ export interface OverlayEntry {
   variant: BentoOverlayVariant;
   /** Cue played on open. Defaults to "open"; reading material uses "flip". */
   sound?: "open" | "flip";
-  /** Standalone page this content also lives at. On mobile the long-form
-   *  overlay reads as a cramped, hard-to-close modal, so entries with a
-   *  route navigate there directly on small screens instead of opening
-   *  the overlay at all. Desktop is unaffected. */
-  route?: string;
   render: (ctx: { close: () => void }) => ReactNode;
   /** Optional companion panel rendered as a sibling of the main shell, not
    *  inside it — the 3 case studies use this for their section legend.
@@ -187,30 +181,34 @@ export function BentoOverlayProvider({
   // the next thing opened always starts at its normal size — fullscreen is a
   // per-viewing choice, not a mode that carries over.
   const [fullscreenKey, setFullscreenKey] = useState<string | null>(null);
-  const router = useRouter();
-  const isMobileRef = useRef(false);
 
   // Portals need `document`, which doesn't exist during SSR — this delays
   // the portal render until after the client mount, the standard fix.
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
-  // Read as a ref rather than state — this only needs to be current at the
-  // moment openSlug is called, not to trigger a re-render of its own.
-  useEffect(() => {
-    const check = () => { isMobileRef.current = window.innerWidth < 700; };
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  // Whether the current ?p= entry is one this page pushed on top of the
+  // home page. Only then is "back" the same as "close" — an overlay reached
+  // by a shared link (or a /cove redirect) has nothing of ours behind it,
+  // and stepping back would leave the site.
+  const pushedRef = useRef(false);
 
-  // Closing an addressable overlay steps back in history rather than pushing
-  // a new entry, so the browser's back button and the UI's close affordances
-  // stay in sync instead of stacking up duplicate entries.
+  // Closing an overlay this page opened steps back in history rather than
+  // pushing a new entry, so the browser's back button and the UI's close
+  // affordances stay in sync instead of stacking up duplicate entries. A
+  // deep-linked one just drops the param in place.
   const close = useCallback(() => {
     sfx.close();
-    if (slugFromLocation()) window.history.back();
-    else setState(null);
+    if (slugFromLocation()) {
+      if (pushedRef.current) {
+        window.history.back();
+        return;
+      }
+      const url = new URL(window.location.href);
+      url.searchParams.delete(URL_PARAM);
+      window.history.replaceState(window.history.state, "", url);
+    }
+    setState(null);
   }, []);
 
   const buildFromSlug = useCallback(
@@ -234,20 +232,16 @@ export function BentoOverlayProvider({
 
   const openSlug = useCallback(
     (slug: string, opts?: { morph?: boolean }) => {
-      const entry = registry?.[slug];
-      if (isMobileRef.current && entry?.route) {
-        router.push(entry.route);
-        return;
-      }
       const next = buildFromSlug(slug);
       if (!next) return;
       sfx[registry?.[slug]?.sound ?? "open"]();
       const url = new URL(window.location.href);
       url.searchParams.set(URL_PARAM, slug);
       window.history.pushState({}, "", url);
+      pushedRef.current = true;
       setState(opts?.morph ? { ...next, morphSlug: slug } : next);
     },
-    [buildFromSlug, registry, router]
+    [buildFromSlug, registry]
   );
 
   // Keep overlay state in sync with the URL so the back button closes an
@@ -258,30 +252,28 @@ export function BentoOverlayProvider({
   }, [buildFromSlug]);
 
   useEffect(() => {
-    window.addEventListener("popstate", syncFromUrl);
-    return () => window.removeEventListener("popstate", syncFromUrl);
+    // Going forward onto an overlay entry means it's one we pushed earlier,
+    // with the page it opened from right behind it.
+    const onPop = () => {
+      pushedRef.current = !!slugFromLocation();
+      syncFromUrl();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
   }, [syncFromUrl]);
 
-  // Deep link: open whatever the URL points at on first load, once. A
-  // shared `?p=cove` link opened on mobile redirects to the real route
-  // for the same reason openSlug does — same rule, same place it applies.
+  // Deep link: open whatever the URL points at on first load, once.
   const didInit = useRef(false);
   useEffect(() => {
     if (didInit.current) return;
     didInit.current = true;
-    const slug = slugFromLocation();
-    if (!slug) return;
-    const entry = registry?.[slug];
-    if (isMobileRef.current && entry?.route) {
-      router.replace(entry.route);
-      return;
-    }
+    if (!slugFromLocation()) return;
     // Reading the URL is exactly the "subscribe to an external system" case:
     // the address bar is the source of truth on first paint, and it can't be
     // known during render without breaking SSR.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     syncFromUrl();
-  }, [syncFromUrl, registry, router]);
+  }, [syncFromUrl]);
 
   // Esc closes, and background scroll is locked while any overlay is open.
   useEffect(() => {
@@ -330,7 +322,7 @@ export function BentoOverlayProvider({
                 // playing its exit would otherwise revive that instance, stale
                 // morph state and all, instead of mounting a fresh one.
                 key={state.morphSlug ? `${state.key}-morph` : state.key}
-                className={`bento-overlay-backdrop${fullscreen ? " is-fullscreen" : ""}`}
+                className={`bento-overlay-backdrop is-${state.variant}${fullscreen ? " is-fullscreen" : ""}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -491,6 +483,9 @@ export function BentoOverlayProvider({
             max-height: 100dvh;
             height: 100%;
           }
+          /* Bare content (the business card, a poster) has no sheet to fill
+             the screen with — it floats, centered, like on desktop. */
+          .bento-overlay-backdrop.is-bare { padding: 24px; align-items: center; }
         }
       `}</style>
     </Ctx.Provider>

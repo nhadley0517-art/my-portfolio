@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import CoveContent from "./CoveContent";
-import { DesktopOverlayRedirect } from "@/components/CaseStudyShell";
+import { OverlayRedirect } from "@/components/CaseStudyShell";
 
 export const metadata: Metadata = {
   title: "Cove — Noah Hadley",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function CovePage() {
   return (
     <>
-      <DesktopOverlayRedirect slug="cove" />
+      <OverlayRedirect slug="cove" />
       <CoveContent />
     </>
   );

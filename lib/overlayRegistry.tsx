@@ -31,19 +31,16 @@ const DRIVEWAY_SECTIONS = [
 export const OVERLAY_REGISTRY: OverlayRegistry = {
   no2: {
     variant: "wide",
-    route: "/no2",
     render: ({ close }) => <No2Content variant="overlay" onClose={close} />,
     sidePanel: ({ fullscreen }) => <CaseStudySidePanel sections={NO2_SECTIONS} accentColor={NO2_ACCENT} fullscreen={fullscreen} />,
   },
   cove: {
     variant: "wide",
-    route: "/cove",
     render: ({ close }) => <CoveContent variant="overlay" onClose={close} />,
     sidePanel: ({ fullscreen }) => <CaseStudySidePanel sections={COVE_SECTIONS} accentColor={COVE_ACCENT} fullscreen={fullscreen} />,
   },
   "writing-process": {
     variant: "wide",
-    route: "/writingprocess",
     render: ({ close }) => <WritingProcessContent variant="overlay" onClose={close} />,
     sidePanel: ({ fullscreen }) => <CaseStudySidePanel sections={WP_SECTIONS} accentColor={WP_ACCENT} fullscreen={fullscreen} />,
   },

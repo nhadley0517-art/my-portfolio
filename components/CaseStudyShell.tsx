@@ -85,17 +85,16 @@ export function CaseStudyBottomNav({
   );
 }
 
-/** On desktop, a direct visit to a case study's standalone route (a typed
- *  URL, a refresh, a shared link) redirects into the same overlay
- *  experience opening it from the home page gives — the plain page reads
- *  as cramped next to that, and it's the only place the side legend below
- *  has room to sit. Mobile is left alone: it keeps the real page exactly as
- *  before, matching the `< 700` cutoff BentoOverlayProvider already uses
- *  everywhere else to decide "this is a phone." */
-export function DesktopOverlayRedirect({ slug }: { slug: string }) {
+/** A direct visit to a case study's standalone route (a typed URL, a
+ *  refresh, a shared link) redirects into the same overlay experience
+ *  opening it from the home page gives, on every screen size — one way to
+ *  read, close, and go fullscreen, with the home page right behind it. The
+ *  page itself stays server-rendered underneath for crawlers and link
+ *  previews. */
+export function OverlayRedirect({ slug }: { slug: string }) {
   const router = useRouter();
   useEffect(() => {
-    if (window.innerWidth >= 700) router.replace(`/?p=${slug}`);
+    router.replace(`/?p=${slug}`);
   }, [router, slug]);
   return null;
 }

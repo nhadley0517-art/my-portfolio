@@ -18,15 +18,19 @@ const SECTIONS = [
 // Real 3.5x2in business card proportion — both card faces are 1050x600.
 const CARD_RATIO = 1050 / 600;
 
-/** The full interactive card (drag to spin, tap to flip) — opened from the
- *  sidebar's small static preview so the one real "play with this" moment
- *  lives in an overlay of its own rather than fighting the hero for
- *  attention. Sized to be comfortably large without ever exceeding the
- *  viewport it opens into. */
+/** The full interactive card — opened from the sidebar's small static
+ *  preview so the one real "play with this" moment lives in an overlay of
+ *  its own rather than fighting the hero for attention. Sized to be
+ *  comfortably large without ever exceeding the viewport it opens into.
+ *  Drag to spin with a mouse; on touch screens it's a plain tap to flip,
+ *  since dragging a 3D object with a thumb reads as fighting it. Only ever
+ *  rendered client-side (it opens on a click), so reading the media query
+ *  here can't mismatch a server render. */
 function BusinessCardExpanded() {
+  const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
   return (
-    <div style={{ width: "min(78vw, 460px)", aspectRatio: CARD_RATIO, margin: "0 auto" }}>
-      <BusinessCard />
+    <div style={{ width: "min(86vw, 460px)", aspectRatio: CARD_RATIO, margin: "0 auto" }}>
+      <BusinessCard mobile={touch} />
     </div>
   );
 }
@@ -38,14 +42,17 @@ function BusinessCardExpanded() {
  *  card's own glare responding to a light source, rather than a caption or
  *  icon telling you what to do. Clicking opens the real, full-size
  *  interactive card in an overlay. */
-function SidebarCardPreview() {
+function SidebarCardPreview({ onOpen }: { onOpen?: () => void }) {
   const { open } = useBentoOverlay();
   return (
     <button
       type="button"
       className="side-nav-card"
-      onClick={() => open(<BusinessCardExpanded />, "bare", "business-card")}
-      aria-label="Open Noah Hadley's business card — drag to spin it around"
+      onClick={() => {
+        onOpen?.();
+        open(<BusinessCardExpanded />, "bare", "business-card");
+      }}
+      aria-label="Open Noah Hadley's business card"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/Business-card-front.png" alt="" />
@@ -215,7 +222,8 @@ export default function SideNav() {
           ))}
           <div className="side-nav-sheet-divider" />
           <div className="side-nav-sheet-card">
-            <SidebarCardPreview />
+            {/* The menu steps aside so the card opens onto the page itself. */}
+            <SidebarCardPreview onOpen={() => setOpen(false)} />
           </div>
           <a
             href="mailto:nhadley0517@gmail.com"
@@ -473,8 +481,11 @@ export default function SideNav() {
             margin: 4px 8px;
           }
           .side-nav-sheet-sound { padding: 6px 12px 4px; }
-          .side-nav-sheet-card { padding: 8px 12px 4px; }
-          .side-nav-sheet-card .side-nav-card { max-width: 96px; }
+          /* Same 12px inset as the links around it, and none of the
+             desktop sidebar's 32px bottom margin — in the menu the email
+             link's own padding is the gap. */
+          .side-nav-sheet-card { padding: 12px 12px 4px; }
+          .side-nav-sheet-card .side-nav-card { max-width: 120px; margin-bottom: 0; }
         }
       `}</style>
     </>
