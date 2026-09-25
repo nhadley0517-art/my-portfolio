@@ -1,6 +1,6 @@
 import type { ProjectRow } from "@/components/ProjectList";
 
-/** The three long-form case studies. Years come from the case studies
+/** The four featured case studies. Years come from the case studies
  *  themselves, so they're safe to show. */
 export const SELECTED_WORK: ProjectRow[] = [
   {
@@ -8,7 +8,14 @@ export const SELECTED_WORK: ProjectRow[] = [
     year: "2026",
     title: "No. 2",
     category: "iOS app",
-    thumb: { type: "iframe", src: "/no2-thumb.html" },
+    thumb: { type: "phones" },
+  },
+  {
+    slug: "sales-dashboard",
+    title: "Driveway Auto Spa",
+    category: "sales dashboard",
+    thumb: { type: "video", src: "/dwautospademo.mp4" },
+    live: true,
   },
   {
     slug: "cove",
@@ -30,13 +37,6 @@ export const SELECTED_WORK: ProjectRow[] = [
  *  durations ("3 days", "February–April") but not the years they happened,
  *  and a guessed date on a résumé-adjacent list is worse than none. */
 export const OTHER_WORK: ProjectRow[] = [
-  {
-    slug: "sales-dashboard",
-    title: "Driveway Auto Spa",
-    category: "sales dashboard",
-    thumb: { type: "video", src: "/dwautospademo.mp4" },
-    live: true,
-  },
   {
     slug: "miah-families",
     title: "Miah Families",

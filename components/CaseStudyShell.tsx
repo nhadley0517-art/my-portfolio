@@ -122,9 +122,17 @@ export function DesktopOverlayRedirect({ slug }: { slug: string }) {
 export function CaseStudySidePanel({
   sections,
   accentColor,
+  fullscreen = false,
 }: {
   sections: { id: string; label: string }[];
   accentColor: string;
+  /** Fullscreen makes the shell fill the viewport, which puts its top edge
+   *  at y:0 — this panel mirrors that edge, so without an extra offset it
+   *  would sit flush against the very top of the screen instead of reading
+   *  as intentionally placed. Not-fullscreen is unaffected: the shell's own
+   *  measured top (it's vertically centered by the backdrop) is plenty of
+   *  breathing room on its own. */
+  fullscreen?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   // Lines up with the shell's own top edge, not the viewport's vertical
@@ -173,7 +181,7 @@ export function CaseStudySidePanel({
     <motion.div
       ref={ref}
       className="cs-side-panel"
-      style={{ top }}
+      style={{ top: top + (fullscreen ? 56 : 0) }}
       initial={{ opacity: 0, x: -16, filter: "blur(4px)" }}
       animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
       transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}

@@ -4,6 +4,7 @@ import React from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import MorphHero from "@/components/MorphHero";
 import CaseStudyNav from "@/components/CaseStudyNav";
 import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
 
@@ -44,7 +45,7 @@ function AutoplayVideo({ src }: { src: string }) {
       loop
       muted
       playsInline
-      style={{ width: "100%", borderRadius: "4px", display: "block" }}
+      style={{ width: "100%", aspectRatio: "16 / 9", borderRadius: "4px", display: "block" }}
     />
   );
 }
@@ -326,11 +327,11 @@ export default function CoveContent({ variant = "page", onClose }: CaseStudyCont
     <>
         {/* ── HERO ── */}
         <section className="pt-14 md:pt-20">
-          <ScrollReveal>
-            <div className="max-w-5xl mx-auto py-6">
+          <div className="max-w-5xl mx-auto py-6">
+            <MorphHero slug="cove">
               <AutoplayVideo src="/creating-a-booking-demo.mp4" />
-            </div>
-          </ScrollReveal>
+            </MorphHero>
+          </div>
 
           <div className="max-w-5xl mx-auto mt-16 md:mt-20 mb-0">
             <ScrollReveal delay={0.05}>
@@ -378,7 +379,7 @@ export default function CoveContent({ variant = "page", onClose }: CaseStudyCont
         </section>
 
         {/* 01. THE BRIEF */}
-        <section id="brief" className="px-6 py-28 md:py-36">
+        <section id="brief" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>01. The Brief</SectionLabel></ScrollReveal>
             <ScrollReveal delay={0.1}>
@@ -394,7 +395,7 @@ export default function CoveContent({ variant = "page", onClose }: CaseStudyCont
         </section>
 
         {/* 02. THE PROBLEM */}
-        <section id="problem" className="px-6 py-28 md:py-36">
+        <section id="problem" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>02. The Problem</SectionLabel></ScrollReveal>
             <ScrollReveal delay={0.1}>
@@ -433,7 +434,7 @@ export default function CoveContent({ variant = "page", onClose }: CaseStudyCont
         </section>
 
         {/* 03. DESIGN SYSTEM */}
-        <section id="design-system" className="px-6 py-28 md:py-36">
+        <section id="design-system" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>03. Design System</SectionLabel></ScrollReveal>
 
@@ -579,7 +580,7 @@ export default function CoveContent({ variant = "page", onClose }: CaseStudyCont
         </section>
 
         {/* 04. THE PRODUCT */}
-        <section id="product" className="px-6 py-28 md:py-36">
+        <section id="product" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>04. Core Product</SectionLabel></ScrollReveal>
 
@@ -624,7 +625,7 @@ export default function CoveContent({ variant = "page", onClose }: CaseStudyCont
         </section>
 
         {/* 05. AI INTEGRATION */}
-        <section id="intelligence" className="px-6 py-28 md:py-36">
+        <section id="intelligence" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>05. AI Integration</SectionLabel></ScrollReveal>
 
@@ -671,7 +672,7 @@ export default function CoveContent({ variant = "page", onClose }: CaseStudyCont
 
 
         {/* 07. REFLECTION */}
-        <section id="reflection" className="px-6 py-28 md:py-36">
+        <section id="reflection" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>06. Reflection</SectionLabel></ScrollReveal>
 

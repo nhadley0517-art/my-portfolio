@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import SoundToggle from "@/components/SoundToggle";
+import BusinessCard from "@/components/BusinessCard";
+import { useBentoOverlay } from "@/components/BentoOverlay";
+import { sfx } from "@/lib/sounds";
 
 const SECTIONS = [
   { id: "welcome", label: "Welcome" },
@@ -11,6 +14,45 @@ const SECTIONS = [
   { id: "experience", label: "Experience" },
   { id: "sandbox", label: "Sandbox" },
 ];
+
+// Real 3.5x2in business card proportion — both card faces are 1050x600.
+const CARD_RATIO = 1050 / 600;
+
+/** The full interactive card (drag to spin, tap to flip) — opened from the
+ *  sidebar's small static preview so the one real "play with this" moment
+ *  lives in an overlay of its own rather than fighting the hero for
+ *  attention. Sized to be comfortably large without ever exceeding the
+ *  viewport it opens into. */
+function BusinessCardExpanded() {
+  return (
+    <div style={{ width: "min(78vw, 460px)", aspectRatio: CARD_RATIO, margin: "0 auto" }}>
+      <BusinessCard />
+    </div>
+  );
+}
+
+/** Small static preview of the business card's front face — sits in the
+ *  sidebar above the contact links. Not interactive itself (too small to
+ *  drag), but reads as clickable the same way the real card reads as a
+ *  physical object: a light sweeps across it on hover/focus, like the real
+ *  card's own glare responding to a light source, rather than a caption or
+ *  icon telling you what to do. Clicking opens the real, full-size
+ *  interactive card in an overlay. */
+function SidebarCardPreview() {
+  const { open } = useBentoOverlay();
+  return (
+    <button
+      type="button"
+      className="side-nav-card"
+      onClick={() => open(<BusinessCardExpanded />, "bare", "business-card")}
+      aria-label="Open Noah Hadley's business card — drag to spin it around"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/Business-card-front.png" alt="" />
+      <span className="side-nav-card-shine" aria-hidden />
+    </button>
+  );
+}
 
 /** Fixed index of the page. Tracks which section you're in as you scroll.
  *  Below the layout breakpoint this collapses into a hamburger — the old
@@ -75,6 +117,7 @@ export default function SideNav() {
     // which is what read as the pill landing one section above whatever was
     // actually clicked. We already know which section the user meant.
     setActive(id);
+    sfx.navigate();
     // Scroll BEFORE closing the sheet, not after — closing it first
     // unmounts the sheet mid-click and can shift the page's layout (and
     // therefore the target's position) out from under scrollIntoView
@@ -123,6 +166,7 @@ export default function SideNav() {
         </ul>
 
         <div className="side-nav-bottom">
+          <SidebarCardPreview />
           <a href="mailto:nhadley0517@gmail.com" className="side-nav-contact">
             nhadley0517@gmail.com
           </a>
@@ -133,7 +177,10 @@ export default function SideNav() {
         <button
           type="button"
           className="side-nav-burger"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            sfx.toggle();
+            setOpen((v) => !v);
+          }}
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
         >
@@ -167,6 +214,9 @@ export default function SideNav() {
             </div>
           ))}
           <div className="side-nav-sheet-divider" />
+          <div className="side-nav-sheet-card">
+            <SidebarCardPreview />
+          </div>
           <a
             href="mailto:nhadley0517@gmail.com"
             className="side-nav-sheet-link"
@@ -248,6 +298,48 @@ export default function SideNav() {
           flex-direction: column;
           align-items: flex-start;
         }
+        .side-nav-card {
+          position: relative;
+          display: block;
+          width: 100%;
+          max-width: 140px;
+          padding: 0;
+          margin-bottom: 32px;
+          border: none;
+          border-radius: 8px;
+          overflow: hidden;
+          cursor: pointer;
+          background: none;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 20px -13px rgba(0,0,0,0.22);
+          transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
+        }
+        .side-nav-card:hover,
+        .side-nav-card:focus-visible {
+          transform: translateY(-2px);
+          box-shadow: 0 3px 8px rgba(0,0,0,0.1), 0 14px 28px -14px rgba(0,0,0,0.3);
+        }
+        .side-nav-card img {
+          display: block;
+          width: 100%;
+          aspect-ratio: 1050 / 600;
+          object-fit: cover;
+        }
+        /* A light sweeping across the card on hover, mirroring the real
+           card's own pointer-tracked glare — the card reads as a physical,
+           light-catching object rather than a flat button, no caption or
+           icon needed to say "click me." */
+        .side-nav-card-shine {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%);
+          transform: translateX(-130%);
+          transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+          pointer-events: none;
+        }
+        .side-nav-card:hover .side-nav-card-shine,
+        .side-nav-card:focus-visible .side-nav-card-shine {
+          transform: translateX(130%);
+        }
         .side-nav-contact {
           font-size: 12px;
           color: #A8ABB2;
@@ -325,7 +417,9 @@ export default function SideNav() {
             border-radius: 4px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
           }
-          .side-nav-mark { margin-bottom: 0; }
+          /* 26px logo, 44px tap target — the pad is cancelled out by the
+             negative margin so the bar itself doesn't grow. */
+          .side-nav-mark { margin: -9px; padding: 9px; }
           .side-nav-list { display: none; }
           .side-nav-bottom { display: none; }
           .side-nav-burger { display: flex; }
@@ -379,6 +473,8 @@ export default function SideNav() {
             margin: 4px 8px;
           }
           .side-nav-sheet-sound { padding: 6px 12px 4px; }
+          .side-nav-sheet-card { padding: 8px 12px 4px; }
+          .side-nav-sheet-card .side-nav-card { max-width: 96px; }
         }
       `}</style>
     </>

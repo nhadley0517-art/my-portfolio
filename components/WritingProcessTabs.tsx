@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { sfx } from "@/lib/sounds";
 
 const TABS = [
   { label: "Prewriting", src: "/Prewriting.png" },
@@ -18,26 +19,28 @@ export default function WritingProcessTabs() {
   const [active, setActive] = useState(0);
 
   return (
-    <div className="flex gap-10 md:gap-14 items-start">
-      {/* ── Left: tab list (35%) ── */}
-      <div className="w-[35%] shrink-0 flex flex-col">
+    <div className="wpt">
+      {/* ── Tab list: a left rail on desktop, a horizontal scroll strip on
+          mobile — the fixed 35/65 side-by-side split left 8 labels
+          (including "Submission") cramped into a sliver of a phone screen
+          with no way to widen it. */}
+      <div className="wpt-tabs">
         {TABS.map((tab, i) => (
           <button
             key={tab.label}
-            onClick={() => setActive(i)}
-            className={`text-left py-3.5 px-4 text-sm transition-all duration-200 border-l-2 ${
-              i === active
-                ? "border-[#FD8973] text-[#13181B] font-semibold"
-                : "border-[#DDD8D1] text-[#7D8A93] font-medium hover:text-[#13181B] hover:border-[#BFBAB4]"
-            }`}
+            onClick={() => {
+              if (i !== active) sfx.select();
+              setActive(i);
+            }}
+            className={"wpt-tab" + (i === active ? " is-active" : "")}
           >
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* ── Right: image display (65%) ── */}
-      <div className="flex-1 relative">
+      {/* ── Image display ── */}
+      <div className="wpt-image">
         <AnimatePresence mode="wait">
           <motion.img
             key={active}
@@ -57,6 +60,46 @@ export default function WritingProcessTabs() {
           />
         </AnimatePresence>
       </div>
+
+      <style>{`
+        .wpt { display: flex; gap: 56px; align-items: flex-start; }
+        .wpt-tabs { width: 35%; flex-shrink: 0; display: flex; flex-direction: column; }
+        .wpt-image { flex: 1; position: relative; min-width: 0; }
+        .wpt-tab {
+          text-align: left;
+          padding: 14px 16px;
+          font-size: 14px;
+          font-weight: 500;
+          border-left: 2px solid #DDD8D1;
+          color: #7D8A93;
+          background: none;
+          cursor: pointer;
+          transition: color 0.2s ease, border-color 0.2s ease;
+          white-space: nowrap;
+        }
+        .wpt-tab:hover { color: #13181B; border-color: #BFBAB4; }
+        .wpt-tab.is-active { color: #13181B; font-weight: 600; border-color: #FD8973; }
+
+        @media (max-width: 700px) {
+          .wpt { flex-direction: column; gap: 20px; }
+          .wpt-tabs {
+            width: 100%;
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 4px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+          }
+          .wpt-tabs::-webkit-scrollbar { display: none; }
+          .wpt-tab {
+            flex-shrink: 0;
+            padding: 8px 14px;
+            border-left: none;
+            border-bottom: 2px solid #DDD8D1;
+          }
+          .wpt-tab.is-active { border-color: #FD8973; }
+        }
+      `}</style>
     </div>
   );
 }

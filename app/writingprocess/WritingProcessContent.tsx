@@ -3,6 +3,7 @@
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import MorphHero from "@/components/MorphHero";
 import WritingProcessTabs from "@/components/WritingProcessTabs";
 import CaseStudyNav from "@/components/CaseStudyNav";
 import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
@@ -75,12 +76,12 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
     <>
         {/* ── HERO ── */}
         <section className="pt-14 md:pt-20">
-          <ScrollReveal>
-            <div className="max-w-5xl mx-auto pb-10 md:pb-14">
+          <div className="max-w-5xl mx-auto pb-10 md:pb-14">
+            <MorphHero slug="writing-process">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={HERO_IMAGE} alt="Writing Process Redesign banner" style={{ width: "100%", height: "auto", display: "block", borderRadius: "4px" }} />
-            </div>
-          </ScrollReveal>
+              <img src={HERO_IMAGE} alt="Writing Process Redesign banner" style={{ width: "100%", height: "auto", aspectRatio: "1440 / 1756", display: "block", borderRadius: "4px" }} />
+            </MorphHero>
+          </div>
 
           <div className="max-w-5xl mx-auto mb-12">
             <ScrollReveal>
@@ -131,7 +132,7 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
         </section>
 
         {/* ── 01 — OVERVIEW ── */}
-        <section id="overview" className="px-6 py-28 md:py-36">
+        <section id="overview" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>01 — Overview</SectionLabel></ScrollReveal>
 
@@ -194,7 +195,7 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
         </section>
 
         {/* ── 02 — THE PROBLEM ── */}
-        <section id="problem" className="px-6 py-28 md:py-36">
+        <section id="problem" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>02 — The Problem</SectionLabel></ScrollReveal>
 
@@ -241,7 +242,7 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
         </section>
 
         {/* ── 03 — RESEARCH & EARLY INSIGHTS ── */}
-        <section id="research" className="px-6 py-28 md:py-36">
+        <section id="research" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>03 — Research &amp; Early Insights</SectionLabel></ScrollReveal>
 
@@ -282,7 +283,7 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
         </section>
 
         {/* ── 04 — FIRST ITERATION ── */}
-        <section id="first-iteration" className="px-6 py-28 md:py-36">
+        <section id="first-iteration" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>04 — First Iteration</SectionLabel></ScrollReveal>
 
@@ -333,7 +334,7 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
         </section>
 
         {/* ── 05 — THE PIVOT ── */}
-        <section id="the-pivot" className="px-6 py-28 md:py-36">
+        <section id="the-pivot" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>05 — The Pivot</SectionLabel></ScrollReveal>
 
@@ -380,7 +381,7 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
         </section>
 
         {/* ── 06 — FINAL SOLUTION ── */}
-        <section id="final-solution" className="px-6 py-28 md:py-36">
+        <section id="final-solution" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>06 — Final Solution</SectionLabel></ScrollReveal>
 
@@ -421,7 +422,7 @@ export default function WritingProcessContent({ variant = "page", onClose }: Cas
         </section>
 
         {/* ── 07 — OUTCOME ── */}
-        <section id="outcome" className="px-6 py-28 md:py-36">
+        <section id="outcome" className="px-6 py-16 md:py-24 lg:py-36">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal><SectionLabel>07 — Outcome &amp; Stakeholder Response</SectionLabel></ScrollReveal>
 

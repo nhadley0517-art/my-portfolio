@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
 import { useBentoOverlay } from "@/components/BentoOverlay";
+import PhoneScene from "@/components/PhoneScene";
 
 export interface ProjectRow {
   /** Overlay registry slug this row opens. */
@@ -12,7 +13,8 @@ export interface ProjectRow {
   year?: string;
   title: string;
   category: string;
-  thumb?: { type: "image" | "video" | "iframe"; src: string };
+  /** "phones" is No. 2's three-phone scene (PhoneScene), which has no single src. */
+  thumb?: { type: "image" | "video"; src: string } | { type: "phones" };
   /** Shows a small "Live" indicator right after the title — for the
    *  shorter pieces that are actually deployed/in production, same signal
    *  as the case studies' status badges, just sized for a dense list row. */
@@ -154,9 +156,13 @@ export default function ProjectList({ label, rows }: { label: string; rows: Proj
           >
             {active.thumb.type === "video" ? (
               <video src={active.thumb.src} autoPlay muted loop playsInline />
-            ) : (
+            ) : active.thumb.type === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={active.thumb.src} alt="" />
+            ) : (
+              <div style={{ aspectRatio: "16 / 9", borderRadius: 4, overflow: "hidden" }}>
+                <PhoneScene />
+              </div>
             )}
           </motion.div>
         )}
@@ -272,6 +278,11 @@ export default function ProjectList({ label, rows }: { label: string; rows: Proj
           .plist-thumb { display: none; }
           .plist-rows.is-hovering .plist-row { opacity: 1; }
           .plist-live-badge { font-size: 11px; }
+        }
+        /* Touch screens never hover, so the titles would otherwise sit at
+           the resting light gray forever. */
+        @media (hover: none) {
+          .plist-title { color: #13181B; }
         }
         @media (prefers-reduced-motion: reduce) {
           .plist-thumb { display: none; }

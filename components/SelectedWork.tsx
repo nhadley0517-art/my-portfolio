@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useReducer, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useBentoOverlay } from "@/components/BentoOverlay";
+import { MORPH_TRANSITION, morphLayoutId } from "@/components/MorphHero";
 import { SELECTED_WORK } from "@/lib/workData";
+import { PhoneSceneSlot, SharedPhoneSceneHost } from "@/components/PhoneScene";
+import { sfx } from "@/lib/sounds";
 
 // Shared with the intro's word spans so a name link staggers in as one atomic
 // unit in the same sequence, rather than reading as a separate animation.
@@ -69,8 +72,22 @@ function NameLink({
 export default function SelectedWork() {
   const { openSlug } = useBentoOverlay();
   const [hovered, setHovered] = useState<string | null>(null);
+  const [, bumpLaunch] = useReducer((n: number) => n + 1, 0);
+  const mediaRefs = useRef(new Map<string, HTMLDivElement>());
 
-  const [no2, cove, wp] = SELECTED_WORK;
+  const [no2, dws, cove, wp] = SELECTED_WORK;
+
+  const openProject = (slug: string) => {
+    // Only fly the thumbnail if it's actually on screen — a morph from a
+    // thumbnail scrolled out of view would come in from off the edge.
+    const r = mediaRefs.current.get(slug)?.getBoundingClientRect();
+    const visible = !!r && r.bottom > 0 && r.top < window.innerHeight;
+    // Re-rendering this component in the same commit as the overlay
+    // opening is what makes Framer snapshot where the thumbnail is right
+    // now; without a render here the hero has no "from" box to fly out of.
+    bumpLaunch();
+    openSlug(slug, { morph: visible });
+  };
 
   return (
     <div className="sw">
@@ -96,50 +113,68 @@ export default function SelectedWork() {
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}
       >
-        <Words text="Three projects, three different problems." />{" "}
-        <NameLink slug={no2.slug} hovered={hovered} setHovered={setHovered} onOpen={openSlug}>
+        <Words text="Four projects, four different problems." />{" "}
+        <NameLink slug={no2.slug} hovered={hovered} setHovered={setHovered} onOpen={openProject}>
           {no2.title}
         </NameLink>{" "}
         <Words text="is a gut-health app I designed and shipped solo in two weeks, live on the App Store." />{" "}
-        <NameLink slug={cove.slug} hovered={hovered} setHovered={setHovered} onOpen={openSlug}>
+        <NameLink slug={dws.slug} hovered={hovered} setHovered={setHovered} onOpen={openProject}>
+          {dws.title}
+        </NameLink>{" "}
+        <Words text="is a sales dashboard I designed, built, and shipped solo in three days, running a real detailing business today." />{" "}
+        <NameLink slug={cove.slug} hovered={hovered} setHovered={setHovered} onOpen={openProject}>
           {cove.title}
         </NameLink>{" "}
         <Words text="is the field service CRM a business runs its whole day on." />{" "}
-        <NameLink slug={wp.slug} hovered={hovered} setHovered={setHovered} onOpen={openSlug}>
+        <NameLink slug={wp.slug} hovered={hovered} setHovered={setHovered} onOpen={openProject}>
           {wp.title}
         </NameLink>{" "}
         <Words text="turned a wall of text into a guided tool GCU students actually use. Hover a name to see the work, or just click it." />
       </motion.p>
 
       <div className={"sw-thumbs" + (hovered ? " is-hovering" : "")}>
-        {SELECTED_WORK.map((row) => (
+        {SELECTED_WORK.map((row, i) => (
           <button
             key={row.slug}
             type="button"
             className={"sw-thumb" + (hovered === row.slug ? " is-active" : "")}
-            onClick={() => openSlug(row.slug)}
-            onPointerEnter={() => setHovered(row.slug)}
+            onClick={() => openProject(row.slug)}
+            onPointerEnter={(e) => {
+              setHovered(row.slug);
+              if (e.pointerType === "mouse") sfx.hover();
+            }}
             onPointerLeave={() => setHovered(null)}
             aria-label={`Open ${row.title}`}
           >
-            {row.thumb?.type === "video" ? (
-              <video src={row.thumb.src} autoPlay muted loop playsInline />
-            ) : row.thumb?.type === "iframe" ? (
-              // Self-contained HTML scene (its own videos inside) — has no
-              // intrinsic size the way an image/video does, so it's the one
-              // thumb type that needs an explicit height rather than auto.
-              <iframe
-                src={row.thumb.src}
-                className="sw-thumb-frame"
-                scrolling="no"
-                tabIndex={-1}
-                title={`${row.title} preview`}
-              />
-            ) : row.thumb ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={row.thumb.src} alt="" />
-            ) : null}
-            <span className="sw-thumb-caption">{row.title} · {row.category}</span>
+            {/* Shares a layoutId with the case study's MorphHero landing
+                pad, which is what lets Framer fly this box into the hero. */}
+            <motion.div
+              ref={(el) => {
+                if (el) mediaRefs.current.set(row.slug, el);
+                else mediaRefs.current.delete(row.slug);
+              }}
+              layoutId={morphLayoutId(row.slug)}
+              transition={MORPH_TRANSITION}
+              className="sw-thumb-media"
+              data-sw-thumb={row.slug}
+              style={{ borderRadius: 4 }}
+            >
+              {row.thumb?.type === "video" ? (
+                <video src={row.thumb.src} autoPlay muted loop playsInline />
+              ) : row.thumb?.type === "phones" ? (
+                <>
+                  <SharedPhoneSceneHost />
+                  <PhoneSceneSlot />
+                </>
+              ) : row.thumb ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={row.thumb.src} alt="" />
+              ) : null}
+            </motion.div>
+            <span className="sw-thumb-caption">
+              <span className="sw-index">{String(i + 1).padStart(2, "0")}</span>
+              {row.title} · {row.category}
+            </span>
           </button>
         ))}
       </div>
@@ -181,14 +216,13 @@ export default function SelectedWork() {
           display: grid;
           /* Plain 1fr is really minmax(auto, 1fr) — "auto" lets each track's
              minimum be pulled by that item's own intrinsic/min-content size,
-             and an <iframe> (No. 2's thumb) has a different default
-             intrinsic size than a <video> or <img>, so the three columns
-             drifted apart at narrower widths instead of staying equal.
-             minmax(0, 1fr) ignores content size entirely — always exactly
-             equal thirds. */
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 20px;
-          width: calc(100% + 60px);
+             and thumbs of different media types have different intrinsic
+             sizes, so columns can drift
+             apart at narrower widths instead of staying equal. minmax(0, 1fr)
+             ignores content size entirely — always exactly equal halves. */
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 28px;
+          width: calc(100% + 100px);
         }
         @media (max-width: 1300px) {
           .sw-thumbs { width: 100%; }
@@ -206,27 +240,29 @@ export default function SelectedWork() {
         /* Every thumb is the same size and shape (Cove's own 16:9 video
            ratio) — object-fit:contain means nothing gets cropped to reach
            it, images/scenes that aren't natively 16:9 just letterbox on a
-           neutral matte instead of losing content. */
-        .sw-thumb img,
-        .sw-thumb video,
-        .sw-thumb-frame {
-          display: block;
-          width: 100%;
+           neutral matte instead of losing content. The radius lives on the
+           inline style, not here — Framer only corrects border-radius
+           mid-flight for values it can read off the element's style. */
+        .sw-thumb-media {
           aspect-ratio: 16 / 9;
-          border-radius: 4px;
+          overflow: hidden;
           background: #F1F1F3;
         }
-        .sw-thumb video {
+        /* Direct children only — No. 2's phone scene has videos of its own
+           nested inside, styled by PhoneScene. */
+        .sw-thumb-media > img,
+        .sw-thumb-media > video {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+        .sw-thumb-media > video {
           object-fit: contain;
         }
         /* The only image-type thumb left (Writing Process) reads better
            filling the frame than letterboxed. */
-        .sw-thumb img {
+        .sw-thumb-media > img {
           object-fit: cover;
-        }
-        .sw-thumb-frame {
-          border: none;
-          pointer-events: none;
         }
         .sw-thumbs.is-hovering .sw-thumb { opacity: 0.45; }
         .sw-thumbs.is-hovering .sw-thumb.is-active {
@@ -242,6 +278,12 @@ export default function SelectedWork() {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+        }
+        .sw-index {
+          font-family: var(--font-geist-mono), ui-monospace, monospace;
+          font-size: 11px;
+          color: #C4C6CB;
+          margin-right: 10px;
         }
 
         @media (max-width: 700px) {

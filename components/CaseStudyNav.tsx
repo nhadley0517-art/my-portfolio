@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { sfx } from "@/lib/sounds";
 
 interface Section {
   id: string;
@@ -71,6 +72,7 @@ export default function CaseStudyNav({ sections, accentColor, card = false, inli
     // exactly which section they meant; no need to infer it from scroll
     // position at all.
     setActiveId(id);
+    sfx.navigate();
     const scroller = getScroller();
     if (scroller instanceof Element) {
       // Target getBoundingClientRect().top directly (viewport-relative),

@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 interface Internship {
   id: string;
   company: string;
@@ -43,8 +47,15 @@ const INTERNSHIPS: Internship[] = [
 export default function ExperienceCards() {
   return (
     <div className="exp-cards">
-      {INTERNSHIPS.map((i) => (
-        <div key={i.id} className="exp-mini-card">
+      {INTERNSHIPS.map((i, idx) => (
+        <motion.div
+          key={i.id}
+          className="exp-mini-card"
+          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay: idx * 0.08 }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="exp-mini-logo" src={i.logo} alt={i.company} />
           <p className="exp-mini-role">{i.role}</p>
@@ -58,7 +69,7 @@ export default function ExperienceCards() {
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       ))}
 
       <style>{`
@@ -135,7 +146,9 @@ export default function ExperienceCards() {
           background: #9CA3AF;
         }
         @media (max-width: 700px) {
-          .exp-cards { grid-template-columns: 1fr; }
+          .exp-cards { grid-template-columns: 1fr; gap: 16px; }
+          .exp-mini-card { padding: 16px 20px 24px; }
+          .exp-mini-logo { width: 72px; height: 72px; margin-bottom: 10px; }
         }
       `}</style>
     </div>

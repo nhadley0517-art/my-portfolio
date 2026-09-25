@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { play, setEnabled } from "cuelume";
+import { setEnabled } from "cuelume";
+import { sfx } from "@/lib/sounds";
 
 const STORAGE_KEY = "nh-sound-enabled";
 
@@ -29,7 +30,7 @@ export default function SoundToggle() {
     window.localStorage.setItem(STORAGE_KEY, String(next));
     // Only confirm audibly when turning it back on; playing a cue on the way
     // out would be the exact thing the user just asked to stop.
-    if (next) play("toggle");
+    if (next) sfx.toggle();
   };
 
   return (

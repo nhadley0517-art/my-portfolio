@@ -71,8 +71,10 @@
   /* Matches --side-nav-width exactly (not eyeballed) — .site-container
      centers within this box, and only an equal left/right pad here makes
      that centered column land on the page's true center, since the nav
-     otherwise eats into the left side only. */
-  padding-right: var(--side-nav-width);
+     otherwise eats into the left side only. On small laptops that
+     mirrored pad would squeeze the column to ~500px, so it eases in:
+     none just above the tablet breakpoint, the full width from ~1180px. */
+  padding-right: min(var(--side-nav-width), max(0px, calc((100vw - 900px) * 0.75)));
 }
 .site-container {
   max-width: 920px;

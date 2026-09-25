@@ -1,10 +1,16 @@
 "use client";
 
 import React from "react";
-import { play } from "cuelume";
+import { sfx } from "@/lib/sounds";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import MorphHero, { AfterLanding } from "@/components/MorphHero";
+import PhoneScene from "@/components/PhoneScene";
+
+// Through Next's image optimizer — the source PNG is 3.7MB. (w must be one
+// of Next's default deviceSizes; 75 is its default allowed quality.)
+const APP_PREVIEW_SRC = "/_next/image?url=%2Fapp-preview.png&w=1920&q=75";
 import CaseStudyNav from "@/components/CaseStudyNav";
 import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
 
@@ -43,32 +49,66 @@ function LeanFont() {
  *  lands; the wrapper's aspect-ratio just reserves the space until then. */
 function LeanDiagram({ src, ratio, title }: { src: string; ratio: number; title: string }) {
   const [svg, setSvg] = React.useState<string | null>(null);
+  const [near, setNear] = React.useState(false);
+  // Fetched once it's within a screen of view rather than on mount — seven
+  // animated diagrams parsing and starting at once was part of what made the
+  // case study stutter as it opened.
+  const ref = useNearView<HTMLDivElement>((isNear) => {
+    if (isNear) setNear(true);
+  });
 
   React.useEffect(() => {
+    if (!near) return;
     let cancelled = false;
     fetch(src)
       .then((r) => r.text())
       .then((text) => { if (!cancelled) setSvg(text); });
     return () => { cancelled = true; };
-  }, [src]);
+  }, [src, near]);
 
   if (!svg) {
-    return <div role="img" aria-label={title} style={{ width: "100%", aspectRatio: ratio }} />;
+    return <div ref={ref} role="img" aria-label={title} style={{ width: "100%", aspectRatio: ratio }} />;
   }
 
   return <div role="img" aria-label={title} style={{ width: "100%" }} dangerouslySetInnerHTML={{ __html: svg }} />;
 }
 
-/** A real screen recording, boxed at roughly a phone's aspect ratio.
- *  Autoplays muted and loops, same treatment as the home page's own project
- *  thumbnails, so it reads as a living screen rather than a video the
- *  visitor has to press play on. */
+/** Runs `onChange` as an element comes within ~one screen of view and
+ *  leaves it — scoped to the page or the overlay, whichever scrolls. */
+function useNearView<T extends Element>(onChange: (near: boolean, el: T) => void) {
+  const ref = React.useRef<T>(null);
+  const cb = React.useRef(onChange);
+  React.useEffect(() => {
+    cb.current = onChange;
+  });
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // In the overlay the content scrolls inside its own container, and the
+    // margin only reaches ahead if it's measured against that container.
+    const root = el.closest(".bento-overlay-scroll");
+    const io = new IntersectionObserver(([entry]) => cb.current(entry.isIntersecting, el), { root, rootMargin: "400px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
+
+/** A real screen recording, boxed at roughly a phone's aspect ratio. Loops
+ *  muted so it reads as a living screen, but only plays near the viewport —
+ *  this page has eight of them, and starting them all the moment the case
+ *  study opened (mid thumbnail flight) was what made opening it stutter. */
 function ShotVideo({ src, label, ratio = 9 / 19.5 }: { src: string; label: string; ratio?: number }) {
+  const ref = useNearView<HTMLVideoElement>((near, video) => {
+    if (near) video.play().catch(() => {});
+    else video.pause();
+  });
   return (
     <video
+      ref={ref}
       src={src}
       aria-label={label}
-      autoPlay
+      preload="metadata"
       loop
       muted
       playsInline
@@ -275,7 +315,7 @@ function SolutionCarousel({ items }: { items: typeof SOLUTION_SCREENS }) {
             image, not a new sound just for this carousel. */}
         <button
           type="button"
-          onClick={() => { play("press"); scrollToIndex(indexRef.current - 1); }}
+          onClick={() => { sfx.flip(); scrollToIndex(indexRef.current - 1); }}
           disabled={index === 0}
           aria-label="Previous screen"
           className="n2-carousel-arrow"
@@ -297,7 +337,7 @@ function SolutionCarousel({ items }: { items: typeof SOLUTION_SCREENS }) {
 
         <button
           type="button"
-          onClick={() => { play("press"); scrollToIndex(indexRef.current + 1); }}
+          onClick={() => { sfx.flip(); scrollToIndex(indexRef.current + 1); }}
           disabled={index === items.length - 1}
           aria-label="Next screen"
           className="n2-carousel-arrow"
@@ -575,6 +615,17 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
 
       {/* ── 01 — INTRO ── */}
       <section className="pt-14 md:pt-20 px-6">
+        {/* The same three-phone scene as the Selected Work thumbnail, so
+            the thumbnail can fly straight into it. (MorphHero lines up its
+            playback with the flying copy at handoff.) */}
+        <div className="max-w-5xl mx-auto py-6 mb-10">
+          <MorphHero slug="no2" same>
+            <div style={{ aspectRatio: "16 / 9", borderRadius: "4px", overflow: "hidden" }}>
+              <PhoneScene />
+            </div>
+          </MorphHero>
+        </div>
+
         <div className="max-w-5xl mx-auto mb-10">
           <ScrollReveal>
             <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "7px 12px", borderRadius: "4px", background: "#fff", fontSize: "13px", fontWeight: 400, color: "#4B5563" }}>
@@ -619,14 +670,15 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
           <ScrollReveal delay={0.15}>
             <div style={{ width: "100%", maxWidth: "760px", margin: "0 auto" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/app-preview.png" alt="No. 2, live on the App Store" style={{ width: "100%", borderRadius: "4px", display: "block" }} />
+              <img src={APP_PREVIEW_SRC} alt="No. 2, live on the App Store" style={{ width: "100%", aspectRatio: "2592 / 1676", borderRadius: "4px", display: "block" }} />
             </div>
           </ScrollReveal>
         </div>
       </section>
 
+      <AfterLanding slug="no2">
       {/* ── 01 — PROBLEM ── */}
-      <section id="problem" className="px-6 py-28 md:py-36">
+      <section id="problem" className="px-6 py-16 md:py-24 lg:py-36">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal>
             <SectionLabel>01. Problem</SectionLabel>
@@ -647,7 +699,7 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
       </section>
 
       {/* ── 02 — SOLUTION ── */}
-      <section id="solution" className="px-6 py-28 md:py-36">
+      <section id="solution" className="px-6 py-16 md:py-24 lg:py-36">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal>
             <SectionLabel>02. Solution</SectionLabel>
@@ -676,7 +728,7 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
       </section>
 
       {/* ── 03 — RESEARCH ── */}
-      <section id="research" className="px-6 py-28 md:py-36">
+      <section id="research" className="px-6 py-16 md:py-24 lg:py-36">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal>
             <SectionLabel>03. Research</SectionLabel>
@@ -746,7 +798,7 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
       </section>
 
       {/* ── 04 — DESIGN DECISIONS ── */}
-      <section id="decisions" className="px-6 py-28 md:py-36">
+      <section id="decisions" className="px-6 py-16 md:py-24 lg:py-36">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal>
             <SectionLabel>04. Design Decisions</SectionLabel>
@@ -798,7 +850,7 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
       </section>
 
       {/* ── 05 — FINAL SOLUTION & KEY LEARNINGS ── */}
-      <section id="learnings" className="px-6 py-28 md:py-36">
+      <section id="learnings" className="px-6 py-16 md:py-24 lg:py-36">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal>
             <SectionLabel>05. Final Solution &amp; Key Learnings</SectionLabel>
@@ -879,6 +931,7 @@ export default function No2Content({ variant = "page", onClose }: CaseStudyConte
         nextHref="/cove"
         nextLabel="Cove"
       />
+      </AfterLanding>
     </>
   );
 

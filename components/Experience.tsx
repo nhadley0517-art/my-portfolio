@@ -13,7 +13,7 @@ export default function Experience() {
           font-size: 16px;
           font-weight: 300;
           color: #13181B;
-          margin: 0 0 28px;
+          margin: 0 0 22px;
         }
       `}</style>
     </section>

@@ -3,6 +3,8 @@
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
+import MorphHero from "@/components/MorphHero";
+import { SELECTED_WORK } from "@/lib/workData";
 import Link from "next/link";
 import type { ArchiveProjectData } from "@/lib/archiveProjectsData";
 
@@ -31,6 +33,13 @@ function HeroVisual({ project }: { project: ArchiveProjectData & { hero: NonNull
       style={{ width: "100%", height: "auto", display: "block", borderRadius: "4px" }}
     />
   );
+}
+
+/** Whether this project's hero is exactly its Selected Work thumbnail
+ *  (Driveway's demo video) — see MorphHero's `same`. */
+function heroIsThumb(project: ArchiveProjectData) {
+  const thumb = SELECTED_WORK.find((r) => r.slug === project.slug)?.thumb;
+  return thumb?.type === "video" && project.hero?.type === "video" && thumb.src === project.hero.src;
 }
 
 interface ArchiveProjectPageProps {
@@ -98,16 +107,16 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
           </div>
 
           {project.hero && (
-            <ScrollReveal delay={0.1}>
-              <div className="max-w-5xl mx-auto">
+            <div className="max-w-5xl mx-auto">
+              <MorphHero slug={project.slug} delay={0.1} same={heroIsThumb(project)}>
                 <HeroVisual project={{ ...project, hero: project.hero }} />
-              </div>
-            </ScrollReveal>
+              </MorphHero>
+            </div>
           )}
         </section>
 
         {/* ── Overview ── */}
-        <section className="px-6 py-16 md:py-20">
+        <section id="overview" className="px-6 py-16 md:py-20">
           <div className="max-w-5xl mx-auto" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             {project.overview.map((p, i) => (
               <ScrollReveal key={i} delay={i * 0.05}>
@@ -119,7 +128,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
 
         {/* ── Screens: before/after + why, one block per screen ── */}
         {project.screens && project.screens.length > 0 && (
-          <section className="px-6 pb-16 md:pb-20">
+          <section id="screens" className="px-6 pb-16 md:pb-20">
             <div className="max-w-5xl mx-auto" style={{ display: "flex", flexDirection: "column", gap: "56px" }}>
               {project.screens.map((screen, i) => (
                 <ScrollReveal key={screen.label} delay={i * 0.05}>
@@ -183,7 +192,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
 
         {/* ── Project details ── */}
         {detailRows.length > 0 && (
-          <section className="px-6 pb-16 md:pb-20">
+          <section id="details" className="px-6 pb-16 md:pb-20">
             <ScrollReveal>
               <div
                 className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4"
@@ -212,7 +221,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
         )}
 
         {/* ── What I Made ── */}
-        <section className="px-6 pb-16 md:pb-20">
+        <section id="what-i-made" className="px-6 pb-16 md:pb-20">
           <div className="max-w-5xl mx-auto">
             <ScrollReveal>
               <p
@@ -250,7 +259,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
 
         {/* ── Final screens (only rendered when we have real production shots) ── */}
         {project.finalImages && project.finalImages.length > 0 && (
-          <section className="px-6 pb-16 md:pb-20">
+          <section id="final-screens" className="px-6 pb-16 md:pb-20">
             <div className="max-w-5xl mx-auto">
               <ScrollReveal>
                 <p
@@ -284,7 +293,7 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
 
         {/* ── Live product CTA + closing note (omitted cleanly when there's nothing to show) ── */}
         {(project.live || project.closingNote) && (
-          <section className="px-6 pb-16 md:pb-20">
+          <section id="live" className="px-6 pb-16 md:pb-20">
             <ScrollReveal>
               <div className="max-w-5xl mx-auto" style={{ display: "flex", flexDirection: "column", gap: "18px", alignItems: "flex-start" }}>
                 {project.live && (

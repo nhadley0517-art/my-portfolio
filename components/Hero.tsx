@@ -1,8 +1,45 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import BusinessCard from "./BusinessCard";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import LoopHero from "./LoopHero";
+
+const LOCATION = "Reno, NV";
+const TIME_ZONE = "America/Los_Angeles";
+
+/** Small mono status line above the bio — availability plus local time,
+ *  the kind of detail that reads as "a real person is on the other end."
+ *  The clock renders client-side only: the server's time and the visitor's
+ *  first paint would never match, which React treats as a hydration error. */
+function StatusLine() {
+  const [time, setTime] = useState<string | null>(null);
+  useEffect(() => {
+    const fmt = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", timeZone: TIME_ZONE });
+    const tick = () => setTime(fmt.format(new Date()));
+    tick();
+    const id = setInterval(tick, 30_000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <motion.div
+      className="hero-status"
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+    >
+      <span className="hero-status-item">
+        <span className="hero-status-dot" aria-hidden />
+        Available for work
+      </span>
+      <span className="hero-status-item">
+        {LOCATION}
+        <span className="hero-status-sep" aria-hidden>·</span>
+        <span className="hero-status-time">{time ?? " "}</span>
+      </span>
+    </motion.div>
+  );
+}
 
 type BioChunk = { text: string; strong?: boolean };
 
@@ -10,62 +47,27 @@ type BioChunk = { text: string; strong?: boolean };
 // the final line never leaves a single word stranded alone.
 const BIO_PARAGRAPHS: BioChunk[][] = [
   [
-    { text: "Noah Hadley", strong: true },
-    { text: "is a" },
+    { text: "Hi! I'm" },
+    { text: "Noah,", strong: true },
+    { text: "a" },
     { text: "product designer", strong: true },
-    { text: "who graduated from Grand Canyon University in April 2026. He cares about how things feel to use, not just how they look. He designs end to end across web and mobile, uses Claude Code and Cursor as a core part of his workflow, and recently shipped a" },
+    { text: "who graduated from Grand Canyon University in April 2026. I care about how things feel to use, not just how they look. I design end to end across web and mobile, use Claude Code and Cursor as a core part of my workflow, and recently shipped a" },
     { text: "solo iOS app", strong: true },
-    { text: "built completely from scratch in two weeks." },
+    { text: "built completely from scratch in two weeks." },
   ],
   [
-    { text: "He previously interned at Canyon Creative, designing client-facing products in an agency environment, and at Grand Canyon Education, where he led a full platform redesign for tens of thousands of students." },
+    { text: "I previously interned at Canyon Creative, designing client-facing products in an agency environment, and at Grand Canyon Education, where I led a full platform redesign for tens of thousands of students." },
   ],
   [
-    { text: "He's actively looking for" },
+    { text: "I'm actively looking for" },
     { text: "full-time product design roles,", strong: true },
-    { text: "open to remote, hybrid, or relocation." },
+    { text: "open to remote, hybrid, or relocation." },
   ],
 ];
 
 const BIO_PARAGRAPHS_WORDS = BIO_PARAGRAPHS.map((chunks) =>
   chunks.flatMap((c) => c.text.split(" ").map((word) => ({ word, strong: c.strong })))
 );
-
-// Both card images are 1050x600 — the real 3.5x2in business card proportion.
-// Everything sizes off this so the card is never subtly stretched.
-const CARD_RATIO = 1050 / 600;
-
-/* Sizing is expressed as CSS math rather than read off `window`. Reading the
-   viewport during render is what caused a hydration mismatch — the server has
-   no window, so it emitted a different height than the client. `vh`/`vw` units
-   are resolved by the browser itself, so the exact same string is correct on
-   both, there's no wrong-size frame before a JS effect corrects it, and window
-   resizes are handled for free without a listener. */
-
-/** Resting height of the hero section: taller than the content strictly needs,
- *  because the card is centered in the stage below the bio, so a deeper
- *  resting section is what drops it clear of the text. Never taller than the
- *  viewport, or the section would shrink as you scroll instead of growing. */
-const HERO_REST_H = "min(100vh, max(68vh, 840px))";
-
-const CARD_SMALL_W = "300px";
-/** The grown card, capped three ways: by viewport width, by the source
- *  image's own native size (so it's never upscaled), and — the cap that
- *  actually binds on short screens — by the vertical room left under the bio,
- *  so the card and its shadow can't overflow the section's `overflow: hidden`
- *  and get sliced off. The 520px covers the bio block plus the section's
- *  padding, with margin so the card never lands flush against the clip edge. */
-const CARD_LARGE_W =
-  `max(${CARD_SMALL_W}, min(100vw - 260px, 660px, calc(max(180px, 100vh - 520px) * ${CARD_RATIO})))`;
-
-/** Mobile doesn't scroll-jack at all, so it just needs one fixed size —
- *  the desktop formula's constants (260px of side margin) are tuned for a
- *  much wider stage and read as cramped down here. 48px matches the
- *  page's own mobile edge margin. */
-const CARD_MOBILE_W = "min(420px, calc(100vw - 48px))";
-
-/** Linear interpolation between two CSS lengths, driven by scroll progress. */
-const lerpCss = (from: string, to: string, p: number) => `calc(${from} + (${to} - ${from}) * ${p})`;
 
 function HeroBio() {
   return (
@@ -102,25 +104,6 @@ function HeroBio() {
 }
 
 export default function Hero() {
-
-  // Scroll-linked growth: the card starts small and scales up as the user
-  // scrolls through this wrapper, while the section itself stays pinned
-  // (`position: sticky`). No spring/smoothing on these values — a direct
-  // algebraic map off scrollYProgress means the card's size always matches
-  // scroll position exactly, with nothing left to settle.
-  const scrollWrapRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: scrollWrapRef, offset: ["start start", "end end"] });
-
-  // The section needs a concrete (not min-) height so the bio can sit at a
-  // fixed size up top while the card stage below it (flex: 1) has room to
-  // grow into.
-  const heroHeight = useTransform(scrollYProgress, (p) => lerpCss(HERO_REST_H, "100vh", p));
-  const cardWidth = useTransform(scrollYProgress, (p) => lerpCss(CARD_SMALL_W, CARD_LARGE_W, p));
-  const cardHeight = useTransform(
-    scrollYProgress,
-    (p) => `calc((${lerpCss(CARD_SMALL_W, CARD_LARGE_W, p)}) / ${CARD_RATIO})`
-  );
-
   // Keep the page pinned to the hero on load (don't let the browser restore
   // a previous scroll position or jump to an anchor).
   useEffect(() => {
@@ -128,101 +111,28 @@ export default function Hero() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Preload the back face so the first flip doesn't show a blank plane.
-  useEffect(() => {
-    const img = new window.Image();
-    img.src = "/Business-card-back.png";
-  }, []);
-
   return (
-    <section id="welcome">
-      {/* Desktop: the scroll-jack growth sequence, entirely unchanged.
-          Hidden below the mobile breakpoint via CSS only — nothing here
-          reads the viewport in JS, so there's no hydration risk and no
-          behavior change for desktop. */}
-      <div ref={scrollWrapRef} className="hero-desktop-scroll" style={{ position: "relative", height: "190vh" }}>
-        <motion.section
-          className="hero-section"
-          style={{
-            background: "#f4f4f5",
-            height: heroHeight,
-            boxSizing: "border-box",
-            position: "sticky",
-            top: 0,
-            overflow: "hidden",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {/* Bio — fixed at the top of the sticky section, so it stays
-              visible and never moves for the entire hero scroll sequence;
-              only the image stage below it grows. Uses .site-container
-              directly so it's centered in exactly the same column as every
-              other section, rather than a separately-maintained formula. */}
-          <div className="site-container hero-bio-wrap">
-            <HeroBio />
-          </div>
-
-          {/* The business card — a real CSS 3D object you can turn over.
-              Only its stage is scroll-sized; the card's own tilt/turn
-              transforms live inside BusinessCard, so the two never fight
-              over the same element's transform. */}
-          <div className="hero-image-stage">
-            <motion.div
-              className="hero-card-stage"
-              style={{ width: cardWidth, height: cardHeight }}
-            >
-              <BusinessCard />
-            </motion.div>
-          </div>
-        </motion.section>
-      </div>
-
-      {/* Mobile: no scroll-jack, no pin — the card just renders at its full
-          size right away and the section takes only the height its content
-          needs, so scrolling past the hero is one normal scroll like every
-          other section instead of a dead zone spent growing an image. */}
-      <div className="hero-mobile-static">
-        <div className="site-container hero-bio-wrap">
-          <HeroBio />
-        </div>
-        <div className="hero-image-stage">
-          <div className="hero-card-stage hero-card-stage--mobile">
-            <BusinessCard mobile />
-          </div>
+    <section id="welcome" className="hero-section">
+      <div className="site-container hero-bio-wrap">
+        <StatusLine />
+        <HeroBio />
+        <div className="hero-loop-wrap">
+          <LoopHero />
+          <p className="hero-loop-caption">
+            This is a lite version of <strong>Loop</strong>, a pixel-art music sequencer I designed and built —{" "}
+            <a href="https://loop-music-studio.vercel.app/" target="_blank" rel="noopener noreferrer" className="hero-loop-link">
+              see the full thing
+            </a>
+            .
+          </p>
         </div>
       </div>
 
       <style>{`
-        /* No horizontal padding here — the bio uses .site-container
-           directly, and the image stage centers its box within this
-           section's full width, which shares the same center line as
-           .site-container since both center within the same site-main. */
         .hero-section {
           padding-top: 108px;
-          /* Deeper than it looks like it needs to be — the card's ground
-             shadow and "drag to turn" hint both sit *outside* the card's
-             own box, and the section clips its overflow. */
-          padding-bottom: 56px;
+          padding-bottom: clamp(56px, 7vw, 96px);
         }
-        .hero-image-stage {
-          flex: 1;
-          min-height: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-        }
-        .hero-card-stage { position: relative; flex-shrink: 0; }
-        .hero-card-stage--mobile {
-          width: ${CARD_MOBILE_W};
-          height: calc(${CARD_MOBILE_W} / ${CARD_RATIO});
-        }
-        /* Flex items with auto cross-axis margins shrink-wrap to content
-           instead of stretching first — explicit width forces it to fill
-           the row before max-width caps it, so it centers exactly like
-           every other section's plain-block .site-container does. */
-        .hero-bio-wrap { flex-shrink: 0; width: 100%; padding-bottom: clamp(56px, 7vw, 100px); }
         .hero-bio {
           font-size: 16px;
           font-weight: 300;
@@ -232,7 +142,44 @@ export default function Hero() {
           max-width: 840px;
           margin: 0 0 16px;
         }
-        .hero-bio:last-child { margin-bottom: 0; }
+        .hero-status {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px 24px;
+          margin-bottom: 28px;
+          font-family: var(--font-geist-mono), ui-monospace, monospace;
+          font-size: 11.5px;
+          letter-spacing: 0.01em;
+          color: #A8ABB2;
+        }
+        .hero-status-item { display: inline-flex; align-items: center; gap: 8px; }
+        .hero-status-dot {
+          position: relative;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #16A34A;
+        }
+        /* A slow ring pulsing out of the dot — the one bit of motion that
+           says "live" without anything else on the line moving. */
+        .hero-status-dot::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: #16A34A;
+          animation: hero-status-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes hero-status-ping {
+          0% { transform: scale(1); opacity: 0.5; }
+          75%, 100% { transform: scale(2.6); opacity: 0; }
+        }
+        .hero-status-sep { color: #D1D3D8; }
+        .hero-status-time { font-variant-numeric: tabular-nums; min-width: 7ch; }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-status-dot::after { animation: none; }
+        }
+
         .hero-bio-word-wrap { display: inline; }
         .hero-bio-word { display: inline-block; }
         /* Key facts (name, role, standout details) pulled out of the
@@ -240,16 +187,36 @@ export default function Hero() {
            to separate a title from surrounding copy. */
         .hero-bio-word.is-strong { color: #13181B; font-weight: 400; }
 
-        .hero-mobile-static {
-          display: none;
+        /* Same max-width as .hero-bio, not the wider site-container it sits
+           in — matches the paragraph's own column exactly rather than
+           stretching edge to edge underneath it. */
+        .hero-loop-wrap {
+          max-width: 840px;
+          margin-top: clamp(28px, 3.5vw, 40px);
+        }
+        .hero-loop-caption {
+          font-size: 13px;
+          font-weight: 300;
+          color: #A8ABB2;
+          margin: 12px 0 0;
+        }
+        .hero-loop-caption strong { font-weight: 500; color: #6B7280; }
+        .hero-loop-link {
+          color: #6B7280;
+          text-decoration: underline;
+          text-underline-offset: 3px;
+          text-decoration-color: rgba(107,114,128,0.35);
+          transition: color 0.2s ease;
+        }
+        .hero-loop-link:hover { color: #13181B; }
+
+        /* Below 900px the sidebar is a bar pinned above the hero, which
+           already accounts for most of the desktop top offset. */
+        @media (max-width: 900px) {
+          .hero-section { padding-top: 64px; }
         }
         @media (max-width: 700px) {
-          .hero-desktop-scroll { display: none; }
-          .hero-mobile-static {
-            display: flex;
-            flex-direction: column;
-            padding: 96px 0 64px;
-          }
+          .hero-section { padding: 48px 0 56px; }
         }
       `}</style>
     </section>
