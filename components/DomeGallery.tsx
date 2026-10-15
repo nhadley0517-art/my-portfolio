@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useCallback } from "react";
-import { sfx } from "@/lib/sounds";
 
 type ImageInput = string | { src: string; alt?: string };
 
@@ -275,7 +274,6 @@ export default function DomeGallery({
     const overlay = overlayElRef.current;
     const scrimEl = scrimElRef.current;
     if (!overlay) return;
-    sfx.close();
     const refDiv = parent.querySelector(".item__image--reference") as HTMLElement | null;
     const originalPos = originalTilePositionRef.current;
 
@@ -332,7 +330,6 @@ export default function DomeGallery({
   const openItemFromElement = useCallback(
     (el: HTMLElement) => {
       if (openingRef.current) return;
-      sfx.lift();
       openingRef.current = true;
       openStartedAtRef.current = performance.now();
       const parent = el.parentElement as HTMLElement;

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { sfx } from "@/lib/sounds";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -311,11 +310,9 @@ function SolutionCarousel({ items }: { items: typeof SOLUTION_SCREENS }) {
       </div>
 
       <div className="n2-carousel-controls">
-        {/* "press" — same cue as picking a case study or a dome gallery
-            image, not a new sound just for this carousel. */}
         <button
           type="button"
-          onClick={() => { sfx.flip(); scrollToIndex(indexRef.current - 1); }}
+          onClick={() => scrollToIndex(indexRef.current - 1)}
           disabled={index === 0}
           aria-label="Previous screen"
           className="n2-carousel-arrow"
@@ -337,7 +334,7 @@ function SolutionCarousel({ items }: { items: typeof SOLUTION_SCREENS }) {
 
         <button
           type="button"
-          onClick={() => { sfx.flip(); scrollToIndex(indexRef.current + 1); }}
+          onClick={() => scrollToIndex(indexRef.current + 1)}
           disabled={index === items.length - 1}
           aria-label="Next screen"
           className="n2-carousel-arrow"

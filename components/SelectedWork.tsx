@@ -6,7 +6,6 @@ import { useBentoOverlay } from "@/components/BentoOverlay";
 import { MORPH_TRANSITION, morphLayoutId } from "@/components/MorphHero";
 import { SELECTED_WORK } from "@/lib/workData";
 import { PhoneSceneSlot, SharedPhoneSceneHost } from "@/components/PhoneScene";
-import { sfx } from "@/lib/sounds";
 
 // Shared with the intro's word spans so a name link staggers in as one atomic
 // unit in the same sequence, rather than reading as a separate animation.
@@ -139,10 +138,7 @@ export default function SelectedWork() {
             type="button"
             className={"sw-thumb" + (hovered === row.slug ? " is-active" : "")}
             onClick={() => openProject(row.slug)}
-            onPointerEnter={(e) => {
-              setHovered(row.slug);
-              if (e.pointerType === "mouse") sfx.hover();
-            }}
+            onPointerEnter={() => setHovered(row.slug)}
             onPointerLeave={() => setHovered(null)}
             aria-label={`Open ${row.title}`}
           >

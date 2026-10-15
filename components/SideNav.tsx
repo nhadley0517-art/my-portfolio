@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import SoundToggle from "@/components/SoundToggle";
 import BusinessCard from "@/components/BusinessCard";
 import { useBentoOverlay } from "@/components/BentoOverlay";
-import { sfx } from "@/lib/sounds";
 
 const SECTIONS = [
   { id: "welcome", label: "Welcome" },
@@ -124,7 +122,6 @@ export default function SideNav() {
     // which is what read as the pill landing one section above whatever was
     // actually clicked. We already know which section the user meant.
     setActive(id);
-    sfx.navigate();
     // Scroll BEFORE closing the sheet, not after — closing it first
     // unmounts the sheet mid-click and can shift the page's layout (and
     // therefore the target's position) out from under scrollIntoView
@@ -177,17 +174,13 @@ export default function SideNav() {
           <a href="mailto:nhadley0517@gmail.com" className="side-nav-contact">
             nhadley0517@gmail.com
           </a>
-          <SoundToggle />
         </div>
 
         {/* Mobile only — hidden on desktop via CSS. */}
         <button
           type="button"
           className="side-nav-burger"
-          onClick={() => {
-            sfx.toggle();
-            setOpen((v) => !v);
-          }}
+          onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? "Close menu" : "Open menu"}
         >
@@ -232,9 +225,6 @@ export default function SideNav() {
           >
             nhadley0517@gmail.com
           </a>
-          <div className="side-nav-sheet-sound">
-            <SoundToggle />
-          </div>
         </div>
       )}
 
@@ -480,7 +470,6 @@ export default function SideNav() {
             background: #F1F0ED;
             margin: 4px 8px;
           }
-          .side-nav-sheet-sound { padding: 6px 12px 4px; }
           /* Same 12px inset as the links around it, and none of the
              desktop sidebar's 32px bottom margin — in the menu the email
              link's own padding is the gap. */

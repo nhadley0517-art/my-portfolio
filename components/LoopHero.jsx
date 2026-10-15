@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { sfx } from '@/lib/sounds';
 
 // A small version of Loop (loop-music-studio.vercel.app): paint pixels,
 // hear them as music. Both halves are ported straight from the real app —
@@ -846,7 +845,6 @@ export default function LoopHero() {
           type="button"
           className={'loop-play' + (playing ? ' is-on' : '')}
           onClick={() => {
-            sfx.control();
             endIntro();
             if (playing) {
               stop();
@@ -874,7 +872,6 @@ export default function LoopHero() {
               className={'loop-swatch' + (!erasing && i === color ? ' is-on' : '')}
               style={{ background: p.c }}
               onClick={() => {
-                if (erasing || i !== color) sfx.select();
                 setErasing(false);
                 setColor(i);
               }}
@@ -888,7 +885,6 @@ export default function LoopHero() {
             aria-label="Eraser"
             className={'loop-swatch loop-eraser' + (erasing ? ' is-on' : '')}
             onClick={() => {
-              if (!erasing) sfx.select();
               setErasing(true);
             }}
           >
@@ -914,7 +910,6 @@ export default function LoopHero() {
             type="button"
             className="loop-clear"
             onClick={() => {
-              sfx.clear();
               endIntro();
               pxRef.current.fill(EMPTY);
               dirtyRef.current = true;

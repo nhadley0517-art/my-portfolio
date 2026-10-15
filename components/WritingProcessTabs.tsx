@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { sfx } from "@/lib/sounds";
 
 const TABS = [
   { label: "Prewriting", src: "/Prewriting.png" },
@@ -28,10 +27,7 @@ export default function WritingProcessTabs() {
         {TABS.map((tab, i) => (
           <button
             key={tab.label}
-            onClick={() => {
-              if (i !== active) sfx.select();
-              setActive(i);
-            }}
+            onClick={() => setActive(i)}
             className={"wpt-tab" + (i === active ? " is-active" : "")}
           >
             {tab.label}

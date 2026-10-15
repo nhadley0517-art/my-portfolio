@@ -70,18 +70,14 @@ export const OVERLAY_REGISTRY: OverlayRegistry = {
   },
   writing: {
     variant: "card",
-    sound: "flip",
     render: () => <WritingIndex />,
   },
-  // Namespaced so a post can never collide with a project slug, and given
-  // the "page" cue so opening something to read sounds different from
-  // opening something to look at.
+  // Namespaced so a post can never collide with a project slug.
   ...Object.fromEntries(
     POSTS.map((post) => [
       `writing/${post.slug}`,
       {
         variant: "card" as const,
-        sound: "flip" as const,
         render: ({ close }: { close: () => void }) => <WritingPost post={post} onClose={close} />,
       },
     ])

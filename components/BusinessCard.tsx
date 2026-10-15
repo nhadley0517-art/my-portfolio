@@ -9,7 +9,6 @@ import {
   useTransform,
   useMotionTemplate,
 } from "framer-motion";
-import { sfx } from "@/lib/sounds";
 
 const FRONT_SRC = "/Business-card-front.png";
 const BACK_SRC = "/Business-card-back.png";
@@ -121,9 +120,6 @@ export default function BusinessCard({ mobile = false }: { mobile?: boolean }) {
   const settle = () => {
     // Nearest half-turn, so it always comes to rest showing a clean face.
     const target = Math.round(ry.get() / 180) * 180;
-    // Only when a drag actually lands it on the other side — hovering off
-    // or a drag that springs back to the same face stays silent.
-    if (Math.abs(target - restY.current) % 360 === 180) sfx.flip();
     restY.current = target;
     animate(ry, target, settleSpring);
     animate(rx, 0, settleSpring);
@@ -147,7 +143,6 @@ export default function BusinessCard({ mobile = false }: { mobile?: boolean }) {
   };
 
   const flip = () => {
-    sfx.flip();
     setTouched(true);
     restY.current += 180;
     animate(ry, restY.current, settleSpring);

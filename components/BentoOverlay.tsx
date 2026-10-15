@@ -3,7 +3,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { sfx } from "@/lib/sounds";
 
 export type BentoOverlayVariant = "bare" | "card" | "wide";
 
@@ -14,8 +13,6 @@ export type BentoOverlayVariant = "bare" | "card" | "wide";
  *  URL alone. */
 export interface OverlayEntry {
   variant: BentoOverlayVariant;
-  /** Cue played on open. Defaults to "open"; reading material uses "flip". */
-  sound?: "open" | "flip";
   render: (ctx: { close: () => void }) => ReactNode;
   /** Optional companion panel rendered as a sibling of the main shell, not
    *  inside it — the 3 case studies use this for their section legend.
@@ -105,10 +102,7 @@ function OverlayChrome({
         <button
           type="button"
           className="bento-chrome-btn bento-chrome-btn--fullscreen"
-          onClick={() => {
-            sfx.toggle();
-            onToggleFullscreen();
-          }}
+          onClick={onToggleFullscreen}
           aria-label={fullscreen ? "Exit fullscreen" : "View fullscreen"}
         >
           {fullscreen ? (
@@ -198,7 +192,6 @@ export function BentoOverlayProvider({
   // affordances stay in sync instead of stacking up duplicate entries. A
   // deep-linked one just drops the param in place.
   const close = useCallback(() => {
-    sfx.close();
     if (slugFromLocation()) {
       if (pushedRef.current) {
         window.history.back();
@@ -226,7 +219,6 @@ export function BentoOverlayProvider({
   );
 
   const open = useCallback((content: ReactNode, variant: BentoOverlayVariant, key = "overlay") => {
-    sfx.lift();
     setState({ content, variant, key });
   }, []);
 
@@ -234,14 +226,13 @@ export function BentoOverlayProvider({
     (slug: string, opts?: { morph?: boolean }) => {
       const next = buildFromSlug(slug);
       if (!next) return;
-      sfx[registry?.[slug]?.sound ?? "open"]();
       const url = new URL(window.location.href);
       url.searchParams.set(URL_PARAM, slug);
       window.history.pushState({}, "", url);
       pushedRef.current = true;
       setState(opts?.morph ? { ...next, morphSlug: slug } : next);
     },
-    [buildFromSlug, registry]
+    [buildFromSlug]
   );
 
   // Keep overlay state in sync with the URL so the back button closes an
