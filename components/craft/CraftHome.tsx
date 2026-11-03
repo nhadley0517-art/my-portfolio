@@ -12,8 +12,7 @@ import { DitherImage, DitherReveal, PosterDeck, reducedMotion } from "@/componen
 
 const EMAIL = "nhadley0517@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/noah-hadley/";
-// TODO(Noah): your X handle.
-const X_URL = "https://x.com/";
+const X_URL = "https://x.com/NoahUXUI";
 const HADLEY_DEV = "https://hadley.dev";
 const STILL_DEMO = "/tvos%20demo.mp4";
 
@@ -36,7 +35,7 @@ const Icon = ({ d }: { d: string }) => (
 const NAV = [
   { label: "Work", id: "work", icon: <Icon d="M2.5 4.5a1 1 0 0 1 1-1h3l1.5 1.5h4.5a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1z" /> },
   { label: "Experience", id: "experience", icon: <Icon d="M2.5 13.5h11M4.5 11V8M8 11V4.5M11.5 11V6.5" /> },
-  { label: "Play", id: "play", icon: <Icon d="M10.5 2.5l3 3L6 13H3v-3zM9 4l3 3" /> },
+  { label: "Craft", id: "craft", icon: <Icon d="M10.5 2.5l3 3L6 13H3v-3zM9 4l3 3" /> },
 ];
 
 type Item = { title: string; line: string; color: string; thumb: string; video?: boolean; slug?: string; href?: string };
@@ -70,7 +69,7 @@ const ROLES: Role[] = [
     dates: "",
     work: [
       { slug: "no2", title: "No. 2", line: "An iOS app I designed and shipped solo in two weeks", thumb: "/no2-thumb.jpg", color: C.yellow },
-      { href: HADLEY_DEV, title: "hadley.dev", line: "My library of micro-interactions, installed through the shadcn CLI", thumb: "/craft/banner.jpg", color: C.blue },
+      { href: HADLEY_DEV, title: "hadley.dev", line: "My library of micro-interactions, installed through the shadcn CLI", thumb: "/craft/cover.jpg", color: C.blue },
       { slug: "sales-dashboard", title: "Driveway Auto Spa", line: "A sales dashboard a detailing business runs on", thumb: "/dwautospademo.mp4", video: true, color: C.pink },
       { slug: "cove", title: "Cove", line: "A field service CRM, as founding designer", thumb: "/dashboard-demo.mp4", video: true, color: C.green },
       { slug: "real", title: "Real", line: "A redesign I hand-coded and cold-messaged to the founder", thumb: "/real-thumb.jpg", color: C.orange },
@@ -100,6 +99,30 @@ function Tile({ span, title, meta, color, children }: { span: 2 | 3 | 4 | 6; tit
         <span className="c-chip">{title}</span> {meta}
       </figcaption>
     </figure>
+  );
+}
+
+/** A case study: the product work, so it gets the room and says what it
+ *  was and what came of it, and the media opens the full story. */
+function CaseTile({ slug, title, kind, line, color, onOpen, register, children }: { slug: string; title: string; kind: string; line: string; color: string; onOpen: (slug: string) => void; register: (slug: string, el: HTMLDivElement | null) => void; children: ReactNode }) {
+  return (
+    <article className="c-tile c-case-tile c-span-3" style={colorVar(color)}>
+      <div className="c-tile-body">
+        <DitherReveal>
+          <CaseThumb slug={slug} title={title} onOpen={onOpen} register={register}>
+            {children}
+          </CaseThumb>
+        </DitherReveal>
+      </div>
+      <button type="button" className="c-case-copy" onClick={() => onOpen(slug)}>
+        <span className="c-case-head">
+          <span className="c-chip">{title}</span>
+          <span className="c-kind">{kind}</span>
+        </span>
+        <span className="c-case-line">{line}</span>
+        <span className="c-read">Read the case study <span aria-hidden>→</span></span>
+      </button>
+    </article>
   );
 }
 
@@ -290,55 +313,75 @@ export default function CraftHome() {
         </header>
 
         <div className="c-band">
-          <DitherImage src="/craft/banner.jpg" rotate />
+          <DitherImage src="/craft/landscape.jpg" />
         </div>
 
-        <section id="work" className="c-grid" aria-label="Work">
-          <Tile span={4} title="Still" meta="Concept TV interface" color={C.orange}>
-            <div className="c-still">
-              <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
-            </div>
-          </Tile>
-          <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
-            <div className="c-plinth"><SearchDemo /></div>
-          </Tile>
-          <Tile span={3} title="No. 2" meta="iOS app, shipped solo" color={C.yellow}>
-            <CaseThumb slug="no2" title="No. 2" onOpen={openProject} register={register}>
+        {/* The product work comes first and gets the room: it's what someone
+            hiring would open. Everything made for its own sake lives in
+            Craft further down. */}
+        <section id="work" className="c-section is-first" aria-labelledby="work-h">
+          <div className="c-head">
+            <h2 id="work-h">Selected work</h2>
+            <p>Case studies</p>
+          </div>
+          <div className="c-grid">
+            <CaseTile slug="no2" title="No. 2" kind="iOS app · 2026" line="A gut-health app I designed and shipped solo in two weeks, live on the App Store." color={C.yellow} onOpen={openProject} register={register}>
               <SharedPhoneSceneHost />
               <PhoneSceneSlot />
-            </CaseThumb>
-          </Tile>
-          <Tile span={3} title="Driveway Auto Spa" meta="Sales dashboard, in daily use" color={C.pink}>
-            <CaseThumb slug="sales-dashboard" title="Driveway Auto Spa" onOpen={openProject} register={register}>
+            </CaseTile>
+            <CaseTile slug="sales-dashboard" title="Driveway Auto Spa" kind="Sales dashboard · Live" line="Designed, built, and shipped solo in three days. A real detailing business runs on it today." color={C.pink} onOpen={openProject} register={register}>
               <video src="/dwautospademo.mp4" autoPlay muted loop playsInline />
-            </CaseThumb>
-          </Tile>
-          <Tile span={6} title="Profile Card" meta="hadley.dev, drag the edge" color={C.purple}>
-            <div className="c-plinth is-wide"><ProfileDemo /></div>
-          </Tile>
-          <Tile span={3} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
-            <div className="c-plinth"><CharacterDemo /></div>
-          </Tile>
-          <Tile span={3} title="Cove" meta="Field service CRM, founding designer" color={C.green}>
-            <CaseThumb slug="cove" title="Cove" onOpen={openProject} register={register}>
+            </CaseTile>
+            <CaseTile slug="cove" title="Cove" kind="Field service CRM · 2026" line="Founding designer on the CRM a field service business runs its whole day on." color={C.green} onOpen={openProject} register={register}>
               <video src="/dashboard-demo.mp4" autoPlay muted loop playsInline />
-            </CaseThumb>
-          </Tile>
+            </CaseTile>
+            <article className="c-tile c-case-tile c-span-3 is-soon" style={colorVar(C.green)}>
+              <div className="c-tile-body c-soon-media">
+                <span>H&amp;R Block</span>
+              </div>
+              <div className="c-case-copy">
+                <span className="c-case-head">
+                  <span className="c-chip">H&amp;R Block</span>
+                  <span className="c-kind">Coming soon</span>
+                </span>
+                <span className="c-case-line">A collection of work from my role as a product designer.</span>
+              </div>
+            </article>
+          </div>
         </section>
 
         <section id="experience" className="c-section">
-          <h2>Experience</h2>
+          <div className="c-head">
+            <h2>Experience</h2>
+          </div>
           <Timeline onOpen={openProject} />
         </section>
 
-        <section id="play" className="c-section">
-          <h2>Play</h2>
+        <section id="craft" className="c-section" aria-labelledby="craft-h">
+          <div className="c-head">
+            <h2 id="craft-h">Craft</h2>
+            <p>Interfaces, components, and experiments, made because I wanted to</p>
+          </div>
           <div className="c-grid">
-            <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
-              <div className="c-plinth is-loop"><LoopHero /></div>
+            <Tile span={4} title="Still" meta="Concept TV interface" color={C.orange}>
+              <div className="c-still">
+                <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
+              </div>
+            </Tile>
+            <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
+              <div className="c-plinth"><SearchDemo /></div>
+            </Tile>
+            <Tile span={4} title="Profile Card" meta="hadley.dev, drag the edge" color={C.purple}>
+              <div className="c-plinth is-wide"><div className="c-shrink"><ProfileDemo /></div></div>
             </Tile>
             <Tile span={2} title="Posters" meta="Made outside any brief" color={C.yellow}>
               <div className="c-plinth is-deck"><PosterDeck /></div>
+            </Tile>
+            <Tile span={2} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
+              <div className="c-plinth"><CharacterDemo /></div>
+            </Tile>
+            <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
+              <div className="c-plinth is-loop"><LoopHero /></div>
             </Tile>
           </div>
         </section>
@@ -402,15 +445,20 @@ export default function CraftHome() {
         .c-span-4 { grid-column: span 4; }
         .c-span-6 { grid-column: span 6; }
         .c-tile-body {
+          outline: 2px solid transparent;
+          outline-offset: 0;
           flex: 1;
           min-height: 0;
           border-radius: 6px;
           overflow: hidden;
-          transition: box-shadow 0.25s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+          transition: outline-color 0.2s ease, outline-offset 0.25s cubic-bezier(0.16,1,0.3,1), transform 0.35s cubic-bezier(0.16,1,0.3,1);
         }
+        /* A crisp ring in the project's color, set off from the edge, not
+           a glow: it says "this one" without blurring the work. */
         .c-tile:hover .c-tile-body {
-          transform: translateY(-3px);
-          box-shadow: 0 0 0 2px var(--c), 0 18px 40px -22px var(--c);
+          transform: translateY(-2px);
+          outline-color: var(--c);
+          outline-offset: 4px;
         }
         .c-tile figcaption { margin-top: 12px; font-size: 13px; color: var(--faint); }
         .c-chip {
@@ -439,7 +487,10 @@ export default function CraftHome() {
           padding: 20px;
           background: #EBEBED;
         }
-        .c-plinth.is-wide { min-height: 520px; overflow: hidden; }
+        .c-plinth.is-wide { min-height: 400px; overflow: hidden; }
+        /* The card's desktop layout is wider than this tile, so it runs a
+           little smaller here instead of clipping. */
+        .c-shrink { width: 100%; zoom: 0.84; }
         .c-plinth.is-loop { display: block; min-height: 0; }
         .c-plinth.is-deck { padding: 0; }
 
@@ -458,8 +509,48 @@ export default function CraftHome() {
         .c-deck-picks button.is-on { background: ${C.yellow}; color: var(--ink); }
 
         .c-section { margin-top: 112px; scroll-margin-top: 32px; }
-        #work { scroll-margin-top: 32px; }
-        .c-section h2 { margin: 0 0 28px; font-size: 16px; font-weight: 400; color: var(--ink); }
+        .c-section.is-first { margin-top: 56px; }
+        .c-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 0 0 24px; }
+        .c-head h2 { margin: 0; font-size: 16px; font-weight: 400; color: var(--ink); }
+        .c-head p { margin: 0; font-size: 13px; color: var(--faint); text-align: right; }
+
+        .c-case-copy {
+          display: grid;
+          gap: 4px;
+          margin-top: 14px;
+          padding: 0;
+          border: 0;
+          background: none;
+          font: inherit;
+          text-align: left;
+          cursor: pointer;
+        }
+        div.c-case-copy { cursor: default; }
+        .c-case-head { display: flex; align-items: baseline; gap: 10px; font-size: 15px; }
+        .c-case-head .c-chip { font-weight: 500; }
+        .c-kind { font-family: var(--font-geist-mono), monospace; font-size: 11.5px; color: var(--faint); }
+        .c-case-line { font-size: 14px; line-height: 1.55; color: var(--muted); max-width: 46ch; }
+        .c-read {
+          margin-top: 4px;
+          font-size: 13px;
+          color: var(--c);
+          opacity: 0;
+          transform: translateX(-4px);
+          transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+        }
+        .c-case-tile:hover .c-read { opacity: 1; transform: none; }
+        .c-case-tile:hover .c-chip { background: var(--c); color: #fff; }
+        .c-soon-media {
+          display: grid;
+          place-items: center;
+          aspect-ratio: 16 / 9;
+          flex: none;
+          border: 1px dashed rgba(19,24,27,0.18);
+          font-size: 13px;
+          color: var(--faint);
+        }
+        .is-soon:hover .c-tile-body { outline-color: transparent; transform: none; }
+        .is-soon:hover .c-chip { background: none; color: var(--ink); }
 
         .c-timeline { position: relative; list-style: none; margin: 0; padding: 0 0 0 28px; max-width: 680px; }
         .c-timeline::before, .c-line {
@@ -471,7 +562,7 @@ export default function CraftHome() {
           width: 1px;
         }
         .c-timeline::before { background: var(--hair); }
-        .c-line { display: block; background: var(--ink); transform-origin: top; }
+        .c-line { display: block; background: #4B5157; transform-origin: top; }
         .c-timeline li { position: relative; padding-bottom: 56px; }
         .c-timeline li:last-child { padding-bottom: 0; }
         .c-dot {
@@ -548,11 +639,13 @@ export default function CraftHome() {
         @media (max-width: 640px) {
           .c-grid { grid-template-columns: minmax(0, 1fr); }
           .c-span-2, .c-span-3, .c-span-4, .c-span-6 { grid-column: span 1; }
-          .c-plinth.is-wide { min-height: 440px; }
+          .c-plinth.is-wide { min-height: 420px; }
+          .c-shrink { zoom: 1; }
           .c-section { margin-top: 80px; }
         }
         @media (hover: none) {
-          .c-tile:hover .c-tile-body { transform: none; box-shadow: none; }
+          .c-tile:hover .c-tile-body { transform: none; outline-color: transparent; }
+          .c-read { opacity: 1; transform: none; }
         }
         @media (prefers-reduced-motion: reduce) {
           .c-role-body, .c-tile-body, .c-item-thumb { transition: none; }

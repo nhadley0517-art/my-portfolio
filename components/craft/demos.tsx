@@ -147,10 +147,10 @@ export function ProfileDemo() {
     <div ref={ref} className="flex w-full justify-center" onPointerDownCapture={() => setHands(true)}>
       <ProfileCard
         name="Noah Hadley"
-        handle="noahhadley"
+        handle="NoahUXUI"
         bio="Product designer. Small interactions, decided carefully."
-        avatar="/noahheadshot.jpg"
-        cover="/craft/banner.jpg"
+        avatar="/craft/bear.svg"
+        cover="/craft/cover.jpg"
         followers={1284}
         following={312}
         view={view}
