@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local reference projects: assets get pulled from these, never committed
+/cluely redesign/
+/Component Library/
+/crm/
+/driveway-ppf/
+/fun projects/
+/tv ui/

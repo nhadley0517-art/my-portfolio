@@ -73,6 +73,18 @@ export function PhoneSceneSlot({ active = true }: { active?: boolean }) {
  *  container-query units, so one component covers a ~150px mobile thumbnail
  *  up to the full-width hero. */
 export default function PhoneScene() {
+  const root = useRef<HTMLDivElement>(null);
+  // The videos mount inside a detached node, where the autoplay attribute
+  // can miss its moment, so they're started by hand once they're on the page.
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const start = () => el.querySelectorAll("video").forEach((v) => v.paused && v.play().catch(() => {}));
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && start());
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const phone = (i: number, cls: string) => (
     <div className={`ps-phone ${cls}`}>
       <video src={NO2_PHONE_VIDEOS[i]} autoPlay muted loop playsInline />
@@ -80,7 +92,7 @@ export default function PhoneScene() {
   );
 
   return (
-    <div className="ps">
+    <div ref={root} className="ps">
       <div className="ps-glow" />
       <div className="ps-row">
         {phone(0, "ps-side ps-left")}
