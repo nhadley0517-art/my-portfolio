@@ -143,8 +143,24 @@ export function ProfileDemo() {
     return () => clearInterval(id);
   }, [hands, inView]);
 
+  // Grabbing the card switches the whole page out of text selection until the
+  // pointer lets go anywhere, so the drag only ever moves the card.
+  const startStretch = () => {
+    setHands(true);
+    const root = document.documentElement;
+    root.classList.add("is-stretching");
+    window.getSelection()?.removeAllRanges();
+    const end = () => {
+      root.classList.remove("is-stretching");
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+    };
+    window.addEventListener("pointerup", end);
+    window.addEventListener("pointercancel", end);
+  };
+
   return (
-    <div ref={ref} className="flex w-full justify-center" onPointerDownCapture={() => setHands(true)}>
+    <div ref={ref} className="flex w-full select-none justify-center" onPointerDownCapture={startStretch}>
       <ProfileCard
         name="Noah Hadley"
         handle="NoahUXUI"

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useBentoOverlay } from "@/components/BentoOverlay";
 import { MORPH_TRANSITION, morphLayoutId } from "@/components/MorphHero";
 import { PhoneSceneSlot, SharedPhoneSceneHost } from "@/components/PhoneScene";
 import LoopHero from "@/components/LoopHero";
 import { SideNav } from "@/components/hadley/side-nav";
+import { SegmentedControl } from "@/components/hadley/segmented-control";
 import { CharacterDemo, ProfileDemo, SearchDemo } from "@/components/craft/demos";
 import { DitherImage, DitherReveal, PosterDeck, reducedMotion } from "@/components/craft/dither";
 
@@ -34,9 +35,18 @@ const Icon = ({ d }: { d: string }) => (
 
 const NAV = [
   { label: "Work", id: "work", icon: <Icon d="M2.5 4.5a1 1 0 0 1 1-1h3l1.5 1.5h4.5a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1z" /> },
+  { label: "Playground", id: "work", icon: <Icon d="M10.5 2.5l3 3L6 13H3v-3zM9 4l3 3" /> },
   { label: "Experience", id: "experience", icon: <Icon d="M2.5 13.5h11M4.5 11V8M8 11V4.5M11.5 11V6.5" /> },
-  { label: "Craft", id: "craft", icon: <Icon d="M10.5 2.5l3 3L6 13H3v-3zM9 4l3 3" /> },
 ];
+
+type View = "work" | "play";
+const VIEWS: { value: View; label: string }[] = [
+  { value: "work", label: "Selected work" },
+  { value: "play", label: "Playground" },
+];
+/** The hero's top edge, which the side nav lines up with above the fold. */
+const HERO_TOP = 112;
+const NAV_TOP = 24;
 
 type Item = { title: string; line: string; color: string; thumb: string; video?: boolean; slug?: string; href?: string };
 type Role = { company: string; color: string; role: string; dates: string; blurb?: string; work?: Item[]; soon?: boolean };
@@ -236,7 +246,9 @@ function Timeline({ onOpen }: { onOpen: (slug: string) => void }) {
 
 export default function CraftHome() {
   const { openSlug } = useBentoOverlay();
-  const [active, setActive] = useState("Work");
+  const [section, setSection] = useState("work");
+  const [view, setView] = useState<View>("work");
+  const nav = useRef<HTMLDivElement>(null);
   const [, bumpLaunch] = useReducer((n: number) => n + 1, 0);
   const thumbs = useRef(new Map<string, HTMLDivElement>());
 
@@ -257,23 +269,47 @@ export default function CraftHome() {
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) setActive(NAV.find((n) => n.id === e.target.id)!.label);
-        }
+        for (const e of entries) if (e.isIntersecting) setSection(e.target.id);
       },
       { rootMargin: "-40% 0px -55% 0px" }
     );
-    NAV.forEach((n) => io.observe(document.getElementById(n.id)!));
+    ["work", "experience"].forEach((id) => io.observe(document.getElementById(id)!));
     return () => io.disconnect();
   }, []);
 
+  // Above the fold the nav's top edge sits level with the hero; as the page
+  // scrolls it rides up with it, then holds in the corner.
+  useEffect(() => {
+    const place = () => {
+      if (nav.current) nav.current.style.top = `${Math.max(NAV_TOP, HERO_TOP - window.scrollY)}px`;
+    };
+    place();
+    window.addEventListener("scroll", place, { passive: true });
+    return () => window.removeEventListener("scroll", place);
+  }, []);
+
+  // A link straight to the playground (#playground) opens on it.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (window.location.hash === "#playground") setView("play");
+  }, []);
+
+  const showView = (next: View) => {
+    setView(next);
+    history.replaceState(null, "", next === "play" ? "#playground" : window.location.pathname + window.location.search);
+  };
+
+  const active = section === "experience" ? "Experience" : view === "play" ? "Playground" : "Work";
+
   const go = (label: string) => {
+    if (label === "Work") showView("work");
+    if (label === "Playground") showView("play");
     document.getElementById(NAV.find((n) => n.label === label)!.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <div className="craft">
-      <div className="c-nav">
+      <div ref={nav} className="c-nav" style={{ top: HERO_TOP }}>
         <SideNav title="Noah Hadley" items={NAV} active={active} onNavigate={go} stroke />
       </div>
       <nav className="c-bar" aria-label="Sections">
@@ -316,38 +352,76 @@ export default function CraftHome() {
           <DitherImage src="/craft/landscape.jpg" />
         </div>
 
-        {/* The product work comes first and gets the room: it's what someone
-            hiring would open. Everything made for its own sake lives in
-            Craft further down. */}
-        <section id="work" className="c-section is-first" aria-labelledby="work-h">
+        {/* One place for the work, two ways to look at it: the case studies
+            someone hiring would open, and the playground of things made for
+            their own sake. Switching swaps the grid in place, so the
+            playground is one click away instead of a long scroll down. */}
+        <section id="work" className="c-section is-first" aria-label="Work">
           <div className="c-head">
-            <h2 id="work-h">Selected work</h2>
-            <p>Case studies</p>
+            <div className={`c-switch is-${view}`}>
+              <SegmentedControl options={VIEWS} value={view} onValueChange={showView} stroke />
+            </div>
+            <p>{view === "work" ? "Case studies" : "Interfaces, components, and experiments, made because I wanted to"}</p>
           </div>
-          <div className="c-grid">
-            <CaseTile slug="no2" title="No. 2" kind="iOS app · 2026" line="A gut-health app I designed and shipped solo in two weeks, live on the App Store." color={C.yellow} onOpen={openProject} register={register}>
-              <SharedPhoneSceneHost />
-              <PhoneSceneSlot />
-            </CaseTile>
-            <CaseTile slug="sales-dashboard" title="Driveway Auto Spa" kind="Sales dashboard · Live" line="Designed, built, and shipped solo in three days. A real detailing business runs on it today." color={C.pink} onOpen={openProject} register={register}>
-              <video src="/dwautospademo.mp4" autoPlay muted loop playsInline />
-            </CaseTile>
-            <CaseTile slug="cove" title="Cove" kind="Field service CRM · 2026" line="Founding designer on the CRM a field service business runs its whole day on." color={C.green} onOpen={openProject} register={register}>
-              <video src="/dashboard-demo.mp4" autoPlay muted loop playsInline />
-            </CaseTile>
-            <article className="c-tile c-case-tile c-span-3 is-soon" style={colorVar(C.green)}>
-              <div className="c-tile-body c-soon-media">
-                <span>H&amp;R Block</span>
-              </div>
-              <div className="c-case-copy">
-                <span className="c-case-head">
-                  <span className="c-chip">H&amp;R Block</span>
-                  <span className="c-kind">Coming soon</span>
-                </span>
-                <span className="c-case-line">A collection of work from my role as a product designer.</span>
-              </div>
-            </article>
-          </div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={view}
+              initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {view === "work" ? (
+                <div className="c-grid">
+                  <CaseTile slug="no2" title="No. 2" kind="iOS app · 2026" line="A gut-health app I designed and shipped solo in two weeks, live on the App Store." color={C.yellow} onOpen={openProject} register={register}>
+                    <SharedPhoneSceneHost />
+                    <PhoneSceneSlot />
+                  </CaseTile>
+                  <CaseTile slug="sales-dashboard" title="Driveway Auto Spa" kind="Sales dashboard · Live" line="Designed, built, and shipped solo in three days. A real detailing business runs on it today." color={C.pink} onOpen={openProject} register={register}>
+                    <video src="/dwautospademo.mp4" autoPlay muted loop playsInline />
+                  </CaseTile>
+                  <CaseTile slug="cove" title="Cove" kind="Field service CRM · 2026" line="Founding designer on the CRM a field service business runs its whole day on." color={C.green} onOpen={openProject} register={register}>
+                    <video src="/dashboard-demo.mp4" autoPlay muted loop playsInline />
+                  </CaseTile>
+                  <article className="c-tile c-case-tile c-span-3 is-soon" style={colorVar(C.green)}>
+                    <div className="c-tile-body c-soon-media">
+                      <span>H&amp;R Block</span>
+                    </div>
+                    <div className="c-case-copy">
+                      <span className="c-case-head">
+                        <span className="c-chip">H&amp;R Block</span>
+                        <span className="c-kind">Coming soon</span>
+                      </span>
+                      <span className="c-case-line">A collection of work from my role as a product designer.</span>
+                    </div>
+                  </article>
+                </div>
+              ) : (
+                <div className="c-grid">
+                  <Tile span={4} title="Still" meta="Concept TV interface" color={C.orange}>
+                    <div className="c-still">
+                      <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
+                    </div>
+                  </Tile>
+                  <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
+                    <div className="c-plinth"><SearchDemo /></div>
+                  </Tile>
+                  <Tile span={4} title="Profile Card" meta="hadley.dev, drag the edge" color={C.purple}>
+                    <div className="c-plinth is-wide"><div className="c-shrink"><ProfileDemo /></div></div>
+                  </Tile>
+                  <Tile span={2} title="Posters" meta="Made outside any brief" color={C.yellow}>
+                    <div className="c-plinth is-deck"><PosterDeck /></div>
+                  </Tile>
+                  <Tile span={2} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
+                    <div className="c-plinth"><CharacterDemo /></div>
+                  </Tile>
+                  <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
+                    <div className="c-plinth is-loop"><LoopHero /></div>
+                  </Tile>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </section>
 
         <section id="experience" className="c-section">
@@ -355,35 +429,6 @@ export default function CraftHome() {
             <h2>Experience</h2>
           </div>
           <Timeline onOpen={openProject} />
-        </section>
-
-        <section id="craft" className="c-section" aria-labelledby="craft-h">
-          <div className="c-head">
-            <h2 id="craft-h">Craft</h2>
-            <p>Interfaces, components, and experiments, made because I wanted to</p>
-          </div>
-          <div className="c-grid">
-            <Tile span={4} title="Still" meta="Concept TV interface" color={C.orange}>
-              <div className="c-still">
-                <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
-              </div>
-            </Tile>
-            <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
-              <div className="c-plinth"><SearchDemo /></div>
-            </Tile>
-            <Tile span={4} title="Profile Card" meta="hadley.dev, drag the edge" color={C.purple}>
-              <div className="c-plinth is-wide"><div className="c-shrink"><ProfileDemo /></div></div>
-            </Tile>
-            <Tile span={2} title="Posters" meta="Made outside any brief" color={C.yellow}>
-              <div className="c-plinth is-deck"><PosterDeck /></div>
-            </Tile>
-            <Tile span={2} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
-              <div className="c-plinth"><CharacterDemo /></div>
-            </Tile>
-            <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
-              <div className="c-plinth is-loop"><LoopHero /></div>
-            </Tile>
-          </div>
         </section>
       </main>
 
@@ -399,7 +444,7 @@ export default function CraftHome() {
           font-family: var(--font-geist-sans), system-ui, sans-serif;
           font-weight: 400;
         }
-        .c-nav { position: fixed; top: 24px; left: 24px; z-index: 50; }
+        .c-nav { position: fixed; left: 24px; z-index: 50; }
         .c-bar { display: none; }
         /* Centered on the page itself, with the same clearance on both sides
            as the nav takes on the left. */
@@ -490,7 +535,7 @@ export default function CraftHome() {
         .c-plinth.is-wide { min-height: 400px; overflow: hidden; }
         /* The card's desktop layout is wider than this tile, so it runs a
            little smaller here instead of clipping. */
-        .c-shrink { width: 100%; zoom: 0.84; }
+        .c-shrink { width: 100%; transform: scale(0.84); }
         .c-plinth.is-loop { display: block; min-height: 0; }
         .c-plinth.is-deck { padding: 0; }
 
@@ -512,6 +557,19 @@ export default function CraftHome() {
         .c-section.is-first { margin-top: 56px; }
         .c-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 0 0 24px; }
         .c-head h2 { margin: 0; font-size: 16px; font-weight: 400; color: var(--ink); }
+        /* The selected half of the switch takes its view's color. */
+        .c-switch [role="radio"] > span:first-child:not(:last-child) { transition: background-color 0.25s ease; }
+        .c-switch.is-work [role="radio"] > span:first-child:not(:last-child) { background: ${C.blue}; }
+        .c-switch.is-play [role="radio"] > span:first-child:not(:last-child) { background: ${C.pink}; }
+        .c-switch [role="radio"][aria-checked="true"] { color: #fff; }
+
+        /* While the profile card is being stretched, nothing on the page can
+           be selected, so a fast drag never paints text or images blue. */
+        html.is-stretching, html.is-stretching * {
+          -webkit-user-select: none !important;
+          user-select: none !important;
+          cursor: ew-resize !important;
+        }
         .c-head p { margin: 0; font-size: 13px; color: var(--faint); text-align: right; }
 
         .c-case-copy {
@@ -640,7 +698,7 @@ export default function CraftHome() {
           .c-grid { grid-template-columns: minmax(0, 1fr); }
           .c-span-2, .c-span-3, .c-span-4, .c-span-6 { grid-column: span 1; }
           .c-plinth.is-wide { min-height: 420px; }
-          .c-shrink { zoom: 1; }
+          .c-shrink { transform: none; }
           .c-section { margin-top: 80px; }
         }
         @media (hover: none) {
