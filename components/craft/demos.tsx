@@ -165,7 +165,7 @@ export function ProfileDemo() {
         name="Noah Hadley"
         handle="NoahUXUI"
         bio="Product designer. Small interactions, decided carefully."
-        avatar="/craft/bear.svg"
+        avatar="/craft/avatar.svg"
         cover="/craft/cover.jpg"
         followers={1284}
         following={312}

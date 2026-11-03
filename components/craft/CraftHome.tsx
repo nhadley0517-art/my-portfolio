@@ -6,6 +6,7 @@ import { useBentoOverlay } from "@/components/BentoOverlay";
 import { MORPH_TRANSITION, morphLayoutId } from "@/components/MorphHero";
 import { PhoneSceneSlot, SharedPhoneSceneHost } from "@/components/PhoneScene";
 import LoopHero from "@/components/LoopHero";
+import Footer from "@/components/Footer";
 import { SideNav } from "@/components/hadley/side-nav";
 import { SegmentedControl } from "@/components/hadley/segmented-control";
 import { CharacterDemo, ProfileDemo, SearchDemo } from "@/components/craft/demos";
@@ -34,8 +35,8 @@ const Icon = ({ d }: { d: string }) => (
 );
 
 const NAV = [
+  { label: "About", id: "about", icon: <Icon d="M8 7.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2.5 14.5c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5" /> },
   { label: "Work", id: "work", icon: <Icon d="M2.5 4.5a1 1 0 0 1 1-1h3l1.5 1.5h4.5a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1z" /> },
-  { label: "Playground", id: "work", icon: <Icon d="M10.5 2.5l3 3L6 13H3v-3zM9 4l3 3" /> },
   { label: "Experience", id: "experience", icon: <Icon d="M2.5 13.5h11M4.5 11V8M8 11V4.5M11.5 11V6.5" /> },
 ];
 
@@ -246,7 +247,7 @@ function Timeline({ onOpen }: { onOpen: (slug: string) => void }) {
 
 export default function CraftHome() {
   const { openSlug } = useBentoOverlay();
-  const [section, setSection] = useState("work");
+  const [section, setSection] = useState("about");
   const [view, setView] = useState<View>("work");
   const nav = useRef<HTMLDivElement>(null);
   const [, bumpLaunch] = useReducer((n: number) => n + 1, 0);
@@ -273,7 +274,7 @@ export default function CraftHome() {
       },
       { rootMargin: "-40% 0px -55% 0px" }
     );
-    ["work", "experience"].forEach((id) => io.observe(document.getElementById(id)!));
+    NAV.forEach((n) => io.observe(document.getElementById(n.id)!));
     return () => io.disconnect();
   }, []);
 
@@ -282,6 +283,9 @@ export default function CraftHome() {
   useEffect(() => {
     const place = () => {
       if (nav.current) nav.current.style.top = `${Math.max(NAV_TOP, HERO_TOP - window.scrollY)}px`;
+      // The hero is too short to cross the scroll-spy's band, so the top of
+      // the page counts as About on its own.
+      if (window.scrollY < 240) setSection("about");
     };
     place();
     window.addEventListener("scroll", place, { passive: true });
@@ -299,18 +303,20 @@ export default function CraftHome() {
     history.replaceState(null, "", next === "play" ? "#playground" : window.location.pathname + window.location.search);
   };
 
-  const active = section === "experience" ? "Experience" : view === "play" ? "Playground" : "Work";
+  const active = NAV.find((n) => n.id === section)!.label;
 
+  // The nav only moves around the page; which view of the work is showing
+  // is the pill's job alone.
   const go = (label: string) => {
-    if (label === "Work") showView("work");
-    if (label === "Playground") showView("play");
-    document.getElementById(NAV.find((n) => n.label === label)!.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const id = NAV.find((n) => n.label === label)!.id;
+    if (id === "about") window.scrollTo({ top: 0, behavior: "smooth" });
+    else document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <div className="craft">
       <div ref={nav} className="c-nav" style={{ top: HERO_TOP }}>
-        <SideNav title="Noah Hadley" items={NAV} active={active} onNavigate={go} stroke />
+        <SideNav title="Noah Hadley" items={NAV} active={active} onNavigate={go} radius={12} />
       </div>
       <nav className="c-bar" aria-label="Sections">
         <strong>Noah Hadley</strong>
@@ -324,7 +330,7 @@ export default function CraftHome() {
       </nav>
 
       <main className="c-main">
-        <header className="c-intro">
+        <header id="about" className="c-intro">
           <h1>
             Hi, I&apos;m Noah
             <span>a product designer in Reno, NV</span>
@@ -359,7 +365,7 @@ export default function CraftHome() {
         <section id="work" className="c-section is-first" aria-label="Work">
           <div className="c-head">
             <div className={`c-switch is-${view}`}>
-              <SegmentedControl options={VIEWS} value={view} onValueChange={showView} stroke />
+              <SegmentedControl options={VIEWS} value={view} onValueChange={showView} radius={10} />
             </div>
             <p>{view === "work" ? "Case studies" : "Interfaces, components, and experiments, made because I wanted to"}</p>
           </div>
@@ -431,6 +437,7 @@ export default function CraftHome() {
           <Timeline onOpen={openProject} />
         </section>
       </main>
+      <Footer />
 
       <style>{`
         .craft {
