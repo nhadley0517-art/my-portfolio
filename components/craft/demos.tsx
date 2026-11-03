@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import { SearchBar } from "@/components/hadley/search-bar";
 import { CharacterLimit } from "@/components/hadley/character-limit";
+import { ProfileCard } from "@/components/hadley/profile-card";
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
@@ -13,7 +14,7 @@ const SEARCH_ITEMS = [
   "Driveway Auto Spa",
   "Cove",
   "Loop",
-  "Hold to Confirm",
+  "Profile Card",
   "Character Limit",
 ].map((label, i) => ({ label, hint: String(i + 1).padStart(3, "0") }));
 
@@ -71,10 +72,10 @@ export function SearchDemo() {
   );
 }
 
-const FITS = "Small things done with care add up.";
-const OVER =
-  "Every detail is a decision. Spend your attention where it matters most, then ship it and watch what people do.";
-const LIMIT = 80;
+const FITS = "Small things, done with care.";
+const LIMIT = 40;
+/** Enough whole words to land clearly past the limit, so the orange shows. */
+const OVER = "Every detail is a decision you get to make on purpose.";
 
 /** The real composer. Writes a line that fits, then one that runs over so the
  *  orange sand spills, until someone clicks in. */
@@ -104,7 +105,7 @@ export function CharacterDemo() {
         await sleep(2300);
         await type(OVER);
         await sleep(1400);
-        const to = OVER.lastIndexOf(" ", LIMIT - 2);
+        const to = OVER.lastIndexOf(" ", LIMIT - 4);
         for (let n = OVER.length - 1; n >= to && live; n--) {
           setText(OVER.slice(0, n));
           await sleep(55);
@@ -122,7 +123,40 @@ export function CharacterDemo() {
 
   return (
     <div ref={ref} className="w-full" onPointerDownCapture={() => setAuto(false)}>
-      <CharacterLimit limit={LIMIT} value={text} onValueChange={setText} placeholder="Say something" stroke />
+      {/* Controlled, so posting has to hand the box back empty itself. */}
+      <CharacterLimit limit={LIMIT} value={text} onValueChange={setText} onAction={() => setText("")} placeholder="Say something" stroke />
+    </div>
+  );
+}
+
+/** The real profile card, stretching between its phone and desktop layouts on
+ *  its own until someone grabs it. */
+export function ProfileDemo() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref);
+  const [view, setView] = useState<"phone" | "desktop">("phone");
+  const [hands, setHands] = useState(false);
+
+  useEffect(() => {
+    if (hands || !inView) return;
+    const id = setInterval(() => setView((x) => (x === "phone" ? "desktop" : "phone")), 3200);
+    return () => clearInterval(id);
+  }, [hands, inView]);
+
+  return (
+    <div ref={ref} className="flex w-full justify-center" onPointerDownCapture={() => setHands(true)}>
+      <ProfileCard
+        name="Noah Hadley"
+        handle="noahhadley"
+        bio="Product designer. Small interactions, decided carefully."
+        avatar="/noahheadshot.jpg"
+        cover="/craft/banner.jpg"
+        followers={1284}
+        following={312}
+        view={view}
+        onViewChange={setView}
+        stroke
+      />
     </div>
   );
 }

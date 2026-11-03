@@ -1,26 +1,30 @@
 "use client";
 
-import { useEffect, useReducer, useRef, useState, type ReactNode } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useReducer, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useBentoOverlay } from "@/components/BentoOverlay";
 import { MORPH_TRANSITION, morphLayoutId } from "@/components/MorphHero";
 import { PhoneSceneSlot, SharedPhoneSceneHost } from "@/components/PhoneScene";
 import LoopHero from "@/components/LoopHero";
-import ForFunTile from "@/components/ForFunTile";
 import { SideNav } from "@/components/hadley/side-nav";
-import { HoldToConfirm } from "@/components/hadley/hold-to-confirm";
-import { CharacterDemo, SearchDemo } from "@/components/craft/demos";
-import { DitherBand, DitherReveal } from "@/components/craft/dither";
+import { CharacterDemo, ProfileDemo, SearchDemo } from "@/components/craft/demos";
+import { DitherImage, DitherReveal, PosterDeck, reducedMotion } from "@/components/craft/dither";
 
 const EMAIL = "nhadley0517@gmail.com";
-const STILL_FRAMES = ["/craft/still-1.jpg", "/craft/still-3.jpg"];
+const LINKEDIN = "https://www.linkedin.com/in/noah-hadley/";
+// TODO(Noah): your X handle.
+const X_URL = "https://x.com/";
+const HADLEY_DEV = "https://hadley.dev";
+const STILL_DEMO = "/tvos%20demo.mp4";
 
-const COLOR = {
-  green: "#3AA97F",
-  blue: "#3A9AD0",
-  orange: "#DF5D3D",
-  gold: "#D9A531",
-  purple: "#9168D6",
+/** Pops of color, turned up. Each project owns one, used for its hover. */
+const C = {
+  green: "#00B85C",
+  blue: "#1F6BFF",
+  orange: "#FF5A1F",
+  pink: "#FF2E93",
+  yellow: "#FFB800",
+  purple: "#7A45FF",
 };
 
 const Icon = ({ d }: { d: string }) => (
@@ -31,80 +35,79 @@ const Icon = ({ d }: { d: string }) => (
 
 const NAV = [
   { label: "Work", id: "work", icon: <Icon d="M2.5 4.5a1 1 0 0 1 1-1h3l1.5 1.5h4.5a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1z" /> },
-  { label: "Play", id: "play", icon: <Icon d="M10.5 2.5l3 3L6 13H3v-3zM9 4l3 3" /> },
   { label: "Experience", id: "experience", icon: <Icon d="M2.5 13.5h11M4.5 11V8M8 11V4.5M11.5 11V6.5" /> },
-  { label: "Email", id: "", icon: <Icon d="M2.5 9h3l1 2h3l1-2h3M2.5 9l1.5-5.5h8L13.5 9v4h-11z" /> },
+  { label: "Play", id: "play", icon: <Icon d="M10.5 2.5l3 3L6 13H3v-3zM9 4l3 3" /> },
 ];
 
-type Role = {
-  company: string;
-  color: string;
-  role: string;
-  dates: string;
-  blurb?: string;
-  work?: { slug: string; title: string; line: string; thumb: string }[];
-  placeholder?: boolean;
-};
+type Item = { title: string; line: string; color: string; thumb: string; video?: boolean; slug?: string; href?: string };
+type Role = { company: string; color: string; role: string; dates: string; blurb?: string; work?: Item[]; soon?: boolean };
 
+/** Oldest first, so scrolling down the line is moving forward in time. */
 const ROLES: Role[] = [
   {
-    company: "H&R Block",
-    color: COLOR.green,
-    role: "Product Designer",
-    dates: "Now",
-    blurb: "A collection of smaller projects and what I do there.",
-    placeholder: true,
-  },
-  {
     company: "Grand Canyon Education",
-    color: COLOR.purple,
+    color: C.purple,
     role: "Product Design Intern",
-    dates: "2024 – 2026",
+    dates: "Oct 2024 – Apr 2026",
     blurb: "Designed for a student platform used by tens of thousands of learners.",
-    work: [{ slug: "writing-process", title: "Writing Process", line: "A wall of text, rebuilt as an 8-stage guided tool", thumb: "/wp_thumb.png" }],
+    work: [{ slug: "writing-process", title: "Writing Process", line: "A wall of text, rebuilt as an 8-stage guided tool", thumb: "/wp_thumb.png", color: C.purple }],
   },
   {
     company: "Canyon Creative",
-    color: COLOR.orange,
+    color: C.orange,
     role: "Product Design Intern",
-    dates: "2025 – 2026",
+    dates: "Dec 2025 – Apr 2026",
     blurb: "A student-run agency serving national clients.",
     work: [
-      { slug: "miah-families", title: "Miah Families", line: "A branded, donation-ready home for an Oregon nonprofit", thumb: "/miah-hero.png" },
-      { slug: "actively-ai", title: "Actively AI", line: "Solution pages for an AI revenue platform's launch", thumb: "/actively-hero.png" },
+      { slug: "miah-families", title: "Miah Families", line: "A branded, donation-ready home for an Oregon nonprofit", thumb: "/miah-hero.png", color: C.orange },
+      { slug: "actively-ai", title: "Actively AI", line: "Solution pages for an AI revenue platform's launch", thumb: "/actively-hero.png", color: C.pink },
     ],
   },
   {
     company: "Independent",
-    color: COLOR.blue,
-    role: "Self-directed",
+    color: C.blue,
+    role: "Designing and building my own work",
     dates: "",
     work: [
-      { slug: "real", title: "Real", line: "A redesign I hand-coded and cold-messaged to the founder", thumb: "/real-thumb.jpg" },
-      { slug: "univo", title: "Univo", line: "Medical records in plain language", thumb: "/univo_thumb.png" },
+      { slug: "no2", title: "No. 2", line: "An iOS app I designed and shipped solo in two weeks", thumb: "/no2-thumb.jpg", color: C.yellow },
+      { href: HADLEY_DEV, title: "hadley.dev", line: "My library of micro-interactions, installed through the shadcn CLI", thumb: "/craft/banner.jpg", color: C.blue },
+      { slug: "sales-dashboard", title: "Driveway Auto Spa", line: "A sales dashboard a detailing business runs on", thumb: "/dwautospademo.mp4", video: true, color: C.pink },
+      { slug: "cove", title: "Cove", line: "A field service CRM, as founding designer", thumb: "/dashboard-demo.mp4", video: true, color: C.green },
+      { slug: "real", title: "Real", line: "A redesign I hand-coded and cold-messaged to the founder", thumb: "/real-thumb.jpg", color: C.orange },
+      { slug: "univo", title: "Univo", line: "Medical records in plain language", thumb: "/univo_thumb.png", color: C.purple },
     ],
+  },
+  {
+    company: "H&R Block",
+    color: C.green,
+    role: "Product Designer",
+    dates: "Now",
+    blurb: "A collection of smaller projects and what I do there.",
+    soon: true,
   },
 ];
 
+const colorVar = (color: string) => ({ "--c": color }) as CSSProperties;
+
 /** One piece of work. `span` is out of six columns. */
-function Tile({ span, title, meta, tall, children }: { span: 2 | 3 | 4 | 6; title: string; meta: string; tall?: boolean; children: ReactNode }) {
+function Tile({ span, title, meta, color, children }: { span: 2 | 3 | 4 | 6; title: string; meta: string; color: string; children: ReactNode }) {
   return (
-    <figure className={`c-tile c-span-${span}${tall ? " is-tall" : ""}`}>
+    <figure className={`c-tile c-span-${span}`} style={colorVar(color)}>
       <div className="c-tile-body">
         <DitherReveal>{children}</DitherReveal>
       </div>
       <figcaption>
-        <span>{title}</span> {meta}
+        <span className="c-chip">{title}</span> {meta}
       </figcaption>
     </figure>
   );
 }
 
 /** A case study thumbnail. Shares a layoutId with the case study's landing
- *  pad, so the media flies into the overlay exactly as on the old grid. */
-function CaseThumb({ slug, onOpen, register, children }: { slug: string; onOpen: (slug: string) => void; register: (slug: string, el: HTMLDivElement | null) => void; children: ReactNode }) {
+ *  pad, so the media flies into the overlay. */
+function CaseThumb({ slug, title, onOpen, register, children }: { slug: string; title: string; onOpen: (slug: string) => void; register: (slug: string, el: HTMLDivElement | null) => void; children: ReactNode }) {
   return (
-    <button type="button" className="c-case" onClick={() => onOpen(slug)} aria-label={`Open ${slug}`}>
+    <button type="button" className="c-case" onClick={() => onOpen(slug)} aria-label={`Open ${title}`}>
       <motion.div
         ref={(el) => register(slug, el)}
         layoutId={morphLayoutId(slug)}
@@ -119,21 +122,92 @@ function CaseThumb({ slug, onOpen, register, children }: { slug: string; onOpen:
   );
 }
 
-/** Still is built for a TV, so its tile holds two real captures of the
- *  interface and slowly trades between them. */
-function StillTile() {
-  const [frame, setFrame] = useState(0);
+const SOCIAL = [
+  { label: "X", href: X_URL, path: "M9.47 6.77 15.3 0h-1.38L8.85 5.88 4.8 0H.13l6.12 8.9L.13 16h1.38l5.35-6.22L11.14 16h4.67L9.47 6.77Zm-1.9 2.2-.62-.88L2.01 1.04h2.13l3.98 5.69.62.88 5.17 7.4h-2.13L7.57 8.97Z" },
+  { label: "LinkedIn", href: LINKEDIN, path: "M13.63 13.63h-2.37V9.92c0-.89-.02-2.03-1.24-2.03-1.24 0-1.43.97-1.43 1.97v3.77H6.22V6h2.28v1.04h.03c.32-.6 1.09-1.24 2.25-1.24 2.4 0 2.85 1.58 2.85 3.64v4.19ZM3.54 4.96a1.37 1.37 0 1 1 0-2.75 1.37 1.37 0 0 1 0 2.75Zm1.19 8.67H2.36V6h2.37v7.63ZM14.82 0H1.18C.53 0 0 .52 0 1.15v13.7C0 15.48.53 16 1.18 16h13.64c.65 0 1.18-.52 1.18-1.15V1.15C16 .52 15.47 0 14.82 0Z" },
+  { label: "Email", href: `mailto:${EMAIL}`, path: "M1.5 2.5h13A1.5 1.5 0 0 1 16 4v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12V4a1.5 1.5 0 0 1 1.5-1.5Zm.4 1.6L8 8.3l6.1-4.2H1.9Z" },
+];
+
+/** The experience line draws itself as you scroll. Each role lights up, dot
+ *  first, then its color, the moment the line reaches it. */
+function Timeline({ onOpen }: { onOpen: (slug: string) => void }) {
+  const list = useRef<HTMLOListElement>(null);
+  const items = useRef<(HTMLLIElement | null)[]>([]);
+  const [lit, setLit] = useState(0);
+  const { scrollYProgress } = useScroll({ target: list, offset: ["start 72%", "end 72%"] });
+
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    const el = list.current;
+    if (!el) return;
+    const h = el.offsetHeight;
+    setLit(items.current.filter((li) => li && li.offsetTop / h <= p + 0.001).length);
+  });
+
   useEffect(() => {
-    const id = setInterval(() => setFrame((f) => (f + 1) % STILL_FRAMES.length), 4200);
-    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (reducedMotion()) setLit(ROLES.length);
   }, []);
+
   return (
-    <div className="c-still">
-      {STILL_FRAMES.map((src, i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={src} src={src} alt={i === 0 ? "Still, a concept TV interface: the home screen" : ""} style={{ opacity: i === frame ? 1 : 0 }} />
-      ))}
-    </div>
+    <ol ref={list} className="c-timeline">
+      <motion.span className="c-line" style={{ scaleY: scrollYProgress }} aria-hidden />
+      {ROLES.map((r, i) => {
+        const on = i < lit;
+        return (
+          <li key={r.company} ref={(el) => { items.current[i] = el; }} className={on ? "is-on" : ""} style={colorVar(r.color)}>
+            <motion.span
+              className="c-dot"
+              animate={on ? { scale: [0.4, 1.5, 1], backgroundColor: r.color } : { scale: 0.6, backgroundColor: "#CFD1D6" }}
+              transition={{ duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }}
+            />
+            <div className="c-role">
+              <h3>{r.company}</h3>
+              {r.dates && <time>{r.dates}</time>}
+            </div>
+            <div className="c-role-body">
+              <p className="c-role-title">{r.role}</p>
+              {r.blurb && <p className="c-blurb">{r.blurb}</p>}
+              {r.soon && (
+                <div className="c-soon" aria-hidden>
+                  <i /><i /><i />
+                </div>
+              )}
+              {r.work && (
+                <div className="c-items">
+                  {r.work.map((w) => {
+                    const inner = (
+                      <>
+                        <span className="c-item-thumb">
+                          {w.video ? (
+                            <video src={`${w.thumb}#t=1`} muted playsInline preload="metadata" />
+                          ) : (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={w.thumb} alt="" />
+                          )}
+                        </span>
+                        <span className="c-item-text">
+                          <strong>{w.title}</strong>
+                          {w.line}
+                        </span>
+                      </>
+                    );
+                    return w.href ? (
+                      <a key={w.title} className="c-item" href={w.href} target="_blank" rel="noopener noreferrer" style={colorVar(w.color)}>
+                        {inner}
+                      </a>
+                    ) : (
+                      <button key={w.title} type="button" className="c-item" onClick={() => onOpen(w.slug!)} style={colorVar(w.color)}>
+                        {inner}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -158,7 +232,6 @@ export default function CraftHome() {
   };
 
   useEffect(() => {
-    const sections = NAV.filter((n) => n.id).map((n) => document.getElementById(n.id)!);
     const io = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -167,14 +240,12 @@ export default function CraftHome() {
       },
       { rootMargin: "-40% 0px -55% 0px" }
     );
-    sections.forEach((s) => io.observe(s));
+    NAV.forEach((n) => io.observe(document.getElementById(n.id)!));
     return () => io.disconnect();
   }, []);
 
   const go = (label: string) => {
-    const item = NAV.find((n) => n.label === label)!;
-    if (item.id) document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    else window.location.href = `mailto:${EMAIL}`;
+    document.getElementById(NAV.find((n) => n.label === label)!.id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -200,96 +271,77 @@ export default function CraftHome() {
             <span>a product designer in Reno, NV</span>
           </h1>
           <p>
-            I design at <b style={{ color: COLOR.green }}>H&amp;R Block</b>, and I care most about how things feel in the hand: the timing, the weight, the small decisions nobody asks for.
+            I&apos;m a designer at <span className="c-hl" style={colorVar(C.green)}>H&amp;R Block</span>. I care about how things feel to use, not just how they look, and I design end to end across web and mobile.
           </p>
           <p>
-            On my own time I make things like <button type="button" className="c-word" style={{ color: COLOR.gold }} onClick={() => openProject("no2")}>No. 2</button>, an iOS app I shipped solo, <a href="#play" style={{ color: COLOR.orange }}>Still</a>, a TV interface with no ads, and{" "}
-            <a href="https://hadley.dev" target="_blank" rel="noopener noreferrer" style={{ color: COLOR.blue }}>hadley.dev</a>, a library of micro-interactions.
+            Outside of work I build what I design.{" "}
+            <button type="button" className="c-hl" style={colorVar(C.yellow)} onClick={() => openProject("no2")}>No. 2</button> is an iOS app I designed and shipped solo, and{" "}
+            <a className="c-hl" style={colorVar(C.blue)} href={HADLEY_DEV} target="_blank" rel="noopener noreferrer">hadley.dev</a> is my library of micro-interactions, a few of which you can play with below.
           </p>
+          <div className="c-social">
+            {SOCIAL.map((s) => (
+              <a key={s.label} href={s.href} aria-label={s.label} target={s.href.startsWith("mailto") ? undefined : "_blank"} rel="noopener noreferrer">
+                <svg viewBox="0 0 16 16" aria-hidden>
+                  <path d={s.path} fillRule="evenodd" />
+                </svg>
+              </a>
+            ))}
+          </div>
         </header>
 
         <div className="c-band">
-          <DitherBand />
+          <DitherImage src="/craft/banner.jpg" rotate />
         </div>
 
         <section id="work" className="c-grid" aria-label="Work">
-          <Tile span={4} title="Still" meta="Concept TV interface">
-            <StillTile />
+          <Tile span={4} title="Still" meta="Concept TV interface" color={C.orange}>
+            <div className="c-still">
+              <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
+            </div>
           </Tile>
-          <Tile span={2} title="Search Bar" meta="hadley.dev">
+          <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
             <div className="c-plinth"><SearchDemo /></div>
           </Tile>
-          <Tile span={3} title="No. 2" meta="iOS app, shipped solo">
-            <CaseThumb slug="no2" onOpen={openProject} register={register}>
+          <Tile span={3} title="No. 2" meta="iOS app, shipped solo" color={C.yellow}>
+            <CaseThumb slug="no2" title="No. 2" onOpen={openProject} register={register}>
               <SharedPhoneSceneHost />
               <PhoneSceneSlot />
             </CaseThumb>
           </Tile>
-          <Tile span={3} title="Driveway Auto Spa" meta="Sales dashboard, in daily use">
-            <CaseThumb slug="sales-dashboard" onOpen={openProject} register={register}>
+          <Tile span={3} title="Driveway Auto Spa" meta="Sales dashboard, in daily use" color={C.pink}>
+            <CaseThumb slug="sales-dashboard" title="Driveway Auto Spa" onOpen={openProject} register={register}>
               <video src="/dwautospademo.mp4" autoPlay muted loop playsInline />
             </CaseThumb>
           </Tile>
-          <Tile span={2} title="Character Limit" meta="hadley.dev">
+          <Tile span={6} title="Profile Card" meta="hadley.dev, drag the edge" color={C.purple}>
+            <div className="c-plinth is-wide"><ProfileDemo /></div>
+          </Tile>
+          <Tile span={3} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
             <div className="c-plinth"><CharacterDemo /></div>
           </Tile>
-          <Tile span={4} title="Cove" meta="Field service CRM, founding designer">
-            <CaseThumb slug="cove" onOpen={openProject} register={register}>
+          <Tile span={3} title="Cove" meta="Field service CRM, founding designer" color={C.green}>
+            <CaseThumb slug="cove" title="Cove" onOpen={openProject} register={register}>
               <video src="/dashboard-demo.mp4" autoPlay muted loop playsInline />
             </CaseThumb>
           </Tile>
         </section>
 
+        <section id="experience" className="c-section">
+          <h2>Experience</h2>
+          <Timeline onOpen={openProject} />
+        </section>
+
         <section id="play" className="c-section">
           <h2>Play</h2>
           <div className="c-grid">
-            <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it">
+            <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
               <div className="c-plinth is-loop"><LoopHero /></div>
             </Tile>
-            <Tile span={2} title="Hold to Confirm" meta="hadley.dev, press and hold">
-              <div className="c-plinth"><HoldToConfirm resetAfter={1800} stroke /></div>
-            </Tile>
-            <Tile span={6} tall title="Posters" meta="Made outside any brief, drag to spin">
-              <ForFunTile />
+            <Tile span={2} title="Posters" meta="Made outside any brief" color={C.yellow}>
+              <div className="c-plinth is-deck"><PosterDeck /></div>
             </Tile>
           </div>
         </section>
-
-        <section id="experience" className="c-section">
-          <h2>Experience</h2>
-          <ol className="c-timeline">
-            {ROLES.map((r) => (
-              <li key={r.company}>
-                <span className="c-dot" style={{ background: r.color }} />
-                <div className="c-role">
-                  <h3 style={{ color: r.color }}>{r.company}</h3>
-                  {r.dates && <time>{r.dates}</time>}
-                </div>
-                <p className="c-role-title">{r.role}</p>
-                {r.blurb && <p className="c-blurb">{r.blurb}</p>}
-                {r.placeholder && (
-                  <div className="c-soon" aria-hidden>
-                    <i /><i /><i />
-                  </div>
-                )}
-                {r.work?.map((w) => (
-                  <button key={w.slug} type="button" className="c-item" onClick={() => openProject(w.slug)}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={w.thumb} alt="" />
-                    <span>
-                      <strong>{w.title}</strong>
-                      {w.line}
-                    </span>
-                  </button>
-                ))}
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <footer className="c-footer">
-          Say hi at <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
-        </footer>
       </main>
 
       <style>{`
@@ -306,60 +358,77 @@ export default function CraftHome() {
         }
         .c-nav { position: fixed; top: 24px; left: 24px; z-index: 50; }
         .c-bar { display: none; }
+        /* Centered on the page itself, with the same clearance on both sides
+           as the nav takes on the left. */
         .c-main {
-          max-width: 1360px;
+          width: min(1080px, 100% - 560px);
           margin: 0 auto;
-          padding: 112px 48px 72px 288px;
+          padding: 112px 0 120px;
         }
 
-        .c-intro { max-width: 540px; font-size: 16px; line-height: 1.6; color: var(--muted); }
+        .c-intro { max-width: 560px; font-size: 16px; line-height: 1.6; color: var(--muted); }
         .c-intro h1 { margin: 0 0 20px; font: inherit; color: var(--ink); }
         .c-intro h1 span { display: block; color: var(--faint); }
         .c-intro p { margin: 0 0 16px; }
-        .c-intro b { font-weight: 400; }
-        .c-intro a, .c-word {
+        /* A colored word that turns into a solid label on hover. */
+        .c-hl {
           font: inherit;
-          padding: 0;
+          color: var(--c);
+          padding: 0 3px;
+          margin: 0 -3px;
           border: 0;
-          background: none;
-          cursor: pointer;
+          border-radius: 3px;
+          background: transparent;
           text-decoration: none;
+          cursor: pointer;
+          transition: background-color 0.18s ease, color 0.18s ease;
         }
-        .c-intro a:hover, .c-word:hover { text-decoration: underline; text-underline-offset: 3px; }
-        .c-band { margin: 32px 0 40px; }
+        span.c-hl { cursor: default; }
+        .c-hl:hover { background: var(--c); color: #fff; }
+        .c-social { display: flex; gap: 14px; margin-top: 20px; }
+        .c-social a { display: grid; place-items: center; width: 28px; height: 28px; margin: -6px; color: #3F454B; transition: color 0.15s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+        .c-social a:hover { color: var(--ink); transform: translateY(-2px); }
+        .c-social svg { width: 16px; height: 16px; fill: currentColor; }
+        .c-band { margin: 36px 0 40px; }
 
         .c-grid {
           display: grid;
           grid-template-columns: repeat(6, minmax(0, 1fr));
-          gap: 32px 16px;
+          gap: 36px 16px;
         }
         .c-tile { margin: 0; min-width: 0; display: flex; flex-direction: column; }
         .c-span-2 { grid-column: span 2; }
         .c-span-3 { grid-column: span 3; }
         .c-span-4 { grid-column: span 4; }
         .c-span-6 { grid-column: span 6; }
-        .c-tile-body { flex: 1; min-height: 0; border-radius: 6px; overflow: hidden; }
-        .c-tile.is-tall .c-tile-body { height: 520px; flex: none; }
-        .c-tile figcaption {
-          margin-top: 10px;
-          font-size: 13px;
-          color: var(--faint);
+        .c-tile-body {
+          flex: 1;
+          min-height: 0;
+          border-radius: 6px;
+          overflow: hidden;
+          transition: box-shadow 0.25s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
         }
-        .c-tile figcaption span { color: var(--ink); }
+        .c-tile:hover .c-tile-body {
+          transform: translateY(-3px);
+          box-shadow: 0 0 0 2px var(--c), 0 18px 40px -22px var(--c);
+        }
+        .c-tile figcaption { margin-top: 12px; font-size: 13px; color: var(--faint); }
+        .c-chip {
+          display: inline-block;
+          padding: 1px 6px;
+          margin-left: -6px;
+          border-radius: 3px;
+          color: var(--ink);
+          transition: background-color 0.18s ease, color 0.18s ease;
+        }
+        .c-tile:hover .c-chip { background: var(--c); color: #fff; }
 
         .c-case { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
-        .c-case-media { width: 100%; height: 100%; min-height: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #E9E9EC; }
+        .c-case-media { width: 100%; height: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #E9E9EC; }
         .c-case-media > video { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-        .c-still { position: relative; aspect-ratio: 16 / 9; height: 100%; width: 100%; background: #000; }
-        .c-still img {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: opacity 1.1s ease;
-        }
+        .c-still { height: 100%; aspect-ratio: 16 / 9; background: #000; }
+        .c-still video { display: block; width: 100%; height: 100%; object-fit: cover; }
 
         .c-plinth {
           display: flex;
@@ -367,68 +436,91 @@ export default function CraftHome() {
           justify-content: center;
           height: 100%;
           min-height: 280px;
-          padding: 16px;
+          padding: 20px;
           background: #EBEBED;
         }
-        .c-plinth.is-loop { display: block; min-height: 0; background: #EBEBED; }
+        .c-plinth.is-wide { min-height: 520px; overflow: hidden; }
+        .c-plinth.is-loop { display: block; min-height: 0; }
+        .c-plinth.is-deck { padding: 0; }
 
-        .c-section { margin-top: 96px; scroll-margin-top: 32px; }
-        #work { scroll-margin-top: 32px; }
-        .c-section h2 { margin: 0 0 24px; font-size: 16px; font-weight: 400; color: var(--ink); }
-
-        .c-timeline {
-          list-style: none;
-          margin: 0;
-          padding: 0 0 0 24px;
-          max-width: 640px;
-          border-left: 1px solid var(--hair);
+        .c-deck { display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 380px; }
+        .c-deck canvas { flex: 1; min-height: 0; width: 100%; }
+        .c-deck-picks {
+          display: flex;
+          justify-content: center;
+          padding: 4px 0 10px;
+          gap: 2px;
+          font-family: var(--font-geist-mono), monospace;
+          font-size: 11px;
         }
-        .c-timeline li { position: relative; padding-bottom: 44px; }
+        .c-deck-picks button { padding: 4px 5px; border: 0; border-radius: 3px; background: none; color: var(--faint); cursor: pointer; }
+        .c-deck-picks button:hover { color: var(--ink); }
+        .c-deck-picks button.is-on { background: ${C.yellow}; color: var(--ink); }
+
+        .c-section { margin-top: 112px; scroll-margin-top: 32px; }
+        #work { scroll-margin-top: 32px; }
+        .c-section h2 { margin: 0 0 28px; font-size: 16px; font-weight: 400; color: var(--ink); }
+
+        .c-timeline { position: relative; list-style: none; margin: 0; padding: 0 0 0 28px; max-width: 680px; }
+        .c-timeline::before, .c-line {
+          content: "";
+          position: absolute;
+          left: 3.5px;
+          top: 8px;
+          bottom: 0;
+          width: 1px;
+        }
+        .c-timeline::before { background: var(--hair); }
+        .c-line { display: block; background: var(--ink); transform-origin: top; }
+        .c-timeline li { position: relative; padding-bottom: 56px; }
         .c-timeline li:last-child { padding-bottom: 0; }
         .c-dot {
           position: absolute;
-          left: -28.5px;
-          top: 7px;
+          left: -28px;
+          top: 6px;
           width: 8px;
           height: 8px;
           border-radius: 50%;
           box-shadow: 0 0 0 4px #f4f4f5;
         }
         .c-role { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
-        .c-role h3 { margin: 0; font-size: 16px; font-weight: 500; }
+        .c-role h3 { margin: 0; font-size: 16px; font-weight: 500; color: var(--faint); transition: color 0.4s ease; }
+        .c-timeline li.is-on h3 { color: var(--c); }
         .c-role time { font-family: var(--font-geist-mono), monospace; font-size: 11.5px; color: var(--faint); white-space: nowrap; }
+        .c-role-body { opacity: 0.35; transform: translateY(6px); transition: opacity 0.5s ease 0.08s, transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.08s; }
+        .c-timeline li.is-on .c-role-body { opacity: 1; transform: none; }
         .c-role-title { margin: 2px 0 0; font-size: 14px; color: var(--ink); }
         .c-blurb { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
         .c-soon { display: flex; gap: 8px; margin-top: 14px; }
-        .c-soon i { width: 76px; height: 52px; border: 1px dashed rgba(19,24,27,0.18); border-radius: 4px; }
+        .c-soon i { width: 84px; height: 56px; border: 1px dashed rgba(19,24,27,0.18); border-radius: 4px; }
+        .c-items { display: grid; gap: 4px; margin-top: 12px; }
         .c-item {
           display: flex;
           align-items: center;
           gap: 14px;
           width: 100%;
-          margin-top: 12px;
-          padding: 0;
+          margin: 0 -8px;
+          padding: 8px;
           border: 0;
+          border-radius: 6px;
           background: none;
           font: inherit;
           text-align: left;
+          text-decoration: none;
           cursor: pointer;
+          transition: background-color 0.2s ease;
         }
-        .c-item img {
-          flex: none;
-          width: 76px;
-          height: 52px;
-          object-fit: cover;
-          border-radius: 4px;
-          transition: transform 0.25s cubic-bezier(0.16,1,0.3,1);
+        .c-item:hover { background: color-mix(in srgb, var(--c) 10%, transparent); }
+        .c-item-thumb { flex: none; width: 84px; height: 56px; border-radius: 4px; overflow: hidden; background: #E9E9EC; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; }
+        .c-item:hover .c-item-thumb { transform: rotate(-2deg) scale(1.06); box-shadow: 0 0 0 2px var(--c); }
+        .c-item-thumb img, .c-item-thumb video { display: block; width: 100%; height: 100%; object-fit: cover; }
+        .c-item-text { font-size: 13px; line-height: 1.45; color: var(--muted); }
+        .c-item-text strong { display: block; font-weight: 500; color: var(--ink); transition: color 0.2s ease; }
+        .c-item:hover .c-item-text strong { color: var(--c); }
+
+        @media (max-width: 1240px) {
+          .c-main { width: auto; margin: 0 40px 0 288px; }
         }
-        .c-item:hover img { transform: scale(1.05) rotate(-1.5deg); }
-        .c-item span { font-size: 13px; line-height: 1.45; color: var(--muted); }
-        .c-item strong { display: block; font-weight: 500; color: var(--ink); }
-
-        .c-footer { margin-top: 96px; padding-top: 20px; border-top: 1px dashed var(--hair); font-size: 14px; color: var(--muted); }
-        .c-footer a { color: var(--ink); }
-
         @media (max-width: 1180px) {
           .c-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .c-span-2, .c-span-3 { grid-column: span 1; }
@@ -451,17 +543,19 @@ export default function CraftHome() {
           .c-bar strong { font-weight: 500; white-space: nowrap; }
           .c-bar span { display: flex; gap: 14px; }
           .c-bar button { padding: 8px 0; border: 0; background: none; font: inherit; font-size: 13px; color: var(--muted); cursor: pointer; }
-          .c-main { padding: 48px 24px 56px; }
+          .c-main { margin: 0; padding: 48px 24px 72px; }
         }
         @media (max-width: 640px) {
-          .c-bar button:nth-child(4) { display: none; }
           .c-grid { grid-template-columns: minmax(0, 1fr); }
           .c-span-2, .c-span-3, .c-span-4, .c-span-6 { grid-column: span 1; }
-          .c-tile.is-tall .c-tile-body { height: 420px; }
-          .c-section { margin-top: 72px; }
+          .c-plinth.is-wide { min-height: 440px; }
+          .c-section { margin-top: 80px; }
+        }
+        @media (hover: none) {
+          .c-tile:hover .c-tile-body { transform: none; box-shadow: none; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .c-still img, .c-item img { transition: none; }
+          .c-role-body, .c-tile-body, .c-item-thumb { transition: none; }
         }
       `}</style>
     </div>

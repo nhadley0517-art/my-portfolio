@@ -10,103 +10,138 @@ const BAYER8 = [
   15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21,
 ].map((v) => (v + 0.5) / 64);
 
-const INK = "#13181B";
-const SIGNAL = "#E4572E";
 const PAGE: [number, number, number] = [244, 244, 245];
-const CELL = 3;
-const FPS = 14;
 const REVEAL_MS = 750;
 
-const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+export const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** A thin strip of slow weather: two drifting waves through an ordered dither,
- *  with a little signal orange where they crest. Chunky frame rate on purpose,
- *  so it reads as a printed texture rather than an animation. Leans toward the
- *  pointer, and stops drawing whenever it's off screen. */
-export function DitherBand({ height = 44 }: { height?: number }) {
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+/** An image as a living ordered dither, the way Still's backdrop works: a few
+ *  levels per channel with the color pushed, the dither pattern stepping each
+ *  frame so it shimmers, and a slow drift across the picture. Around the
+ *  pointer the levels open up and the real image comes through. */
+export function DitherImage({ src, height = 180, rotate = false, cell = 3 }: { src: string; height?: number; rotate?: boolean; cell?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const cv = ref.current!;
     const ctx = cv.getContext("2d")!;
-    const pointer = { x: -1, y: -1 };
+    const pointer = { x: -999, y: 0 };
+    let base: ImageData | null = null;
     let visible = true;
     let raf = 0;
     let last = 0;
+    let frame = 0;
+    let cancelled = false;
+    const still = reducedMotion();
 
-    const fit = () => {
-      cv.width = Math.ceil(cv.clientWidth / CELL);
-      cv.height = Math.ceil(cv.clientHeight / CELL);
+    const prepare = async () => {
+      const img = await loadImage(src);
+      if (cancelled) return;
+      cv.width = Math.ceil(cv.clientWidth / cell);
+      cv.height = Math.ceil(cv.clientHeight / cell);
+      // Sample wider than the view so there's picture to drift across.
+      const w = Math.ceil(cv.width * 1.35);
+      const h = cv.height;
+      const off = document.createElement("canvas");
+      off.width = w;
+      off.height = h;
+      const o = off.getContext("2d", { willReadFrequently: true })!;
+      const iw = rotate ? img.height : img.width;
+      const ih = rotate ? img.width : img.height;
+      const scale = Math.max(w / iw, h / ih);
+      o.save();
+      o.translate(w / 2, h / 2);
+      if (rotate) o.rotate(-Math.PI / 2);
+      o.drawImage(img, (-img.width * scale) / 2, (-img.height * scale) / 2, img.width * scale, img.height * scale);
+      o.restore();
+      base = o.getImageData(0, 0, w, h);
+      draw();
     };
 
-    const draw = (t: number) => {
+    const draw = () => {
+      if (!base) return;
       const { width: w, height: h } = cv;
-      ctx.clearRect(0, 0, w, h);
+      const out = ctx.createImageData(w, h);
+      const d = out.data;
+      const b = base.data;
+      const bw = base.width;
+      const span = bw - w;
+      const pan = still ? span / 2 : Math.round(((Math.sin(frame / 260) + 1) / 2) * span);
+      const shift = still ? 0 : frame;
       for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
-          const u = x / w;
-          const v = y / h;
-          let d =
-            0.5 +
-            0.3 * Math.sin(u * 9 + t * 0.35 + Math.sin(v * 3 + t * 0.2) * 1.4) +
-            0.2 * Math.sin(u * 23 - t * 0.5 + v * 4);
-          d *= Math.sin(v * Math.PI) ** 0.6;
-          if (pointer.x >= 0) d += 0.5 * Math.exp(-((x - pointer.x) ** 2 + (y - pointer.y) ** 2) / 500);
-          const bayer = BAYER8[(y & 7) * 8 + (x & 7)];
-          if (d * 0.72 <= bayer) continue;
-          // Dithered into the ink too, so the orange has no hard edge.
-          ctx.fillStyle = (Math.sin(u * 5 - t * 0.25) - 0.55) * 2.6 > bayer ? SIGNAL : INK;
-          ctx.fillRect(x, y, 1, 1);
+          const si = (y * bw + x + pan) * 4;
+          const near = Math.hypot(x - pointer.x, (y - pointer.y) * 1.2) < 22;
+          const L = near ? 12 : 5;
+          const t = BAYER8[((y + shift) & 7) * 8 + ((x + shift * 3) & 7)] - 0.5;
+          const lum = (b[si] + b[si + 1] + b[si + 2]) / 3;
+          const oi = (y * w + x) * 4;
+          for (let c = 0; c < 3; c++) {
+            const v = b[si + c];
+            // Push saturation and contrast before quantizing, for the vivid look.
+            const sat = lum + (v - lum) * 1.3;
+            const n = ((sat / 255 - 0.5) * 1.12 + 0.5) * (L - 1) + t;
+            d[oi + c] = (Math.max(0, Math.min(L - 1, Math.round(n))) * 255) / (L - 1);
+          }
+          d[oi + 3] = 255;
         }
       }
+      ctx.putImageData(out, 0, 0);
     };
 
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
-      if (!visible || now - last < 1000 / FPS) return;
+      if (!visible || now - last < 1000 / 10) return;
       last = now;
-      draw(now / 1000);
+      frame++;
+      draw();
     };
 
     const onMove = (e: PointerEvent) => {
       const r = cv.getBoundingClientRect();
-      pointer.x = (e.clientX - r.left) / CELL;
-      pointer.y = (e.clientY - r.top) / CELL;
+      pointer.x = (e.clientX - r.left) / cell;
+      pointer.y = (e.clientY - r.top) / cell;
+      if (still) draw();
     };
     const onLeave = () => {
-      pointer.x = -1;
+      pointer.x = -999;
+      if (still) draw();
     };
 
-    fit();
-    draw(0);
-    const ro = new ResizeObserver(() => {
-      fit();
-      draw(last / 1000);
-    });
-    ro.observe(cv);
+    prepare();
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
     });
     io.observe(cv);
-    if (!reducedMotion()) {
-      raf = requestAnimationFrame(loop);
-      cv.addEventListener("pointermove", onMove);
-      cv.addEventListener("pointerleave", onLeave);
-    }
+    const ro = new ResizeObserver(() => prepare());
+    ro.observe(cv);
+    if (!still) raf = requestAnimationFrame(loop);
+    cv.addEventListener("pointermove", onMove);
+    cv.addEventListener("pointerleave", onLeave);
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
-      ro.disconnect();
       io.disconnect();
+      ro.disconnect();
       cv.removeEventListener("pointermove", onMove);
       cv.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [src, rotate, cell]);
 
   return (
     <canvas
       ref={ref}
       aria-hidden
-      style={{ display: "block", width: "100%", height, imageRendering: "pixelated" }}
+      style={{ display: "block", width: "100%", height, borderRadius: 6, imageRendering: "pixelated", background: "#E9E9EC" }}
     />
   );
 }
@@ -197,6 +232,132 @@ export function DitherReveal({ children }: { children: ReactNode }) {
           }}
         />
       )}
+    </div>
+  );
+}
+
+const POSTERS = [
+  { src: "/jesse-poster.jpg", title: "Jesse" },
+  { src: "/bryan-poster.jpg", title: "Bryan" },
+  { src: "/payton-poster.jpg", title: "Payton" },
+  { src: "/bauhaus-poster.jpg", title: "Bauhaus" },
+  { src: "/cgi-poster.jpg", title: "CGI" },
+];
+const POSTER_MS = 3400;
+const SWAP_MS = 650;
+
+/** The posters, one at a time, trading places through the same ordered
+ *  dither as everything else: the next one comes through the current one
+ *  cell by cell. Hover holds it; the numbers pick one. */
+export function PosterDeck() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const [index, setIndex] = useState(0);
+  const [held, setHeld] = useState(false);
+  const shown = useRef(-1);
+  const images = useRef<HTMLImageElement[]>([]);
+
+  // Cycles on its own unless someone's looking closely.
+  useEffect(() => {
+    if (held || reducedMotion()) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % POSTERS.length), POSTER_MS);
+    return () => clearInterval(id);
+  }, [held]);
+
+  useEffect(() => {
+    const cv = ref.current!;
+    const ctx = cv.getContext("2d")!;
+    let raf = 0;
+    let cancelled = false;
+
+    const fit = () => {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.round(cv.clientWidth * dpr);
+      cv.height = Math.round(cv.clientHeight * dpr);
+    };
+
+    const contain = (c: CanvasRenderingContext2D, img: HTMLImageElement) => {
+      const s = Math.min(c.canvas.width / img.width, c.canvas.height / img.height) * 0.9;
+      const w = img.width * s;
+      const h = img.height * s;
+      c.drawImage(img, (c.canvas.width - w) / 2, (c.canvas.height - h) / 2, w, h);
+    };
+
+    (async () => {
+      if (!images.current.length) images.current = await Promise.all(POSTERS.map((p) => loadImage(p.src)));
+      if (cancelled) return;
+      fit();
+      const next = images.current[index];
+      const prev = shown.current >= 0 ? images.current[shown.current] : null;
+      shown.current = index;
+      if (!prev || reducedMotion()) {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        contain(ctx, next);
+        return;
+      }
+      // Draw the new poster into a scratch canvas, then let it through a
+      // growing dither mask on top of the old one.
+      const layer = document.createElement("canvas");
+      layer.width = cv.width;
+      layer.height = cv.height;
+      const l = layer.getContext("2d")!;
+      const cellPx = Math.max(4, Math.round(cv.width / 90));
+      const mw = Math.ceil(cv.width / cellPx);
+      const mh = Math.ceil(cv.height / cellPx);
+      const mask = document.createElement("canvas");
+      mask.width = mw;
+      mask.height = mh;
+      const m = mask.getContext("2d")!;
+      const start = performance.now();
+      const step = (now: number) => {
+        const p = Math.min(1, (now - start) / SWAP_MS);
+        const md = m.createImageData(mw, mh);
+        for (let y = 0; y < mh; y++) {
+          for (let x = 0; x < mw; x++) {
+            const on = BAYER8[(y & 7) * 8 + (x & 7)] * 0.55 + (1 - y / mh) * 0.45 < p;
+            md.data[(y * mw + x) * 4 + 3] = on ? 255 : 0;
+          }
+        }
+        m.putImageData(md, 0, 0);
+        l.globalCompositeOperation = "source-over";
+        l.clearRect(0, 0, layer.width, layer.height);
+        contain(l, next);
+        l.globalCompositeOperation = "destination-in";
+        l.imageSmoothingEnabled = false;
+        l.drawImage(mask, 0, 0, layer.width, layer.height);
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        contain(ctx, prev);
+        ctx.drawImage(layer, 0, 0);
+        if (p < 1) raf = requestAnimationFrame(step);
+        else {
+          ctx.clearRect(0, 0, cv.width, cv.height);
+          contain(ctx, next);
+        }
+      };
+      raf = requestAnimationFrame(step);
+    })();
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(raf);
+    };
+  }, [index]);
+
+  return (
+    <div className="c-deck" onPointerEnter={() => setHeld(true)} onPointerLeave={() => setHeld(false)}>
+      <canvas ref={ref} role="img" aria-label={`${POSTERS[index].title} poster`} />
+      <div className="c-deck-picks">
+        {POSTERS.map((p, i) => (
+          <button
+            key={p.src}
+            type="button"
+            className={i === index ? "is-on" : ""}
+            onClick={() => setIndex(i)}
+            aria-label={`Show the ${p.title} poster`}
+          >
+            {String(i + 1).padStart(2, "0")}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
