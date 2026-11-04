@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type * as T from "three";
 
 /* A floating island of a landscape, in 3D pixel art: a real three.js scene,
@@ -23,20 +23,45 @@ const PX = 3;
 
 type TimeOfDay = "day" | "golden" | "night";
 
+const forcedTime = (): TimeOfDay | null => {
+  const f = new URLSearchParams(window.location.search).get("tod");
+  return f === "day" || f === "golden" || f === "night" ? f : null;
+};
+
 function renoTimeOfDay(): TimeOfDay {
-  const forced = new URLSearchParams(window.location.search).get("tod");
-  if (forced === "day" || forced === "golden" || forced === "night") return forced;
+  const forced = forcedTime();
+  if (forced) return forced;
   const parts = new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "numeric", hour12: false }).formatToParts(new Date());
-  const h = Number(parts.find((p) => p.type === "hour")?.value ?? 12) + Number(parts.find((p) => p.type === "minute")?.value ?? 0) / 60;
+  const h = (Number(parts.find((p) => p.type === "hour")?.value ?? 12) % 24) + Number(parts.find((p) => p.type === "minute")?.value ?? 0) / 60;
   if (h >= 20 || h < 6) return "night";
   if (h >= 17.5 || h < 8) return "golden";
   return "day";
 }
 
+const renoClock = () => new Intl.DateTimeFormat("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit" }).format(new Date());
+
+const TOD_LABEL: Record<TimeOfDay, { name: string; dot: string }> = {
+  day: { name: "Daytime", dot: "#F5B82E" },
+  golden: { name: "Golden hour", dot: "#F0743A" },
+  night: { name: "Nighttime", dot: "#5B6CF0" },
+};
+
 export default function Diorama({ height = 320 }: { height?: number }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [clock, setClock] = useState<{ time: string; tod: TimeOfDay; forced: boolean } | null>(null);
 
+  // The light follows the clock in Reno; say so, and keep the time current.
   useEffect(() => {
+    const tick = () => setClock({ time: renoClock(), tod: renoTimeOfDay(), forced: !!forcedTime() });
+    tick();
+    const id = window.setInterval(tick, 20000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // The scene is rebuilt when Reno crosses into a new part of the day.
+  const sceneTod = clock?.tod;
+  useEffect(() => {
+    if (!sceneTod) return;
     const host = ref.current!;
     let disposed = false;
     let cleanup = () => {};
@@ -45,7 +70,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       const THREE = await import("three");
       if (disposed) return;
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const tod = renoTimeOfDay();
+      const tod: TimeOfDay = sceneTod;
       const night = tod === "night";
 
       // ---------- helpers ----------
@@ -130,7 +155,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       const scene = new THREE.Scene();
       const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 120);
       camera.position.set(24, 20, 24);
-      camera.lookAt(0, 2.2, 0);
+      camera.lookAt(0, 2.9, 0);
 
       const LIGHT = {
         day: { sky: "#cfe8ff", ground: "#5e4a33", hemi: 1.15, sun: "#fff3da", sunI: 2.5, sunPos: [-8, 16, 6] },
@@ -193,13 +218,18 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         return h * (1 - Math.pow(Math.min(1, r), 10));
       };
 
-      const NX = 160, NZ = 56;
+      // The grid reaches past the rim on every side, so the wobbly edge is
+      // never sliced off by the grid's own straight border.
+      const GX = RX * 1.12, GZ = RZ * 1.12;
+      const NX = 180, NZ = 64;
       const pos: number[] = [], cols: number[] = [];
-      const cGrass = [col("#5c9a36"), col("#62a03a"), col("#57943a")];
+      // Meadow tones come in broad patches, not per-triangle speckle.
+      const cGrass = [col("#538f33"), col("#5c9a36"), col("#66a53c")];
+      const patch = (x: number, z: number) => vnoise(x * 0.32 + 3.1, z * 0.32 + 7.7) * 0.75 + vnoise(x * 0.9, z * 0.9) * 0.25;
       const cRock = col("#7c8796"), cRockDark = col("#5f6878"), cSnow = col("#f3f2ec"), cMoss = col("#5d8a3c");
       const cSand = col("#cdb37c"), cBed = col("#3c6a74"), cBank = col("#7a6a46");
       const cell = (ix: number, iz: number) => {
-        const x = -RX + (ix / NX) * RX * 2, z = -RZ + (iz / NZ) * RZ * 2;
+        const x = -GX + (ix / NX) * GX * 2, z = -GZ + (iz / NZ) * GZ * 2;
         return new THREE.Vector3(x, terrainH(x, z), z);
       };
       const n3 = new THREE.Vector3(), e1 = new THREE.Vector3(), e2 = new THREE.Vector3();
@@ -215,7 +245,10 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         else if (ch < 0.04 && (Math.hypot((cx - pond.x) / pond.rx, (cz - pond.z) / pond.rz) < 1.5 || Math.abs(cx - streamX(cz)) < 1.1)) k = nz > 0.5 ? cSand : cBank;
         else if (ch > 4.6 + nz * 1.0 && n3.y > 0.3) k = cSnow;
         else if (ch > 1.1) k = n3.y < 0.6 ? cRockDark : ch < 2.2 && nz > 0.5 ? cMoss : cRock;
-        else k = cGrass[Math.floor(nz * 2.99)];
+        else {
+          const p = patch(cx, cz);
+          k = cGrass[p < 0.4 ? 0 : p > 0.62 ? 2 : 1];
+        }
         for (const v of [a, b, c]) {
           pos.push(v.x, v.y, v.z);
           cols.push(k.r, k.g, k.b);
@@ -235,22 +268,36 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       place(world, new THREE.Mesh(terrain, new THREE.MeshToonMaterial({ vertexColors: true, gradientMap: ramp })));
 
       // The island's earthy underside.
-      const outline = new THREE.Shape();
-      for (let i = 0; i <= 120; i++) {
-        const a = (i / 120) * Math.PI * 2;
+      // Layered like a cut-out of earth: a grass lip, soil, then darker stone.
+      // The lip's top face sits just under the terrain and fills any gaps
+      // along the rim, so no background shows through between grass and dirt.
+      const rimPts: [number, number][] = [];
+      for (let i = 0; i < 160; i++) {
+        const a = (i / 160) * Math.PI * 2;
         let lo = 0, hi = 2;
         for (let k = 0; k < 18; k++) {
           const mid = (lo + hi) / 2;
           if (shapeR(Math.cos(a) * RX * mid, Math.sin(a) * RZ * mid) > 1) hi = mid;
           else lo = mid;
         }
-        const x = Math.cos(a) * RX * lo, z = Math.sin(a) * RZ * lo;
-        if (i === 0) outline.moveTo(x, z);
-        else outline.lineTo(x, z);
+        rimPts.push([Math.cos(a) * RX * lo, Math.sin(a) * RZ * lo]);
       }
-      const under = new THREE.ExtrudeGeometry(outline, { depth: 0.7, bevelEnabled: false });
-      under.rotateX(Math.PI / 2);
-      place(world, new THREE.Mesh(under, [new THREE.MeshBasicMaterial({ visible: false }), toon("#6b4a2c")]), 0, 0.02, 0, false);
+      const ring = (scale: number, wob: number) => rimPts.map(([x, z], i) => {
+        const k = scale * (1 + Math.sin(i * 0.9) * wob + Math.sin(i * 2.3) * wob * 0.6);
+        return new THREE.Vector2(x * k, z * k);
+      });
+      const layer = (scale: number, top: number, depth: number, capC: string, sideC: string, wob = 0, hole = 0) => {
+        const sh = new THREE.Shape(ring(scale, wob));
+        // The lip is only a band around the rim, so water in the middle shows.
+        if (hole) sh.holes.push(new THREE.Path(ring(hole, 0).reverse()));
+        const g = new THREE.ExtrudeGeometry(sh, { depth, bevelEnabled: false });
+        g.rotateX(Math.PI / 2);
+        place(world, new THREE.Mesh(g, [toon(capC), toon(sideC)]), 0, top, 0, false);
+      };
+      layer(1.0, -0.03, 0.16, "#538f33", "#4a8530", 0, 0.9);
+      layer(0.995, -0.16, 0.5, "#6b4a2c", "#6b4a2c", 0.004);
+      layer(0.95, -0.66, 0.34, "#4f3a2a", "#4f3a2a", 0.012);
+      layer(0.84, -1.0, 0.22, "#3d3029", "#3d3029", 0.02);
 
       // ---------- water ----------
       const uTime = { value: 0 };
@@ -501,24 +548,31 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       place(world, fire, fireAt.x, groundAt(fireAt.x, fireAt.z), fireAt.z);
 
       // Smoke from the fire and the chimney.
-      const smokeMat = () => new THREE.MeshToonMaterial({ color: col(night ? "#8f93a8" : "#dcdbd4"), gradientMap: ramp, transparent: true });
+      // The chimney's plume climbs past the peaks and trails off into the sky.
+      const smokeMat = () => new THREE.MeshToonMaterial({ color: col(night ? "#8f93a8" : tod === "golden" ? "#d8c6b8" : "#c9c7bf"), gradientMap: ramp, transparent: true });
       const puffs = [
-        ...Array.from({ length: 8 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), smokeMat()), 0, -9, 0, false), o: i / 8, from: new THREE.Vector3(fireAt.x, groundAt(fireAt.x, fireAt.z) + 0.9, fireAt.z), rate: 0.18 })),
-        ...Array.from({ length: 6 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.13, 0), smokeMat()), 0, -9, 0, false), o: i / 6, from: chimneyTop, rate: 0.14 })),
+        ...Array.from({ length: 8 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), smokeMat()), 0, -9, 0, false), o: i / 8, from: new THREE.Vector3(fireAt.x, groundAt(fireAt.x, fireAt.z) + 0.9, fireAt.z), rate: 0.18, rise: 3.4, drift: 1.1, grow: 1.5 })),
+        ...Array.from({ length: 16 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.15, 0), smokeMat()), 0, -9, 0, false), o: i / 16, from: chimneyTop, rate: 0.07, rise: 6.4, drift: 4.2, grow: 3.0 })),
       ];
 
       // Birds, and fireflies at night.
-      const birds = Array.from({ length: 5 }, (_, i) => {
+      // Birds are drawn like sprites: chunky enough to always cover whole
+      // pixels, flat-colored, and flapping between two fixed poses.
+      const birdMat = glow(night ? "#2b3046" : "#2e3238");
+      const birds = Array.from({ length: 4 }, (_, i) => {
         const g = new THREE.Group();
+        g.add(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.18, 0.18), birdMat));
         const wings = [-1, 1].map((s) => {
           const w = new THREE.Group();
-          place(w, box(0.32, 0.03, 0.12, night ? "#2b3046" : "#3a3a3a"), s * 0.16, 0, 0, false);
+          const m = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.16, 0.16), birdMat);
+          m.position.x = s * 0.2;
+          w.add(m);
+          w.position.x = s * 0.06;
           g.add(w);
           return w;
         });
-        g.scale.setScalar(0.9 + (i % 3) * 0.15);
         world.add(g);
-        return { g, wings, o: i * 0.17, y: 6.4 + (i % 3) * 0.7, z: -2 + i * 0.6, speed: 1.6 + (i % 2) * 0.3 };
+        return { g, wings, o: i * 0.23, y: 6.9 + (i % 2) * 0.6 + (i === 3 ? 0.4 : 0), z: -1.5 + i * 0.5, speed: 1.3 + (i % 2) * 0.25 };
       });
       const flies = night
         ? Array.from({ length: 30 }, () => {
@@ -529,23 +583,42 @@ export default function Diorama({ height = 320 }: { height?: number }) {
 
       // ---------- grass ----------
       // Calm, close greens, and wind in slow broad waves rather than jitter.
-      const blade = new THREE.BufferGeometry();
-      blade.setAttribute("position", new THREE.Float32BufferAttribute([-0.05, 0, 0, 0.05, 0, 0, 0, 1, 0], 3));
-      blade.setAttribute("normal", new THREE.Float32BufferAttribute([0, 1, 0, 0, 1, 0, 0, 1, 0], 3));
-      const grassMat = new THREE.MeshToonMaterial({ gradientMap: ramp, side: THREE.DoubleSide });
+      // Why it used to look like static: blades were thinner than a pixel and
+      // faced random ways, so each frame a different scatter of them landed on
+      // pixels, in random tints. Now each tuft is three blades turned to face
+      // the camera, wide enough to fill whole pixels, colored by the same
+      // broad patches as the ground, darker at the root, lighter at the tip.
+      // Gusts roll across as a band that bends the tufts and lifts their tips.
+      const tuft = new THREE.BufferGeometry();
+      const tp: number[] = [], tc: number[] = [];
+      for (const [ox, hh, lean] of [[-0.11, 0.8, -0.05], [0, 1, 0.02], [0.11, 0.7, 0.06]]) {
+        tp.push(ox - 0.07, 0, 0, ox + 0.07, 0, 0, ox + lean, hh, 0);
+        tc.push(0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 1.12, 1.12, 1.12);
+      }
+      tuft.setAttribute("position", new THREE.Float32BufferAttribute(tp, 3));
+      tuft.setAttribute("color", new THREE.Float32BufferAttribute(tc, 3));
+      tuft.setAttribute("normal", new THREE.Float32BufferAttribute(Array.from({ length: 9 }, () => [0, 1, 0]).flat(), 3));
+      const grassMat = new THREE.MeshToonMaterial({ gradientMap: ramp, side: THREE.DoubleSide, vertexColors: true });
       grassMat.onBeforeCompile = (shader) => {
         shader.uniforms.uTime = uTime;
-        shader.vertexShader = shader.vertexShader.replace("#include <common>", "#include <common>\nuniform float uTime;").replace(
-          "#include <begin_vertex>",
-          `#include <begin_vertex>
-          vec4 root = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
-          float gust = sin(uTime * 0.7 - root.x * 0.35 + root.z * 0.15) * 0.5 + 0.5;
-          transformed.x += (0.25 + gust * 0.75) * position.y * 0.18;`
-        );
+        shader.vertexShader = shader.vertexShader
+          .replace("#include <common>", "#include <common>\nuniform float uTime;\nvarying float vGust;")
+          .replace(
+            "#include <begin_vertex>",
+            `#include <begin_vertex>
+            vec4 root = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+            float band = sin(uTime * 0.45 - root.x * 0.22 + root.z * 0.1);
+            float gust = smoothstep(0.2, 1.0, band);
+            transformed.x += (0.08 + gust * 0.32) * position.y;
+            vGust = gust * position.y;`
+          );
+        shader.fragmentShader = shader.fragmentShader
+          .replace("#include <common>", "#include <common>\nvarying float vGust;")
+          .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.rgb *= 1.0 + vGust * 0.22;");
       };
-      const tints = ["#63a33b", "#6aa93e", "#5e9c38", "#74b043"].map(col);
-      const COUNT = 16000;
-      const grass = new THREE.InstancedMesh(blade, grassMat, COUNT);
+      const tints = ["#4d8a30", "#579636", "#62a23b"].map(col);
+      const COUNT = 11000;
+      const grass = new THREE.InstancedMesh(tuft, grassMat, COUNT);
       grass.receiveShadow = true;
       const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), eul = new THREE.Euler(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3();
       const keepClear = (x: number, z: number) =>
@@ -560,11 +633,13 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         const h = terrainH(x, z);
         if (h > 1.0 || h < 0.12 || keepClear(x, z) || Math.abs(x - streamX(z)) < 0.9) continue;
         if (r > 0.75 && rnd() < (r - 0.75) / 0.22) continue;
-        eul.set((rnd() - 0.5) * 0.35, rnd() * Math.PI, (rnd() - 0.5) * 0.35);
+        // Facing the camera (which looks down this group's +z), give or take.
+        eul.set(0, (rnd() - 0.5) * 0.5, 0);
         q.setFromEuler(eul);
-        m4.compose(v3.set(x, h - 0.02, z), q, s3.set(1, 0.2 + rnd() * 0.16, 1));
+        const p = patch(x, z);
+        m4.compose(v3.set(x, h - 0.03, z), q, s3.set(1, 0.24 + p * 0.16 + rnd() * 0.06, 1));
         grass.setMatrixAt(n, m4);
-        grass.setColorAt(n, tints[Math.floor(rnd() * tints.length)]);
+        grass.setColorAt(n, tints[p < 0.4 ? 0 : p > 0.62 ? 2 : 1]);
         n++;
       }
       grass.count = n;
@@ -578,7 +653,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         target.setSize(w, h);
         post.uniforms.uRes.value.set(w, h);
         // The full island across wide screens; on narrow ones, the heart of it.
-        let halfH = 8.6;
+        let halfH = 9.0;
         let halfW = halfH * (w / h);
         if (halfW > 22) {
           halfW = 22;
@@ -616,11 +691,13 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         });
         fireLight.intensity = (night ? 6 : 4) * flick;
         lanternLight.intensity = (night ? 3 : 1.4) + Math.sin(t * 3.1) * 0.15;
-        puffs.forEach(({ m, o, from, rate }) => {
+        puffs.forEach(({ m, o, from, rate, rise, drift, grow }) => {
           const life = (t * rate + o) % 1;
-          m.position.set(from.x + Math.sin(life * 4 + o * 9) * 0.25 + life * 1.1, from.y + life * 3.4, from.z - life * 0.5);
-          m.scale.setScalar(0.55 + life * 1.5);
-          (m.material as T.MeshToonMaterial).opacity = (1 - life) * 0.85;
+          // Rises fast, then leans with the wind as it slows.
+          const up = 1 - Math.pow(1 - life, 1.6);
+          m.position.set(from.x + Math.sin(life * 5 + o * 9) * 0.3 + life * life * drift, from.y + up * rise, from.z - life * 0.6);
+          m.scale.setScalar(0.55 + life * grow);
+          (m.material as T.MeshToonMaterial).opacity = Math.min(1, life * 8) * Math.pow(1 - life, 0.8) * 0.9;
         });
         // A wave when the banner is hovered; the dog's tail never stops.
         wave += ((hovering ? 1 : 0) - wave) * Math.min(1, dt * 6);
@@ -630,9 +707,11 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           const span = RX * 2.4;
           const x = ((t * b.speed + b.o * span) % span) - span / 2;
           b.g.position.set(x, b.y + Math.sin(t * 0.8 + b.o * 9) * 0.3, b.z);
-          const flap = Math.sin(t * 9 + b.o * 20) * 0.6;
-          b.wings[0].rotation.z = flap;
-          b.wings[1].rotation.z = -flap;
+          // Two-frame flap, with a glide every few beats.
+          const beat = Math.floor(t * 4 + b.o * 10);
+          const flap = beat % 6 > 3 ? 0.3 : beat % 2 ? 0.55 : -0.45;
+          b.wings[0].rotation.z = -flap;
+          b.wings[1].rotation.z = flap;
         });
         // A fish leaps now and then.
         const leap = (t % 7) / 1.1;
@@ -681,14 +760,35 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       disposed = true;
       cleanup();
     };
-  }, []);
+  }, [sceneTod]);
 
+  const label = clock ? TOD_LABEL[clock.tod] : null;
   return (
-    <div
-      ref={ref}
-      role="img"
-      aria-label="An animated pixel-art landscape: snowy mountains, a stream and pond with a dock, a log cabin, and someone by a campfire with their dog"
-      style={{ width: "100%", height }}
-    />
+    <div style={{ position: "relative", width: "100%" }}>
+      <div
+        ref={ref}
+        role="img"
+        aria-label="An animated pixel-art landscape: snowy mountains, a stream and pond with a dock, a log cabin, and someone by a campfire with their dog. Its light follows the time of day in Reno."
+        style={{ width: "100%", height }}
+      />
+      {clock && label && (
+        <p className="d-clock" title="The light in the scene follows the time where I live.">
+          <span className="d-dot" style={{ background: label.dot }} />
+          {label.name} in Reno, NV
+          <span className="d-sep">·</span>
+          <time>{clock.forced ? "preview" : clock.time}</time>
+        </p>
+      )}
+      <style>{`
+        .d-clock {
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          margin: 10px 0 0; font-family: var(--font-geist-mono), monospace;
+          font-size: 11.5px; letter-spacing: 0.01em; color: #8A8F98;
+        }
+        .d-dot { width: 7px; height: 7px; border-radius: 2px; flex: none; }
+        .d-sep { color: #C4C7CC; }
+        .d-clock time { color: #13181B; }
+      `}</style>
+    </div>
   );
 }
