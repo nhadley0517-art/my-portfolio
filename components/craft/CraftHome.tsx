@@ -11,7 +11,7 @@ import { SideNav } from "@/components/hadley/side-nav";
 import { SegmentedControl } from "@/components/hadley/segmented-control";
 import { CharacterDemo, ProfileDemo, SearchDemo } from "@/components/craft/demos";
 import { DitherReveal, PosterDeck, reducedMotion } from "@/components/craft/dither";
-import Diorama from "@/components/craft/Diorama";
+import Diorama3D from "@/components/craft/Diorama3D";
 
 const EMAIL = "nhadley0517@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/noah-hadley/";
@@ -357,7 +357,7 @@ export default function CraftHome() {
         </header>
 
         <div className="c-band">
-          <Diorama />
+          <Diorama3D />
         </div>
 
         {/* One place for the work, two ways to look at it: the case studies
@@ -486,7 +486,7 @@ export default function CraftHome() {
         .c-social a { display: grid; place-items: center; width: 28px; height: 28px; margin: -6px; color: #3F454B; transition: color 0.15s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
         .c-social a:hover { color: var(--ink); transform: translateY(-2px); }
         .c-social svg { width: 16px; height: 16px; fill: currentColor; }
-        .c-band { margin: 36px 0 40px; }
+        .c-band { margin: 72px 0 0; }
 
         .c-grid {
           display: grid;
@@ -563,7 +563,7 @@ export default function CraftHome() {
         .c-deck-picks button.is-on { background: ${C.yellow}; color: var(--ink); }
 
         .c-section { margin-top: 112px; scroll-margin-top: 32px; }
-        .c-section.is-first { margin-top: 56px; }
+        .c-section.is-first { margin-top: 128px; }
         .c-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 0 0 24px; }
         .c-head h2 { margin: 0; font-size: 16px; font-weight: 400; color: var(--ink); }
         /* The selected half of the switch takes its view's color. */
@@ -709,6 +709,8 @@ export default function CraftHome() {
           .c-plinth.is-wide { min-height: 420px; }
           .c-shrink { transform: none; }
           .c-section { margin-top: 80px; }
+          .c-section.is-first { margin-top: 72px; }
+          .c-band { margin-top: 48px; }
         }
         @media (hover: none) {
           .c-tile:hover .c-tile-body { transform: none; outline-color: transparent; }
