@@ -10,7 +10,8 @@ import Footer from "@/components/Footer";
 import { SideNav } from "@/components/hadley/side-nav";
 import { SegmentedControl } from "@/components/hadley/segmented-control";
 import { CharacterDemo, ProfileDemo, SearchDemo } from "@/components/craft/demos";
-import { DitherImage, DitherReveal, PosterDeck, reducedMotion } from "@/components/craft/dither";
+import { DitherReveal, PosterDeck, reducedMotion } from "@/components/craft/dither";
+import Terrain from "@/components/craft/Terrain";
 
 const EMAIL = "nhadley0517@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/noah-hadley/";
@@ -267,29 +268,30 @@ export default function CraftHome() {
     openSlug(slug, { morph: visible });
   };
 
-  useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) if (e.isIntersecting) setSection(e.target.id);
-      },
-      { rootMargin: "-40% 0px -55% 0px" }
-    );
-    NAV.forEach((n) => io.observe(document.getElementById(n.id)!));
-    return () => io.disconnect();
-  }, []);
-
   // Above the fold the nav's top edge sits level with the hero; as the page
   // scrolls it rides up with it, then holds in the corner.
   useEffect(() => {
     const place = () => {
       if (nav.current) nav.current.style.top = `${Math.max(NAV_TOP, HERO_TOP - window.scrollY)}px`;
-      // The hero is too short to cross the scroll-spy's band, so the top of
-      // the page counts as About on its own.
-      if (window.scrollY < 240) setSection("about");
+      // One source of truth for the active section: the last one whose top
+      // has passed 40% down the screen, or About at the very top. (A section
+      // observer used to fight this and could report Work late at the top.)
+      const line = window.innerHeight * 0.4;
+      let current = "about";
+      for (const n of NAV) {
+        const el = document.getElementById(n.id);
+        if (n.id !== "about" && el && el.getBoundingClientRect().top <= line) current = n.id;
+      }
+      if (window.scrollY < 8) current = "about";
+      setSection(current);
     };
     place();
     window.addEventListener("scroll", place, { passive: true });
-    return () => window.removeEventListener("scroll", place);
+    window.addEventListener("resize", place);
+    return () => {
+      window.removeEventListener("scroll", place);
+      window.removeEventListener("resize", place);
+    };
   }, []);
 
   // A link straight to the playground (#playground) opens on it.
@@ -355,7 +357,7 @@ export default function CraftHome() {
         </header>
 
         <div className="c-band">
-          <DitherImage src="/craft/landscape.jpg" />
+          <Terrain />
         </div>
 
         {/* One place for the work, two ways to look at it: the case studies
