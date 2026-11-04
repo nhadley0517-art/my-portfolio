@@ -11,7 +11,7 @@ import { SideNav } from "@/components/hadley/side-nav";
 import { SegmentedControl } from "@/components/hadley/segmented-control";
 import { CharacterDemo, ProfileDemo, SearchDemo } from "@/components/craft/demos";
 import { DitherReveal, PosterDeck, reducedMotion } from "@/components/craft/dither";
-import Terrain from "@/components/craft/Terrain";
+import Diorama from "@/components/craft/Diorama";
 
 const EMAIL = "nhadley0517@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/noah-hadley/";
@@ -357,7 +357,7 @@ export default function CraftHome() {
         </header>
 
         <div className="c-band">
-          <Terrain />
+          <Diorama />
         </div>
 
         {/* One place for the work, two ways to look at it: the case studies
