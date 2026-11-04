@@ -156,14 +156,17 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         type: THREE.HalfFloatType,
         depthTexture: new THREE.DepthTexture(1, 1),
       });
-      // Characters are drawn again into a mask, so the post pass can give
-      // them a sprite-style outline and keep them crisp and readable.
-      const maskTarget = new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
-      const maskBlack = new THREE.MeshBasicMaterial({ color: 0x000000 });
-      const maskWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      // A second pass draws each object as a flat ID color, so the post
+      // shader knows what every pixel belongs to. Outlines are drawn the way
+      // pixel artists do them: only where one solid object sits clearly in
+      // front of something else, in a darkened tone of the color underneath
+      // ("sel-out") rather than flat black. Where things touch, like feet on
+      // the ground, there is no line, so they stay grounded.
+      const idTarget = new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+      const idMats = Array.from({ length: 16 }, (_, i) => new THREE.MeshBasicMaterial({ color: new THREE.Color().setRGB(i / 16, 0, 0, THREE.LinearSRGBColorSpace) }));
       const post = new THREE.ShaderMaterial({
         uniforms: {
-          tMask: { value: maskTarget.texture },
+          tId: { value: idTarget.texture },
           tColor: { value: target.texture },
           tDepth: { value: target.depthTexture },
           uRes: { value: new THREE.Vector2(1, 1) },
@@ -174,33 +177,44 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         },
         vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
         fragmentShader: `
-          uniform sampler2D tColor; uniform sampler2D tDepth; uniform sampler2D tMask; uniform vec2 uRes;
+          uniform sampler2D tColor; uniform sampler2D tDepth; uniform sampler2D tId; uniform vec2 uRes;
           uniform vec3 uPal[${PALETTE.length}]; uniform vec3 uHaze; uniform mat4 uInvVP; uniform mat4 uWorldInv;
           varying vec2 vUv;
           float dep(vec2 o){ return texture2D(tDepth, vUv + o / uRes).x; }
           float alp(vec2 o){ return texture2D(tColor, vUv + o / uRes).a; }
-          float msk(vec2 o){ return texture2D(tMask, vUv + o / uRes).r; }
+          float oid(vec2 o){ return floor(texture2D(tId, vUv + o / uRes).r * 16.0 + 0.5); }
           float b2(vec2 a){ a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
           float b4(vec2 a){ return b2(0.5 * a) * 0.25 + b2(a); }
           void main(){
             vec4 c = texture2D(tColor, vUv);
-            float m = msk(vec2(0.0));
-            float mn = max(max(msk(vec2(1.0,0.0)), msk(vec2(-1.0,0.0))), max(msk(vec2(0.0,1.0)), msk(vec2(0.0,-1.0))));
-            // A 1px dark outline around every character.
-            if (m < 0.5 && mn > 0.5) { gl_FragColor = vec4(0.082, 0.114, 0.157, 1.0); return; }
-            if (c.a <= 0.0) discard;
-            float d = dep(vec2(0.0));
+            float own = c.a > 0.0 ? oid(vec2(0.0)) : 0.0;
+            float d = c.a > 0.0 ? dep(vec2(0.0)) : 1.0;
+            bool edge = false; vec3 front = vec3(0.0);
+            for (int k = 0; k < 4; k++) {
+              vec2 o = k == 0 ? vec2(1.0, 0.0) : k == 1 ? vec2(-1.0, 0.0) : k == 2 ? vec2(0.0, 1.0) : vec2(0.0, -1.0);
+              float n = oid(o);
+              if (!edge && n > 0.5 && n != own && dep(o) < d - 0.0025) { edge = true; front = texture2D(tColor, vUv + o / uRes).rgb; }
+            }
+            if (c.a <= 0.0 && !edge) discard;
+            bool isChar = own > 7.5;
             float diff = max(max(dep(vec2(1.0,0.0)) - d, dep(vec2(-1.0,0.0)) - d), max(dep(vec2(0.0,1.0)) - d, dep(vec2(0.0,-1.0)) - d));
             vec3 lin = c.rgb;
             if (diff > 0.004) lin *= 0.6;
             else if (alp(vec2(0.0, 1.0)) == 0.0) lin *= 1.2;
             vec3 s = pow(max(lin, vec3(0.0)), vec3(1.0 / 2.2));
+            if (edge) {
+              // Sel-out: a deep, warm version of what's under the line (or of
+              // the object itself, against the sky), never pure black.
+              vec3 under = c.a > 0.0 ? s : pow(max(front, vec3(0.0)), vec3(1.0 / 2.2));
+              s = mix(under * 0.42, vec3(0.17, 0.155, 0.15), 0.45);
+              c.a = 1.0;
+            }
             // Distance haze, measured on the island itself: the further back
             // and the higher up, the more it fades toward the sky.
             vec4 wp = uInvVP * vec4(vUv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0);
             vec3 lp = (uWorldInv * vec4(wp.xyz / wp.w, 1.0)).xyz;
             float hz = smoothstep(-3.4, -7.4, lp.z) * (0.5 + 0.5 * smoothstep(1.0, 7.0, lp.y)) * 0.42;
-            if (m > 0.5) {
+            if (isChar && !edge) {
               // Characters skip the haze and never sink into the dark.
               float l0 = dot(s, vec3(0.299, 0.587, 0.114));
               s *= clamp(0.34 / max(l0, 0.01), 1.0, 2.6);
@@ -211,7 +225,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
             float l = dot(s, vec3(0.299, 0.587, 0.114));
             s = mix(s, s * vec3(0.8, 0.9, 1.22) + vec3(0.0, 0.0, 0.015), smoothstep(0.5, 0.06, l) * 0.6);
             s = mix(s, s * vec3(1.07, 1.02, 0.9), smoothstep(0.6, 0.95, l) * 0.45);
-            if (m < 0.5) s += (b4(gl_FragCoord.xy) - 0.47) * 0.02;
+            if (!isChar && !edge) s += (b4(gl_FragCoord.xy) - 0.47) * 0.02;
             // Snap to the palette.
             vec3 best = uPal[0]; float bd = 1e9;
             for (int i = 0; i < ${PALETTE.length}; i++) {
@@ -252,7 +266,9 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       // Static props are merged into a handful of meshes once built.
       const statics = new THREE.Group();
       const treesGroup = new THREE.Group();
-      world.add(statics, treesGroup);
+      const rocks = new THREE.Group();
+      world.add(statics, treesGroup, rocks);
+      const uPix = { value: 0.1 };
 
       // Contact shadows get baked into the ground from these.
       const occ: { x: number; z: number; r: number; k: number }[] = [];
@@ -557,7 +573,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         moss.scale.y = 0.35;
         place(g, moss, -s * 0.12, s * 0.62);
         g.rotation.y = rnd() * Math.PI;
-        place(statics, g, x, groundAt(x, z), z);
+        place(rocks, g, x, groundAt(x, z), z);
         occ.push({ x, z, r: s * 1.9, k: 0.42 });
       };
       for (const [x, z, s] of [[-10.6, 3.6, 0.42], [-4.6, 1.0, 0.3], [7.8, 3.8, 0.38], [13.8, 4.4, 0.32], [-14.2, 3.4, 0.36], [2.4, -1.8, 0.34], [-17.2, -0.4, 0.3], [-9.8, -1.6, 0.28]] as const) boulder(x, z, s);
@@ -570,7 +586,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       logMoss.rotation.z = Math.PI / 2;
       place(fallen, logMoss, -0.15, 0.28);
       fallen.rotation.y = 0.5;
-      place(statics, fallen, 9.4, groundAt(9.4, 2.6), 2.6);
+      place(rocks, fallen, 9.4, groundAt(9.4, 2.6), 2.6);
       occ.push({ x: 9.4, z: 2.6, r: 1.3, k: 0.35 });
 
       // ---------- cabin ----------
@@ -649,7 +665,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       place(axe, box(0.18, 0.12, 0.04, "#8e9496"), 0.07, 0.48);
       axe.rotation.z = -0.5;
       place(stump, axe, 0, 0.3);
-      place(statics, stump, 6.2, groundAt(6.2, 1.8), 1.8);
+      place(rocks, stump, 6.2, groundAt(6.2, 1.8), 1.8);
       occ.push({ x: 6.2, z: 1.8, r: 0.6, k: 0.35 });
       for (let i = 0; i < 6; i++) {
         const x = 7.2 + i * 0.6, z = -0.8 + i * 0.08;
@@ -708,14 +724,14 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       person.userData.tap = "person";
       place(fire, person, -0.95, 0.12, 0.2);
       const dog = new THREE.Group();
-      place(dog, box(0.46, 0.18, 0.2, "#de9e41"), 0, 0.1);
+      place(dog, box(0.46, 0.18, 0.2, "#7a4841"), 0, 0.1);
       place(dog, box(0.12, 0.12, 0.18, "#ebede9"), 0.2, 0.1);
-      place(dog, box(0.2, 0.17, 0.17, "#de9e41"), 0.28, 0.2);
-      place(dog, box(0.1, 0.08, 0.1, "#be772b"), 0.42, 0.17);
+      place(dog, box(0.2, 0.17, 0.17, "#7a4841"), 0.28, 0.2);
+      place(dog, box(0.1, 0.08, 0.1, "#4d2b32"), 0.42, 0.17);
       place(dog, box(0.04, 0.03, 0.04, "#2b2420"), 0.48, 0.2);
       for (const s of [-1, 1]) place(dog, box(0.05, 0.1, 0.06, "#7b4f2a"), 0.25, 0.3, s * 0.08);
       const tail = new THREE.Group();
-      place(tail, box(0.05, 0.05, 0.2, "#de9e41"), 0, 0, -0.08);
+      place(tail, box(0.05, 0.05, 0.2, "#7a4841"), 0, 0, -0.08);
       place(dog, tail, -0.24, 0.16, 0);
       dog.rotation.y = 2.9;
       dog.scale.setScalar(1.6);
@@ -793,8 +809,12 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       place(rabbit, box(0.08, 0.08, 0.08, "#ebede9"), -0.17, 0.16);
       rabbit.userData.tap = "rabbit";
       rabbit.scale.setScalar(1.7);
-      // Everything that should read as a character gets the outline.
-      for (const ch of [person, dog, deer, rabbit, ...ducks.map((d) => d.g)]) ch.traverse((o) => o.layers.enable(1));
+      // Object IDs for the outline pass; 8 and up are characters.
+      person.userData.oid = 8;
+      dog.userData.oid = 9;
+      deer.userData.oid = 10;
+      rabbit.userData.oid = 11;
+      ducks.forEach((d) => (d.g.userData.oid = 12));
       place(world, rabbit, 10, groundAt(10, 3), 3);
       const bun = { x: 10, z: 3, fx: 10, fz: 3, tx: 10, tz: 3, hop: 1, wait: 1, hops: 0, fast: 0 };
 
@@ -820,15 +840,18 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       const grassMat = new THREE.MeshToonMaterial({ gradientMap: ramp, side: THREE.DoubleSide, vertexColors: true });
       grassMat.onBeforeCompile = (shader) => {
         shader.uniforms.uTime = uTime;
+        shader.uniforms.uPix = uPix;
         shader.vertexShader = shader.vertexShader
-          .replace("#include <common>", "#include <common>\nuniform float uTime;\nvarying float vGust;")
+          .replace("#include <common>", "#include <common>\nuniform float uTime;\nuniform float uPix;\nvarying float vGust;")
           .replace(
             "#include <begin_vertex>",
             `#include <begin_vertex>
             vec4 root = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
             float band = sin(uTime * 0.6 - root.x * 0.18 + root.z * 0.08);
             float gust = smoothstep(0.3, 1.0, band);
-            transformed.x += (0.03 + gust * 0.13) * position.y;
+            // Like hand-pixelled grass: tips lean by whole pixels only, so
+            // wind reads as a slow wave instead of shimmering speckle.
+            transformed.x += floor((0.03 + gust * 0.13) * position.y / uPix + 0.5) * uPix;
             vGust = gust * position.y;`
           );
         shader.fragmentShader = shader.fragmentShader
@@ -941,6 +964,11 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       };
       mergeInto(statics);
       const treeMeshes = mergeInto(treesGroup);
+      treeMeshes.forEach((m) => (m.userData.oid = 2));
+      mergeInto(rocks).forEach((m) => (m.userData.oid = 3));
+      cabin.userData.oid = 4;
+      fire.userData.oid = 5;
+      flames.forEach((f) => (f.userData.oid = 0));
 
       // ---------- one-shot effects ----------
       const sparkMats = [glow("#e8c170"), glow("#de9e41"), glow("#cf573c")];
@@ -955,13 +983,31 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       let flare = 0, dogHop = 0, deerLeap = 0, lightsOn = true;
       let jump: { x: number; z: number; t: number } | null = null;
 
+      // Which object each mesh belongs to, for the ID pass. Translucent
+      // things (smoke, ripples) stay out of it.
+      const idMeshes: T.Mesh[] = [], idOf: number[] = [], savedMats: (T.Material | T.Material[])[] = [], savedVis: boolean[] = [];
+      world.traverse((o) => {
+        const m = o as T.Mesh;
+        if (!m.isMesh) return;
+        let p: T.Object3D | null = o, id = 0;
+        while (p) {
+          if (p.userData.oid !== undefined) {
+            id = p.userData.oid as number;
+            break;
+          }
+          p = p.parent;
+        }
+        idMeshes.push(m);
+        idOf.push((m.material as T.Material).transparent ? -1 : id);
+      });
+
       // ---------- sizing ----------
       const fit = () => {
         const w = Math.max(1, Math.round(host.clientWidth / PX));
         const h = Math.max(1, Math.round(host.clientHeight / PX));
         renderer.setSize(w, h, false);
         target.setSize(w, h);
-        maskTarget.setSize(w, h);
+        idTarget.setSize(w, h);
         post.uniforms.uRes.value.set(w, h);
         let halfH = 9.4;
         let halfW = halfH * (w / h);
@@ -972,6 +1018,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         Object.assign(camera, { left: -halfW, right: halfW, top: halfH, bottom: -halfH });
         camera.updateProjectionMatrix();
         camera.updateMatrixWorld();
+        uPix.value = (halfW * 2) / w;
         post.uniforms.uInvVP.value.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse).invert();
       };
       fit();
@@ -980,18 +1027,19 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         renderer.shadowMap.needsUpdate = true;
         renderer.setRenderTarget(target);
         renderer.render(scene, camera);
-        // The character mask: everything in black for depth, then the
-        // characters in white wherever they're actually visible.
-        renderer.setRenderTarget(maskTarget);
-        scene.overrideMaterial = maskBlack;
+        // The ID pass: same scene, every mesh in its object's flat ID color.
+        for (let i = 0; i < idMeshes.length; i++) {
+          savedMats[i] = idMeshes[i].material;
+          savedVis[i] = idMeshes[i].visible;
+          if (idOf[i] < 0) idMeshes[i].visible = false;
+          else idMeshes[i].material = idMats[idOf[i]];
+        }
+        renderer.setRenderTarget(idTarget);
         renderer.render(scene, camera);
-        renderer.autoClear = false;
-        camera.layers.set(1);
-        scene.overrideMaterial = maskWhite;
-        renderer.render(scene, camera);
-        camera.layers.set(0);
-        scene.overrideMaterial = null;
-        renderer.autoClear = true;
+        for (let i = 0; i < idMeshes.length; i++) {
+          idMeshes[i].material = savedMats[i];
+          idMeshes[i].visible = savedVis[i];
+        }
         renderer.setRenderTarget(null);
         renderer.render(postScene, postCam);
       };
@@ -1412,7 +1460,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         scene.traverse((o) => (o as T.Mesh).geometry?.dispose());
         mats.forEach((m) => m.dispose());
         target.dispose();
-        maskTarget.dispose();
+        idTarget.dispose();
+        idMats.forEach((m) => m.dispose());
         renderer.dispose();
         canvas.remove();
       };
