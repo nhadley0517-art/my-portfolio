@@ -26,7 +26,7 @@ import type * as T from "three";
    in the pond, a bark from the dog, leaves from a tree, lights in the cabin,
    a leap from the deer, a dash from the rabbit. */
 
-const PX = 3;
+const PX = 2;
 
 const PALETTE = "172038 253a5e 3c5e8b 4f8fba 73bed3 a4dddb 19332d 25562e 468232 75a743 a8ca58 d0da91 4d2b32 7a4841 ad7757 c09473 d7b594 e7d5b3 341c27 602c2c 884b2b be772b de9e41 e8c170 241527 411d31 752438 a53030 cf573c da863e 1e1d39 402751 7a367b a23e8c c65197 df84a5 090a14 10141f 151d28 202e37 394a50 577277 819796 a8b5b2 c7cfcc ebede9".split(" ");
 
@@ -63,7 +63,7 @@ const TOD_LABEL: Record<TimeOfDay, { name: string; dot: string }> = {
 
 // Light through the day. Positions are where the sun (or moon) shines from.
 type Key = { h: number; sky: string; ground: string; hemi: number; sun: string; sunI: number; pos: [number, number, number]; night: number; haze: string };
-const NIGHT: Omit<Key, "h"> = { sky: "#3d4f86", ground: "#1c1a2c", hemi: 0.55, sun: "#9fb4ff", sunI: 0.75, pos: [10, 14, -6], night: 1, haze: "#2c3a66" };
+const NIGHT: Omit<Key, "h"> = { sky: "#4a5c96", ground: "#22203a", hemi: 0.78, sun: "#a9bcff", sunI: 1.0, pos: [10, 14, -6], night: 1, haze: "#2c3a66" };
 const KEYS: Key[] = [
   { h: 0, ...NIGHT },
   { h: 4.8, ...NIGHT },
@@ -156,8 +156,14 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         type: THREE.HalfFloatType,
         depthTexture: new THREE.DepthTexture(1, 1),
       });
+      // Characters are drawn again into a mask, so the post pass can give
+      // them a sprite-style outline and keep them crisp and readable.
+      const maskTarget = new THREE.WebGLRenderTarget(1, 1, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+      const maskBlack = new THREE.MeshBasicMaterial({ color: 0x000000 });
+      const maskWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
       const post = new THREE.ShaderMaterial({
         uniforms: {
+          tMask: { value: maskTarget.texture },
           tColor: { value: target.texture },
           tDepth: { value: target.depthTexture },
           uRes: { value: new THREE.Vector2(1, 1) },
@@ -168,15 +174,20 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         },
         vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
         fragmentShader: `
-          uniform sampler2D tColor; uniform sampler2D tDepth; uniform vec2 uRes;
+          uniform sampler2D tColor; uniform sampler2D tDepth; uniform sampler2D tMask; uniform vec2 uRes;
           uniform vec3 uPal[${PALETTE.length}]; uniform vec3 uHaze; uniform mat4 uInvVP; uniform mat4 uWorldInv;
           varying vec2 vUv;
           float dep(vec2 o){ return texture2D(tDepth, vUv + o / uRes).x; }
           float alp(vec2 o){ return texture2D(tColor, vUv + o / uRes).a; }
+          float msk(vec2 o){ return texture2D(tMask, vUv + o / uRes).r; }
           float b2(vec2 a){ a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
           float b4(vec2 a){ return b2(0.5 * a) * 0.25 + b2(a); }
           void main(){
             vec4 c = texture2D(tColor, vUv);
+            float m = msk(vec2(0.0));
+            float mn = max(max(msk(vec2(1.0,0.0)), msk(vec2(-1.0,0.0))), max(msk(vec2(0.0,1.0)), msk(vec2(0.0,-1.0))));
+            // A 1px dark outline around every character.
+            if (m < 0.5 && mn > 0.5) { gl_FragColor = vec4(0.082, 0.114, 0.157, 1.0); return; }
             if (c.a <= 0.0) discard;
             float d = dep(vec2(0.0));
             float diff = max(max(dep(vec2(1.0,0.0)) - d, dep(vec2(-1.0,0.0)) - d), max(dep(vec2(0.0,1.0)) - d, dep(vec2(0.0,-1.0)) - d));
@@ -189,12 +200,18 @@ export default function Diorama({ height = 320 }: { height?: number }) {
             vec4 wp = uInvVP * vec4(vUv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0);
             vec3 lp = (uWorldInv * vec4(wp.xyz / wp.w, 1.0)).xyz;
             float hz = smoothstep(-3.4, -7.4, lp.z) * (0.5 + 0.5 * smoothstep(1.0, 7.0, lp.y)) * 0.42;
+            if (m > 0.5) {
+              // Characters skip the haze and never sink into the dark.
+              float l0 = dot(s, vec3(0.299, 0.587, 0.114));
+              s *= clamp(0.34 / max(l0, 0.01), 1.0, 2.6);
+              hz = 0.0;
+            }
             s = mix(s, uHaze, hz);
             // Hue-shifted shading: cool shadows, warm lights.
             float l = dot(s, vec3(0.299, 0.587, 0.114));
             s = mix(s, s * vec3(0.8, 0.9, 1.22) + vec3(0.0, 0.0, 0.015), smoothstep(0.5, 0.06, l) * 0.6);
             s = mix(s, s * vec3(1.07, 1.02, 0.9), smoothstep(0.6, 0.95, l) * 0.45);
-            s += (b4(gl_FragCoord.xy) - 0.47) * 0.035;
+            if (m < 0.5) s += (b4(gl_FragCoord.xy) - 0.47) * 0.02;
             // Snap to the palette.
             vec3 best = uPal[0]; float bd = 1e9;
             for (int i = 0; i < ${PALETTE.length}; i++) {
@@ -461,6 +478,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         place(g, box(0.12, 0.12, 0.11, i ? "#ad7757" : "#25562e"), 0.13, 0.2);
         place(g, box(0.08, 0.04, 0.06, "#de9e41"), 0.22, 0.18);
         g.userData.tap = "duck";
+        g.scale.setScalar(1.6);
         place(world, g, pond.x, -0.06, pond.z, false);
         return { g, a: i * 2.6, speed: i ? 0.22 : 0.17 };
       });
@@ -675,31 +693,34 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         place(fire, g, x, 0.14, z);
       }
       const person = new THREE.Group();
-      place(person, box(0.3, 0.42, 0.24, "#2f4a6b"), 0, 0.5);
-      place(person, box(0.28, 0.12, 0.38, "#3a3632"), 0, 0.31, 0.12);
-      place(person, box(0.22, 0.24, 0.12, "#3a3632"), 0, 0.17, 0.3);
+      place(person, box(0.3, 0.42, 0.24, "#cf573c"), 0, 0.5);
+      place(person, box(0.28, 0.12, 0.38, "#253a5e"), 0, 0.31, 0.12);
+      place(person, box(0.22, 0.24, 0.12, "#253a5e"), 0, 0.17, 0.3);
       place(person, new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 6), toon("#e3b48c")), 0, 0.86);
-      place(person, cyl(0.17, 0.17, 0.08, "#b8462e", 8), 0, 0.98);
-      place(person, cyl(0.11, 0.15, 0.12, "#b8462e", 8), 0, 1.06);
+      place(person, cyl(0.17, 0.17, 0.08, "#e8c170", 8), 0, 0.98);
+      place(person, cyl(0.11, 0.15, 0.12, "#e8c170", 8), 0, 1.06);
       const arm = new THREE.Group();
-      place(arm, box(0.09, 0.36, 0.09, "#2f4a6b"), 0, -0.16);
+      place(arm, box(0.09, 0.36, 0.09, "#cf573c"), 0, -0.16);
       place(arm, new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.08), toon("#e3b48c")), 0, -0.36);
       place(person, arm, -0.19, 0.68, 0);
       person.rotation.y = Math.PI - 0.8;
+      person.scale.setScalar(1.45);
       person.userData.tap = "person";
       place(fire, person, -0.95, 0.12, 0.2);
       const dog = new THREE.Group();
-      place(dog, box(0.46, 0.18, 0.2, "#c78b4a"), 0, 0.1);
-      place(dog, box(0.2, 0.17, 0.17, "#c78b4a"), 0.28, 0.2);
-      place(dog, box(0.1, 0.08, 0.1, "#a8703a"), 0.42, 0.17);
+      place(dog, box(0.46, 0.18, 0.2, "#de9e41"), 0, 0.1);
+      place(dog, box(0.12, 0.12, 0.18, "#ebede9"), 0.2, 0.1);
+      place(dog, box(0.2, 0.17, 0.17, "#de9e41"), 0.28, 0.2);
+      place(dog, box(0.1, 0.08, 0.1, "#be772b"), 0.42, 0.17);
       place(dog, box(0.04, 0.03, 0.04, "#2b2420"), 0.48, 0.2);
       for (const s of [-1, 1]) place(dog, box(0.05, 0.1, 0.06, "#7b4f2a"), 0.25, 0.3, s * 0.08);
       const tail = new THREE.Group();
-      place(tail, box(0.05, 0.05, 0.2, "#c78b4a"), 0, 0, -0.08);
+      place(tail, box(0.05, 0.05, 0.2, "#de9e41"), 0, 0, -0.08);
       place(dog, tail, -0.24, 0.16, 0);
-      dog.rotation.y = 2.4;
+      dog.rotation.y = 2.9;
+      dog.scale.setScalar(1.6);
       dog.userData.tap = "dog";
-      place(fire, dog, 0.1, 0, 0.95);
+      place(fire, dog, 1.05, 0, -0.05);
       fire.userData.tap = "fire";
       place(world, fire, fireAt.x, groundAt(fireAt.x, fireAt.z), fireAt.z);
       occ.push({ x: fireAt.x, z: fireAt.z, r: 0.9, k: 0.3 });
@@ -758,6 +779,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       for (const s of [-1, 1]) place(neck, box(0.05, 0.14, 0.05, "#7a4841"), -0.02, 0.5, s * 0.07);
       place(deer, neck, 0.27, 0.62, 0);
       deer.rotation.y = 0.5;
+      deer.scale.setScalar(1.4);
       deer.userData.tap = "deer";
       const deerBase = groundAt(deerAt[0], deerAt[1]);
       place(world, deer, deerAt[0], deerBase, deerAt[1]);
@@ -770,6 +792,9 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       for (const s of [-1, 1]) place(rabbit, box(0.05, 0.18, 0.05, "#ad7757"), 0.14, 0.38, s * 0.04);
       place(rabbit, box(0.08, 0.08, 0.08, "#ebede9"), -0.17, 0.16);
       rabbit.userData.tap = "rabbit";
+      rabbit.scale.setScalar(1.7);
+      // Everything that should read as a character gets the outline.
+      for (const ch of [person, dog, deer, rabbit, ...ducks.map((d) => d.g)]) ch.traverse((o) => o.layers.enable(1));
       place(world, rabbit, 10, groundAt(10, 3), 3);
       const bun = { x: 10, z: 3, fx: 10, fz: 3, tx: 10, tz: 3, hop: 1, wait: 1, hops: 0, fast: 0 };
 
@@ -787,7 +812,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       const tp: number[] = [], tc: number[] = [];
       for (const [ox, hh, lean] of [[-0.11, 0.8, -0.05], [0, 1, 0.02], [0.11, 0.7, 0.06]]) {
         tp.push(ox - 0.07, 0, 0, ox + 0.07, 0, 0, ox + lean, hh, 0);
-        tc.push(0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 1.12, 1.12, 1.12);
+        tc.push(0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 1.05, 1.05, 1.05);
       }
       tuft.setAttribute("position", new THREE.Float32BufferAttribute(tp, 3));
       tuft.setAttribute("color", new THREE.Float32BufferAttribute(tc, 3));
@@ -801,17 +826,17 @@ export default function Diorama({ height = 320 }: { height?: number }) {
             "#include <begin_vertex>",
             `#include <begin_vertex>
             vec4 root = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
-            float band = sin(uTime * 0.45 - root.x * 0.22 + root.z * 0.1);
-            float gust = smoothstep(0.2, 1.0, band);
-            transformed.x += (0.08 + gust * 0.32) * position.y;
+            float band = sin(uTime * 0.6 - root.x * 0.18 + root.z * 0.08);
+            float gust = smoothstep(0.3, 1.0, band);
+            transformed.x += (0.03 + gust * 0.13) * position.y;
             vGust = gust * position.y;`
           );
         shader.fragmentShader = shader.fragmentShader
           .replace("#include <common>", "#include <common>\nvarying float vGust;")
-          .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.rgb *= 1.0 + vGust * 0.22;");
+          .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.rgb *= 1.0 + vGust * 0.08;");
       };
       const tints = ["#4d8a30", "#579636", "#62a23b"].map(col);
-      const COUNT = 11000;
+      const COUNT = 8000;
       const grass = new THREE.InstancedMesh(tuft, grassMat, COUNT);
       grass.receiveShadow = true;
       const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), eul = new THREE.Euler(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3(), tint = new THREE.Color();
@@ -936,6 +961,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         const h = Math.max(1, Math.round(host.clientHeight / PX));
         renderer.setSize(w, h, false);
         target.setSize(w, h);
+        maskTarget.setSize(w, h);
         post.uniforms.uRes.value.set(w, h);
         let halfH = 9.4;
         let halfW = halfH * (w / h);
@@ -949,9 +975,23 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         post.uniforms.uInvVP.value.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse).invert();
       };
       fit();
+      renderer.shadowMap.autoUpdate = false;
       const render = () => {
+        renderer.shadowMap.needsUpdate = true;
         renderer.setRenderTarget(target);
         renderer.render(scene, camera);
+        // The character mask: everything in black for depth, then the
+        // characters in white wherever they're actually visible.
+        renderer.setRenderTarget(maskTarget);
+        scene.overrideMaterial = maskBlack;
+        renderer.render(scene, camera);
+        renderer.autoClear = false;
+        camera.layers.set(1);
+        scene.overrideMaterial = maskWhite;
+        renderer.render(scene, camera);
+        camera.layers.set(0);
+        scene.overrideMaterial = null;
+        renderer.autoClear = true;
         renderer.setRenderTarget(null);
         renderer.render(postScene, postCam);
       };
@@ -1143,7 +1183,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         const t = now / 1000;
         const dt = Math.min(0.1, (now - lastT) / 1000);
         lastT = now;
-        uTime.value = t;
+        // Water and wind run on a slower clock than the wall clock.
+        uTime.value = t * 0.45;
 
         if (now - baseAt > 10000) {
           base = baseHourNow();
@@ -1170,9 +1211,9 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         lanternLight.intensity = lightsOn ? lerp(1.4, 3, nightF) + Math.sin(t * 3.1) * 0.15 : 0;
         lanternLight.distance = lerp(3, 5, nightF);
         flare = Math.max(0, flare - dt * 1.2);
-        const flick = 0.82 + Math.sin(t * 11) * 0.1 + Math.sin(t * 27) * 0.08;
+        const flick = 0.85 + Math.sin(t * 3.5) * 0.09 + Math.sin(t * 7.3) * 0.06;
         flames.forEach((f, i) => {
-          const sy = (0.75 + Math.sin(t * (9 + i * 4) + i * 2) * 0.22 + Math.sin(t * 23 + i) * 0.08) * (1 + flare * 0.9);
+          const sy = (0.78 + Math.sin(t * (3.2 + i * 1.4) + i * 2) * 0.18 + Math.sin(t * 6 + i) * 0.06) * (1 + flare * 0.9);
           f.scale.set(1 + flare * 0.3, sy, 1 + flare * 0.3);
           f.position.y = 0.2 + sy * 0.3;
         });
@@ -1189,9 +1230,9 @@ export default function Diorama({ height = 320 }: { height?: number }) {
 
         // The person waves while you're here; the dog's tail never stops.
         wave += ((hovering ? 1 : 0) - wave) * Math.min(1, dt * 6);
-        arm.rotation.z = -wave * (2.5 + Math.sin(t * 10) * 0.35);
+        arm.rotation.z = -wave * (2.5 + Math.sin(t * 5) * 0.35);
         dogHop = Math.max(0, dogHop - dt * 2.2);
-        tail.rotation.y = Math.sin(t * (hovering || dogHop > 0 ? 18 : 6)) * 0.6;
+        tail.rotation.y = Math.sin(t * (hovering || dogHop > 0 ? 9 : 3)) * 0.6;
         dog.position.y = Math.abs(Math.sin(dogHop * Math.PI * 2)) * 0.22 * dogHop;
 
         birds.forEach((b) => {
@@ -1199,7 +1240,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           const x = ((t * b.speed + b.o * span) % span) - span / 2;
           b.g.position.set(x, b.y + Math.sin(t * 0.8 + b.o * 9) * 0.3, b.z);
           b.g.visible = nightF < 0.6;
-          const beat = Math.floor(t * 4 + b.o * 10);
+          const beat = Math.floor(t * 2.6 + b.o * 10);
           const flap = beat % 6 > 3 ? 0.3 : beat % 2 ? 0.55 : -0.45;
           b.wings[0].rotation.z = -flap;
           b.wings[1].rotation.z = flap;
@@ -1227,14 +1268,14 @@ export default function Diorama({ height = 320 }: { height?: number }) {
 
         flies.forEach(({ f, x, z, p }) => {
           f.position.set(x + Math.sin(t * 0.5 + p) * 0.6, groundAt(x, z) + 0.5 + Math.sin(t * 0.9 + p * 2) * 0.3, z + Math.cos(t * 0.4 + p) * 0.5);
-          f.visible = nightF > 0.5 && Math.sin(t * 2.2 + p * 3) > -0.1;
+          f.visible = nightF > 0.5 && Math.sin(t * 1.1 + p * 3) > -0.1;
         });
         butterflies.forEach((b) => {
           const x = b.cx + Math.sin(t * 0.6 + b.p) * 1.1 + Math.sin(t * 1.7 + b.p * 2) * 0.3;
           const z = b.cz + Math.cos(t * 0.5 + b.p) * 0.7;
           b.g.position.set(x, groundAt(x, z) + 0.55 + Math.sin(t * 2.3 + b.p) * 0.18, z);
           b.g.visible = nightF < 0.4;
-          const open = Math.floor(t * 7 + b.p * 3) % 2 === 0;
+          const open = Math.floor(t * 3.5 + b.p * 3) % 2 === 0;
           b.wings[0].rotation.z = open ? 0 : 1.1;
           b.wings[1].rotation.z = open ? 0 : -1.1;
         });
@@ -1319,7 +1360,10 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         render();
       };
 
-      let raf = 0, visible = true;
+      // Like hand-drawn pixel animation, the scene steps at 12 frames a
+      // second; dragging the time runs at full rate so it stays responsive.
+      let raf = 0, visible = true, lastStep = 0;
+      const STEP = 1000 / 12;
       const frame = (now: number) => {
         // With reduced motion the scene stays still, and only runs while
         // the time is being scrubbed or is easing back.
@@ -1329,7 +1373,11 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           return;
         }
         raf = requestAnimationFrame(frame);
-        if (visible) animate(now);
+        if (!visible) return;
+        if (scrubbing || now - lastStep >= STEP) {
+          lastStep = now;
+          animate(now);
+        }
       };
       function kick() {
         if (!raf) raf = requestAnimationFrame(frame);
@@ -1364,6 +1412,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         scene.traverse((o) => (o as T.Mesh).geometry?.dispose());
         mats.forEach((m) => m.dispose());
         target.dispose();
+        maskTarget.dispose();
         renderer.dispose();
         canvas.remove();
       };
