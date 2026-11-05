@@ -63,8 +63,8 @@ const ROLES: Role[] = [
     color: C.green,
     role: "Product Designer",
     dates: "Now",
-    blurb: "A collection of smaller projects and what I do there.",
-    soon: true,
+    blurb: "What I do on the team, who I do it with, and a library of the work.",
+    work: [{ slug: "hr-block", title: "H&R Block", line: "UX, the component library, A/B tests, handoff, and the people I make it with", thumb: "/craft/hrb-thumb.svg", color: C.green }],
   },
   {
     company: "Independent",
@@ -75,7 +75,7 @@ const ROLES: Role[] = [
       { slug: "no2", title: "No. 2", line: "An iOS app I designed and shipped solo in two weeks", thumb: "/no2-thumb.jpg", color: C.yellow },
       { href: HADLEY_DEV, title: "hadley.dev", line: "My library of micro-interactions, installed through the shadcn CLI", thumb: "/craft/cover.jpg", color: C.blue },
       { slug: "sales-dashboard", title: "Driveway Auto Spa", line: "A sales dashboard a detailing business runs on", thumb: "/dwautospademo.mp4", video: true, color: C.pink },
-      { slug: "cove", title: "Cove", line: "A field service CRM, as founding designer", thumb: "/dashboard-demo.mp4", video: true, color: C.green },
+      { slug: "cove", title: "Cove", line: "A field service CRM, as founding designer", thumb: "/dashboard-demo.mp4", video: true, color: C.purple },
       { slug: "real", title: "Real", line: "A redesign I hand-coded and cold-messaged to the founder", thumb: "/real-thumb.jpg", color: C.orange },
       { slug: "univo", title: "Univo", line: "Medical records in plain language", thumb: "/univo_thumb.png", color: C.purple },
     ],
@@ -384,6 +384,9 @@ export default function CraftHome() {
             >
               {view === "work" ? (
                 <div className="c-grid">
+                  <CaseTile slug="hr-block" title="H&R Block" kind="Product design · Now" line="What I do as a product designer on the team, who I do it with, and a library of the work." color={C.green} onOpen={openProject} register={register}>
+                    <div className="c-hrb">H&amp;R Block</div>
+                  </CaseTile>
                   <CaseTile slug="no2" title="No. 2" kind="iOS app · 2026" line="A gut-health app I designed and shipped solo in two weeks, live on the App Store." color={C.yellow} onOpen={openProject} register={register}>
                     <SharedPhoneSceneHost />
                     <PhoneSceneSlot />
@@ -391,21 +394,9 @@ export default function CraftHome() {
                   <CaseTile slug="sales-dashboard" title="Driveway Auto Spa" kind="Sales dashboard · Live" line="Designed, built, and shipped solo in three days. A real detailing business runs on it today." color={C.pink} onOpen={openProject} register={register}>
                     <video src="/dwautospademo.mp4" autoPlay muted loop playsInline />
                   </CaseTile>
-                  <CaseTile slug="cove" title="Cove" kind="Field service CRM · 2026" line="Founding designer on the CRM a field service business runs its whole day on." color={C.green} onOpen={openProject} register={register}>
+                  <CaseTile slug="cove" title="Cove" kind="Field service CRM · 2026" line="Founding designer on the CRM a field service business runs its whole day on." color={C.purple} onOpen={openProject} register={register}>
                     <video src="/dashboard-demo.mp4" autoPlay muted loop playsInline />
                   </CaseTile>
-                  <article className="c-tile c-case-tile c-span-3 is-soon" style={colorVar(C.green)}>
-                    <div className="c-tile-body c-soon-media">
-                      <span>H&amp;R Block</span>
-                    </div>
-                    <div className="c-case-copy">
-                      <span className="c-case-head">
-                        <span className="c-chip">H&amp;R Block</span>
-                        <span className="c-kind">Coming soon</span>
-                      </span>
-                      <span className="c-case-line">A collection of work from my role as a product designer.</span>
-                    </div>
-                  </article>
                 </div>
               ) : (
                 <div className="c-grid">
@@ -532,6 +523,7 @@ export default function CraftHome() {
         .c-case-media { width: 100%; height: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #E9E9EC; }
         .c-case-media > video { display: block; width: 100%; height: 100%; object-fit: cover; }
 
+        .c-hrb { display: grid; place-items: center; width: 100%; height: 100%; background: ${C.green}; color: #fff; font-size: clamp(22px, 3vw, 34px); font-weight: 600; letter-spacing: -0.02em; }
         .c-still { height: 100%; aspect-ratio: 16 / 9; background: #000; }
         .c-still video { display: block; width: 100%; height: 100%; object-fit: cover; }
 

@@ -6,6 +6,8 @@ import No2Content, { NO2_SECTIONS, ACCENT as NO2_ACCENT } from "@/app/no2/No2Con
 import CoveContent, { COVE_SECTIONS, ACCENT as COVE_ACCENT } from "@/app/cove/CoveContent";
 import WritingProcessContent, { WP_SECTIONS, ACCENT as WP_ACCENT } from "@/app/writingprocess/WritingProcessContent";
 import WritingPost from "@/components/WritingPost";
+import HRBlockContent from "@/components/HRBlockContent";
+import { HRB_ACCENT, HRB_SECTIONS } from "@/lib/hrBlockData";
 import WritingIndex from "@/components/WritingIndex";
 import { POSTS } from "@/content/posts";
 
@@ -38,6 +40,11 @@ export const OVERLAY_REGISTRY: OverlayRegistry = {
     variant: "wide",
     render: ({ close }) => <CoveContent variant="overlay" onClose={close} />,
     sidePanel: ({ fullscreen }) => <CaseStudySidePanel sections={COVE_SECTIONS} accentColor={COVE_ACCENT} fullscreen={fullscreen} />,
+  },
+  "hr-block": {
+    variant: "wide",
+    render: ({ close }) => <HRBlockContent variant="overlay" onClose={close} />,
+    sidePanel: ({ fullscreen }) => <CaseStudySidePanel sections={HRB_SECTIONS} accentColor={HRB_ACCENT} fullscreen={fullscreen} />,
   },
   "writing-process": {
     variant: "wide",

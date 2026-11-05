@@ -748,14 +748,26 @@ export default function Diorama({ height = 320 }: { height?: number }) {
 
       // Smoke from the fire, and a chimney plume that climbs past the peaks.
       const smokeMats: T.MeshToonMaterial[] = [];
-      const smokeMat = () => {
-        const m = new THREE.MeshToonMaterial({ color: col("#c9c7bf"), gradientMap: ramp, transparent: true });
+      // Campfire smoke is soft and see-through. The chimney's is drawn the
+      // pixel-art way: solid puffs that swell, drift and shrink away, with
+      // the same outline as everything else, so the plume stays readable
+      // even where it passes in front of a mountain.
+      const smokeMat = (solid = false) => {
+        const m = new THREE.MeshToonMaterial({ color: col("#c9c7bf"), gradientMap: ramp, transparent: !solid });
         smokeMats.push(m);
+        return m;
+      };
+      // One flat, unlit color for every chimney puff, so each reads as a
+      // clean round blob with an outline rather than a shaded lump.
+      const chimneyMat = new THREE.MeshBasicMaterial({ color: col("#ebede9") });
+      const chimneyPuff = () => {
+        const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.3, 1), chimneyMat);
+        m.userData.oid = 6;
         return m;
       };
       const puffs = [
         ...Array.from({ length: 8 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), smokeMat()), 0, -9, 0, false), o: i / 8, from: new THREE.Vector3(fireAt.x, groundAt(fireAt.x, fireAt.z) + 0.9, fireAt.z), rate: 0.18, rise: 3.4, drift: 1.1, grow: 1.5, chimney: false })),
-        ...Array.from({ length: 24 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.2, 0), smokeMat()), 0, -9, 0, false), o: i / 24, from: chimneyTop, rate: 0.06, rise: 5.3, drift: 3.0, grow: 2.2, chimney: true })),
+        ...Array.from({ length: 6 }, (_, i) => ({ m: place(world, chimneyPuff(), 0, -9, 0, false), o: i / 6, from: chimneyTop, rate: 0.1, rise: 4.2, drift: 3.4, grow: 1.4, chimney: true })),
       ];
 
       // ---------- wildlife ----------
@@ -1055,6 +1067,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       // ---------- time of day ----------
       const KC = KEYS.map((k) => ({ ...k, skyC: col(k.sky), groundC: col(k.ground), sunC: col(k.sun), hazeS: srgb(k.haze) }));
       let nightF = 0, lastH = -1;
+      const dayPuff = col("#ebede9"), nightPuff = col("#a8b5b2");
       const daySmoke = col("#bdbab2"), nightSmoke = col("#b4bccb"), dayBird = col("#2e3238"), nightBird = col("#2b3046");
       const applyLight = (h: number) => {
         if (Math.abs(h - lastH) < 1e-4) return;
@@ -1078,6 +1091,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         wU.cRefl.value.lerpColors(WATER.day.refl, WATER.night.refl, nightF);
         wU.cSky.value.copy(hemi.color);
         smokeMats.forEach((m) => m.color.lerpColors(daySmoke, nightSmoke, nightF));
+        chimneyMat.color.lerpColors(dayPuff, nightPuff, nightF);
         birdMat.color.lerpColors(dayBird, nightBird, nightF);
       };
 
@@ -1289,15 +1303,16 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           const life = (t * rate + o) % 1;
           const up = 1 - Math.pow(1 - life, 1.6);
           if (chimney) {
-            // Climbs nearly straight up through the gap, then, once it's above
-            // the peaks, bends right with the same wind as the grass, the
-            // birds and the campfire smoke.
-            const k = Math.max(0, (life - 0.5) / 0.5);
-            const lean = drift * k * k;
-            m.position.set(from.x + lean + Math.sin(life * 7.5 + t * 0.25) * 0.32 * life, from.y + up * rise, from.z - life * 0.3);
-          } else m.position.set(from.x + Math.sin(life * 5 + o * 9) * 0.3 + life * life * drift, from.y + up * rise, from.z - life * 0.6);
-          m.scale.setScalar(0.55 + life * grow);
-          (m.material as T.MeshToonMaterial).opacity = Math.min(1, life * 8) * Math.pow(1 - life, 0.8) * 0.9;
+            // Rises and drifts right with the same wind as the grass, the
+            // birds and the campfire, swelling as it goes, then shrinks away.
+            m.position.set(from.x + drift * Math.pow(life, 1.3) + Math.sin(life * 6 + t * 0.3) * 0.22 * life, from.y + up * rise, from.z - life * 0.3);
+            const fade = life > 0.7 ? 1 - (life - 0.7) / 0.3 : 1;
+            m.scale.setScalar(Math.max(0.001, (0.45 + life * grow) * fade * Math.min(1, life * 6)));
+          } else {
+            m.position.set(from.x + Math.sin(life * 5 + o * 9) * 0.3 + life * life * drift, from.y + up * rise, from.z - life * 0.6);
+            m.scale.setScalar(0.55 + life * grow);
+            (m.material as T.MeshToonMaterial).opacity = Math.min(1, life * 8) * Math.pow(1 - life, 0.8) * 0.9;
+          }
         });
 
         // The person waves while you're here; the dog's tail never stops.
