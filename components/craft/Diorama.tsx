@@ -90,6 +90,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<View | null>(null);
+  const timeRef = useRef<HTMLTimeElement>(null);
 
   useEffect(() => {
     const host = ref.current!;
@@ -751,8 +752,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         return m;
       };
       const puffs = [
-        ...Array.from({ length: 8 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), smokeMat()), 0, -9, 0, false), o: i / 8, from: new THREE.Vector3(fireAt.x, groundAt(fireAt.x, fireAt.z) + 0.9, fireAt.z), rate: 0.18, rise: 3.4, drift: 1.1, grow: 1.5 })),
-        ...Array.from({ length: 16 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.15, 0), smokeMat()), 0, -9, 0, false), o: i / 16, from: chimneyTop, rate: 0.07, rise: 5.0, drift: 3.4, grow: 2.6 })),
+        ...Array.from({ length: 8 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), smokeMat()), 0, -9, 0, false), o: i / 8, from: new THREE.Vector3(fireAt.x, groundAt(fireAt.x, fireAt.z) + 0.9, fireAt.z), rate: 0.18, rise: 3.4, drift: 1.1, grow: 1.5, chimney: false })),
+        ...Array.from({ length: 24 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.2, 0), smokeMat()), 0, -9, 0, false), o: i / 24, from: chimneyTop, rate: 0.06, rise: 5.6, drift: -2.4, grow: 2.2, chimney: true })),
       ];
 
       // ---------- wildlife ----------
@@ -1052,7 +1053,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       // ---------- time of day ----------
       const KC = KEYS.map((k) => ({ ...k, skyC: col(k.sky), groundC: col(k.ground), sunC: col(k.sun), hazeS: srgb(k.haze) }));
       let nightF = 0, lastH = -1;
-      const daySmoke = col("#c9c7bf"), nightSmoke = col("#8f93a8"), dayBird = col("#2e3238"), nightBird = col("#2b3046");
+      const daySmoke = col("#bdbab2"), nightSmoke = col("#b4bccb"), dayBird = col("#2e3238"), nightBird = col("#2b3046");
       const applyLight = (h: number) => {
         if (Math.abs(h - lastH) < 1e-4) return;
         lastH = h;
@@ -1085,10 +1086,18 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       let scrubbing = false, releasedAt = -1, returnFrom = 0;
       const wrap = (d: number) => ((((d + 12) % 24) + 24) % 24) - 12;
       const mod24 = (h: number) => ((h % 24) + 24) % 24;
-      let viewKey = "";
+      // The clock text is written straight to the DOM every frame, so it
+      // rolls smoothly while scrubbing; React only re-renders the label when
+      // the part of day or the live/preview state changes.
+      let viewKey = "", timeText = "";
       const report = () => {
         const live = !scrubbing && releasedAt < 0;
-        const key = `${Math.floor(hour * 60)}|${live}`;
+        const text = fmtHour(hour);
+        if (text !== timeText && timeRef.current) {
+          timeText = text;
+          timeRef.current.textContent = text;
+        }
+        const key = `${partOfDay(hour)}|${live}`;
         if (key === viewKey) return;
         viewKey = key;
         setView({ hour, live, forced: forced !== null });
@@ -1248,8 +1257,9 @@ export default function Diorama({ height = 320 }: { height?: number }) {
             // Hold the chosen time a moment, then ease back to Reno time.
             const since = (now - releasedAt) / 1000;
             if (since > 1.8 || reduce) {
-              const k = reduce ? 1 : Math.min(1, (since - 1.8) / 1.4);
-              const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+              const k = reduce ? 1 : Math.min(1, (since - 1.8) / 2.2);
+              // Ease in and out, so the clock rolls back instead of jumping.
+              const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
               hour = mod24(returnFrom + wrap(base - returnFrom) * e);
               if (k >= 1) releasedAt = -1;
             }
@@ -1273,10 +1283,15 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         fireLight.intensity = lerp(4, 6.5, nightF) * flick * (1 + flare * 1.2);
         fireLight.distance = lerp(5.5, 8.5, nightF);
 
-        puffs.forEach(({ m, o, from, rate, rise, drift, grow }) => {
+        puffs.forEach(({ m, o, from, rate, rise, drift, grow, chimney }) => {
           const life = (t * rate + o) % 1;
           const up = 1 - Math.pow(1 - life, 1.6);
-          m.position.set(from.x + Math.sin(life * 5 + o * 9) * 0.3 + life * life * drift, from.y + up * rise, from.z - life * 0.6);
+          if (chimney) {
+            // Leans left early into the gap between the peaks, then climbs
+            // in a lazy S-curve, clear of the mountains, into open sky.
+            const lean = drift * (1 - Math.pow(1 - Math.min(1, life * 1.6), 2));
+            m.position.set(from.x + lean + Math.sin(life * 7.5 + t * 0.25) * 0.32 * life, from.y + up * rise, from.z - life * 0.3);
+          } else m.position.set(from.x + Math.sin(life * 5 + o * 9) * 0.3 + life * life * drift, from.y + up * rise, from.z - life * 0.6);
           m.scale.setScalar(0.55 + life * grow);
           (m.material as T.MeshToonMaterial).opacity = Math.min(1, life * 8) * Math.pow(1 - life, 0.8) * 0.9;
         });
@@ -1427,7 +1442,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         }
         raf = requestAnimationFrame(frame);
         if (!visible) return;
-        if (scrubbing || now - lastStep >= STEP) {
+        // Full rate while the time is moving, so the clock rolls smoothly.
+        if (scrubbing || releasedAt >= 0 || now - lastStep >= STEP) {
           lastStep = now;
           animate(now);
         }
@@ -1494,7 +1510,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           <span className="d-dot" style={{ background: label.dot }} />
           {view.live ? `${label.name} in Reno, NV` : label.name}
           <span className="d-sep">·</span>
-          <time>{fmtHour(view.hour)}</time>
+          <time ref={timeRef}>{fmtHour(view.hour)}</time>
           <span className="d-sep">·</span>
           <span className="d-hint">{view.live ? (view.forced ? "preview time" : "drag the scene to change the time") : "let go to return to Reno time"}</span>
         </p>

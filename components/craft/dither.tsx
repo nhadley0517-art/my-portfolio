@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 // The same 8x8 ordered-dither matrix the hadley.dev components and Still use.
 const BAYER8 = [
@@ -10,8 +10,6 @@ const BAYER8 = [
   15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21,
 ].map((v) => (v + 0.5) / 64);
 
-const PAGE: [number, number, number] = [244, 244, 245];
-const REVEAL_MS = 750;
 
 export const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -119,92 +117,47 @@ export function DitherImage({ src, height = 180, cell = 3 }: { src: string; heig
   );
 }
 
-/** Work arrives the way the components' labels do: the page color breaks up
- *  through an ordered dither, sweeping left to right, instead of a fade. */
-export function DitherReveal({ children }: { children: ReactNode }) {
+/** Work comes into focus as it scrolls in: a soft fade up from a light blur
+ *  and a hair of scale, staggered by its place in the row. Quiet enough to
+ *  repeat on every tile without the page feeling busy. */
+export function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const wrap = useRef<HTMLDivElement>(null);
-  const cover = useRef<HTMLCanvasElement>(null);
-  const [done, setDone] = useState(false);
-
-  const paint = (p: number) => {
-    const cv = cover.current;
-    if (!cv) return;
-    const ctx = cv.getContext("2d")!;
-    const { width: w, height: h } = cv;
-    const img = ctx.createImageData(w, h);
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const gone = BAYER8[(y & 7) * 8 + (x & 7)] * 0.6 + (x / w) * 0.4 < p;
-        const i = (y * w + x) * 4;
-        img.data[i] = PAGE[0];
-        img.data[i + 1] = PAGE[1];
-        img.data[i + 2] = PAGE[2];
-        img.data[i + 3] = gone ? 0 : 255;
-      }
-    }
-    ctx.putImageData(img, 0, 0);
-  };
-
-  // Covered before first paint, so a tile never flashes in and then dissolves.
-  useLayoutEffect(() => {
-    const cv = cover.current!;
-    const r = wrap.current!.getBoundingClientRect();
-    cv.width = Math.max(1, Math.ceil(r.width / 6));
-    cv.height = Math.max(1, Math.ceil(r.height / 6));
-    paint(0);
-  }, []);
+  const [shown, setShown] = useState(false);
+  const [lag, setLag] = useState(delay);
 
   useEffect(() => {
     if (reducedMotion()) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDone(true);
+      setShown(true);
       return;
     }
-    let raf = 0;
-    let fallback = 0;
     const io = new IntersectionObserver(
       ([e]) => {
         if (!e.isIntersecting) return;
         io.disconnect();
-        const start = performance.now();
-        const step = (now: number) => {
-          const p = (now - start) / REVEAL_MS;
-          paint(p);
-          if (p < 1) raf = requestAnimationFrame(step);
-          else setDone(true);
-        };
-        raf = requestAnimationFrame(step);
-        // rAF never fires in a background tab; don't leave the work covered.
-        fallback = window.setTimeout(() => setDone(true), REVEAL_MS + 400);
+        // Tiles further right in their row arrive a beat later.
+        const grid = wrap.current!.closest(".c-grid")?.getBoundingClientRect();
+        if (grid) setLag(delay + Math.max(0, (e.boundingClientRect.left - grid.left) / grid.width) * 0.18);
+        setShown(true);
       },
       { threshold: 0.15 }
     );
     io.observe(wrap.current!);
-    return () => {
-      io.disconnect();
-      cancelAnimationFrame(raf);
-      clearTimeout(fallback);
-    };
-  }, []);
+    return () => io.disconnect();
+  }, [delay]);
 
   return (
-    <div ref={wrap} style={{ position: "relative", height: "100%" }}>
+    <div
+      ref={wrap}
+      style={{
+        height: "100%",
+        opacity: shown ? 1 : 0,
+        filter: shown ? "none" : "blur(10px)",
+        transform: shown ? "none" : "translateY(10px) scale(1.025)",
+        transition: `opacity 0.6s ease ${lag}s, filter 0.7s cubic-bezier(0.16,1,0.3,1) ${lag}s, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${lag}s`,
+      }}
+    >
       {children}
-      {!done && (
-        <canvas
-          ref={cover}
-          aria-hidden
-          style={{
-            position: "absolute",
-            inset: -1,
-            width: "calc(100% + 2px)",
-            height: "calc(100% + 2px)",
-            imageRendering: "pixelated",
-            pointerEvents: "none",
-            zIndex: 2,
-          }}
-        />
-      )}
     </div>
   );
 }

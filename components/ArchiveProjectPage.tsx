@@ -125,6 +125,22 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
           </div>
         </section>
 
+        {/* ── Brief: client / challenge / solution ── */}
+        {project.brief && project.brief.length > 0 && (
+          <section id="brief" className="px-6 pb-16 md:pb-20">
+            <div className="max-w-5xl mx-auto cs-brief">
+              {project.brief.map((b, i) => (
+                <ScrollReveal key={b.label} delay={i * 0.05}>
+                  <div className="cs-brief-card">
+                    <p className="cs-eyebrow">{b.label}</p>
+                    <p className="cs-brief-body">{b.body}</p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* ── Screens: before/after + why, one block per screen ── */}
         {project.screens && project.screens.length > 0 && (
           <section id="screens" className="px-6 pb-16 md:pb-20">
@@ -216,6 +232,29 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
                 ))}
               </div>
             </ScrollReveal>
+          </section>
+        )}
+
+        {/* ── Credits: the whole team, for team projects ── */}
+        {project.credits && project.credits.length > 0 && (
+          <section id="team" className="px-6 pb-16 md:pb-20">
+            <div className="max-w-5xl mx-auto">
+              <ScrollReveal>
+                <p className="cs-eyebrow" style={{ marginBottom: "20px" }}>Project Team</p>
+                <ul className="cs-credits">
+                  {project.credits.map((c) => (
+                    <li key={c.name} className={c.me ? "is-me" : undefined}>
+                      <span className="cs-credit-name">
+                        {c.name}
+                        {c.me && <span className="cs-me">Me</span>}
+                      </span>
+                      <span className="cs-credit-role">{c.role}</span>
+                    </li>
+                  ))}
+                </ul>
+                {project.creditsNote && <p className="cs-credits-note">{project.creditsNote}</p>}
+              </ScrollReveal>
+            </div>
           </section>
         )}
 
@@ -369,6 +408,20 @@ export default function ArchiveProjectPage({ project, variant = "page", onClose 
             transition: color 0.15s ease;
           }
           .archive-back-arrow:hover { color: #6B7280; }
+        }
+        .cs-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #9CA3AF; margin: 0 0 10px; }
+        .cs-brief { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+        .cs-brief-card { height: 100%; padding: 20px; border-radius: 6px; background: #fff; }
+        .cs-brief-body { margin: 0; font-size: 14px; line-height: 1.65; color: #6B7280; }
+        .cs-credits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 32px; margin: 0; padding: 0; list-style: none; }
+        .cs-credits li { display: flex; flex-direction: column; gap: 3px; }
+        .cs-credit-name { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #13181B; }
+        .cs-credit-role { font-size: 13px; line-height: 1.45; color: #8A8F98; }
+        .cs-me { padding: 1px 6px; border-radius: 3px; background: #13181B; color: #fff; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; }
+        .cs-credits-note { margin: 24px 0 0; font-size: 12.5px; color: #B0B4BB; }
+        @media (max-width: 760px) {
+          .cs-brief { grid-template-columns: minmax(0, 1fr); }
+          .cs-credits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
         .screen-badge {
           font-size: 11px; font-weight: 600; color: #9CA3AF; margin: 0 0 8px;

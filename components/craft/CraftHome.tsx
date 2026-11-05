@@ -10,7 +10,7 @@ import Footer from "@/components/Footer";
 import { SideNav } from "@/components/hadley/side-nav";
 import { SegmentedControl } from "@/components/hadley/segmented-control";
 import { CharacterDemo, ProfileDemo, SearchDemo } from "@/components/craft/demos";
-import { DitherReveal, PosterDeck, reducedMotion } from "@/components/craft/dither";
+import { PosterDeck, Reveal, reducedMotion } from "@/components/craft/dither";
 import Diorama from "@/components/craft/Diorama";
 
 const EMAIL = "nhadley0517@gmail.com";
@@ -108,7 +108,7 @@ function Tile({ span, title, meta, color, children }: { span: 2 | 3 | 4 | 6; tit
   return (
     <figure className={`c-tile c-span-${span}`} style={colorVar(color)}>
       <div className="c-tile-body">
-        <DitherReveal>{children}</DitherReveal>
+        <Reveal>{children}</Reveal>
       </div>
       <figcaption>
         <span className="c-chip">{title}</span> {meta}
@@ -123,11 +123,11 @@ function CaseTile({ slug, title, kind, line, color, onOpen, register, children }
   return (
     <article className="c-tile c-case-tile c-span-3" style={colorVar(color)}>
       <div className="c-tile-body">
-        <DitherReveal>
+        <Reveal>
           <CaseThumb slug={slug} title={title} onOpen={onOpen} register={register}>
             {children}
           </CaseThumb>
-        </DitherReveal>
+        </Reveal>
       </div>
       <button type="button" className="c-case-copy" onClick={() => onOpen(slug)}>
         <span className="c-case-head">

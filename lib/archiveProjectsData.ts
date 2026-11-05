@@ -51,6 +51,12 @@ export interface ArchiveProjectData {
   finalImages?: { src: string; alt?: string }[];
   /** Optional per-screen before/after breakdowns, shown after the overview. */
   screens?: ArchiveProjectScreen[];
+  /** Optional client / challenge / solution summary, shown after the overview. */
+  brief?: { label: string; body: string }[];
+  /** Optional credits for team projects. `me` marks Noah. */
+  credits?: { name: string; role: string; me?: boolean }[];
+  /** Short line under the credits, e.g. where the team list comes from. */
+  creditsNote?: string;
 }
 
 // Each entry below only states facts already confirmed in conversation with Noah.
@@ -87,16 +93,16 @@ export const ARCHIVE_PROJECTS: ArchiveProjectData[] = [
   {
     slug: "miah-families",
     title: "Miah Families",
-    oneLiner: "Turning a bare-bones Google Site into a branded, donation-ready home for an Oregon nonprofit.",
+    oneLiner: "A brand-new nonprofit for families navigating disability, given a brand, a voice, and a donation-ready home online.",
     hero: { type: "image", src: "/miah-hero.png" },
     overview: [
-      "Miah Families is an Oregon nonprofit building more connected, intergenerational communities for people of all ages and abilities. Before this project, its website was a basic Google Site that did not reflect the organization's mission, new identity, or growing community.",
-      "During my internship at Canyon Creative, I designed and built a completely new website around the agency's newly developed brand system. I worked directly with the client through regular check-ins, translating feedback into changes while advocating for decisions that protected clarity, usability, and the overall experience.",
+      "Miah Families is an Oregon nonprofit building community and support for families navigating disabilities, with a vision of recreational and residential spaces where everyone feels included and no family has to walk alone. Before this project, its website was a basic Google Site that did not reflect its mission, its new identity, or its growing community.",
+      "Canyon Creative took it on in two phases. The fall 2025 team created the brand: the logo, the brand guide, and the visual identity. I was the web designer on the spring 2026 team, which refined that work and brought it to life as a real website. I designed it and built it in Webflow, and worked directly with the client through weekly check-ins, turning feedback into changes and pushing back when a decision would have cost clarity or usability.",
     ],
     details: {
       role: "Web Designer & Webflow Developer",
-      team: "Worked with a Project Manager, Copywriter, and the Canyon Creative brand team",
-      timeline: "February–April",
+      team: "Seven designers, writers, and project managers at Canyon Creative",
+      timeline: "Spring 2026 (brand in fall 2025)",
       builtWith: "Figma, Webflow, Mailchimp, BetterWorld",
     },
     whatIMade: [
@@ -106,6 +112,21 @@ export const ARCHIVE_PROJECTS: ArchiveProjectData[] = [
       "Set up BetterWorld donation campaigns and embedded the donation experience directly into the site, so visitors can complete checkout without being sent away to a third-party page.",
       "Collaborated with the client through weekly feedback sessions, balancing requested changes with thoughtful design pushback when it improved the experience.",
     ],
+    brief: [
+      { label: "The client", body: "A nonprofit startup building community and support for families navigating disabilities, with plans for recreational and residential spaces where everyone belongs." },
+      { label: "The challenge", body: "Start from nothing. As a brand-new nonprofit, Miah Families needed a complete identity and the tools to grow: a logo, brand guidelines, a website, newsletter sign-ups, and a way to take donations." },
+      { label: "The solution", body: "A full brand from the fall team, then a polished, accessible Webflow site from ours: clear navigation, Mailchimp sign-ups, donations built into the page, and featured video that lets families tell the story." },
+    ],
+    credits: [
+      { name: "Mary Edwards", role: "Lead Project Manager" },
+      { name: "Anna Zamora", role: "Web Project Manager & Designer" },
+      { name: "Noah Hadley", role: "Web Designer", me: true },
+      { name: "Lindsey Garfield", role: "Designer" },
+      { name: "Kelley Bowen", role: "Designer" },
+      { name: "Owen Ekstrom", role: "Copywriter" },
+      { name: "Sydney Ruby", role: "Project Manager & Social Media Designer" },
+    ],
+    creditsNote: "Team as credited by Canyon Creative.",
     live: {
       url: "https://www.miahfamilies.org/",
       label: "Visit Miah Families",
