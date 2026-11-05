@@ -979,14 +979,17 @@ const CSS = `
 .loop-play:hover { transform: scale(1.06); }
 .loop-play:active { transform: scale(.92); }
 .loop-play.is-on { border-radius: 8px; }
-.loop-tools, .loop-swatches { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.loop-tools, .loop-swatches { display: flex; flex-wrap: nowrap; gap: 4px; align-items: center; }
 .loop-swatch {
-  width: 14px; height: 14px; padding: 0; border: 0; border-radius: 3px; cursor: pointer;
+  flex: none; width: 13px; height: 13px; padding: 0; border: 0; border-radius: 3px; cursor: pointer;
+  outline: 2px solid transparent; outline-offset: 1px;
   box-shadow: inset 0 0 0 1px rgba(19,24,27,0.06);
-  transition: transform .18s cubic-bezier(.34,1.8,.5,1), box-shadow .15s ease;
+  transition: transform .18s cubic-bezier(.34,1.8,.5,1), outline-color .15s ease;
 }
 .loop-swatch:hover { transform: scale(1.15); }
-.loop-swatch.is-on { transform: scale(1.15); box-shadow: 0 0 0 1.5px #f4f4f5, 0 0 0 3px #13181B; }
+/* The selected ring is a real outline on whole pixels with a see-through
+   gap, so it sits evenly on any background (no scaling, no painted gap). */
+.loop-swatch.is-on { transform: none; outline-color: #13181B; }
 .loop-eraser { display: grid; place-items: center; margin-left: 4px; background: #fff; color: #A8ABB2; box-shadow: inset 0 0 0 1px rgba(19,24,27,0.12); }
 .loop-eraser.is-on { color: #13181B; }
 .loop-tail { margin-left: auto; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
@@ -1023,7 +1026,7 @@ const CSS = `
   .loop-swatch { position: relative; width: 100%; height: auto; aspect-ratio: 1; border-radius: 6px; }
   .loop-swatch::after { content: ""; position: absolute; inset: -3px; }
   .loop-swatch:hover, .loop-swatch.is-on { transform: none; }
-  .loop-swatch.is-on { box-shadow: 0 0 0 2px #f4f4f5, 0 0 0 3.5px #13181B; }
+  .loop-swatch.is-on { outline-color: #13181B; outline-offset: 2px; }
   .loop-eraser { width: 40px; height: 40px; aspect-ratio: auto; margin-left: 0; border-radius: 10px; }
   .loop-eraser::after { content: none; }
   .loop-eraser svg { width: 16px; height: 16px; }

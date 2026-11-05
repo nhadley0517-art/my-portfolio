@@ -47,32 +47,24 @@ const VIEWS: { value: View; label: string }[] = [
   { value: "play", label: "Playground" },
 ];
 /** The hero's top edge, which the side nav lines up with above the fold. */
-const HERO_TOP = 112;
+const HERO_TOP = 96;
+/** The nav card sits a little above the hero, so its first label lines up
+ *  with the hero's first line instead of its edge with the text's top. */
+const NAV_ALIGN = 14;
 const NAV_TOP = 24;
 
 type Item = { title: string; line: string; color: string; thumb: string; video?: boolean; slug?: string; href?: string };
 type Role = { company: string; color: string; role: string; dates: string; blurb?: string; work?: Item[]; soon?: boolean };
 
-/** Oldest first, so scrolling down the line is moving forward in time. */
+/** Newest first: where I am now at the top, then back in time. */
 const ROLES: Role[] = [
   {
-    company: "Grand Canyon Education",
-    color: C.purple,
-    role: "Product Design Intern",
-    dates: "Oct 2024 – Apr 2026",
-    blurb: "Designed for a student platform used by tens of thousands of learners.",
-    work: [{ slug: "writing-process", title: "Writing Process", line: "A wall of text, rebuilt as an 8-stage guided tool", thumb: "/wp_thumb.png", color: C.purple }],
-  },
-  {
-    company: "Canyon Creative",
-    color: C.orange,
-    role: "Product Design Intern",
-    dates: "Dec 2025 – Apr 2026",
-    blurb: "A student-run agency serving national clients.",
-    work: [
-      { slug: "miah-families", title: "Miah Families", line: "A branded, donation-ready home for an Oregon nonprofit", thumb: "/miah-hero.png", color: C.orange },
-      { slug: "actively-ai", title: "Actively AI", line: "Solution pages for an AI revenue platform's launch", thumb: "/actively-hero.png", color: C.pink },
-    ],
+    company: "H&R Block",
+    color: C.green,
+    role: "Product Designer",
+    dates: "Now",
+    blurb: "A collection of smaller projects and what I do there.",
+    soon: true,
   },
   {
     company: "Independent",
@@ -89,12 +81,23 @@ const ROLES: Role[] = [
     ],
   },
   {
-    company: "H&R Block",
-    color: C.green,
-    role: "Product Designer",
-    dates: "Now",
-    blurb: "A collection of smaller projects and what I do there.",
-    soon: true,
+    company: "Canyon Creative",
+    color: C.orange,
+    role: "Product Design Intern",
+    dates: "Dec 2025 – Apr 2026",
+    blurb: "A student-run agency serving national clients.",
+    work: [
+      { slug: "miah-families", title: "Miah Families", line: "A branded, donation-ready home for an Oregon nonprofit", thumb: "/miah-hero.png", color: C.orange },
+      { slug: "actively-ai", title: "Actively AI", line: "Solution pages for an AI revenue platform's launch", thumb: "/actively-hero.png", color: C.pink },
+    ],
+  },
+  {
+    company: "Grand Canyon Education",
+    color: C.purple,
+    role: "Product Design Intern",
+    dates: "Oct 2024 – Apr 2026",
+    blurb: "Designed for a student platform used by tens of thousands of learners.",
+    work: [{ slug: "writing-process", title: "Writing Process", line: "A wall of text, rebuilt as an 8-stage guided tool", thumb: "/wp_thumb.png", color: C.purple }],
   },
 ];
 
@@ -272,7 +275,7 @@ export default function CraftHome() {
   // scrolls it rides up with it, then holds in the corner.
   useEffect(() => {
     const place = () => {
-      if (nav.current) nav.current.style.top = `${Math.max(NAV_TOP, HERO_TOP - window.scrollY)}px`;
+      if (nav.current) nav.current.style.top = `${Math.max(NAV_TOP, HERO_TOP - NAV_ALIGN - window.scrollY)}px`;
       // One source of truth for the active section: the last one whose top
       // has passed 40% down the screen, or About at the very top. (A section
       // observer used to fight this and could report Work late at the top.)
@@ -317,7 +320,7 @@ export default function CraftHome() {
 
   return (
     <div className="craft">
-      <div ref={nav} className="c-nav" style={{ top: HERO_TOP }}>
+      <div ref={nav} className="c-nav" style={{ top: HERO_TOP - NAV_ALIGN }}>
         <SideNav title="Noah Hadley" items={NAV} active={active} onNavigate={go} radius={12} />
       </div>
       <nav className="c-bar" aria-label="Sections">
@@ -406,13 +409,11 @@ export default function CraftHome() {
                 </div>
               ) : (
                 <div className="c-grid">
-                  <Tile span={4} title="Still" meta="Concept TV interface" color={C.orange}>
-                    <div className="c-still">
-                      <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
-                    </div>
+                  <Tile span={2} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
+                    <div className="c-plinth"><CharacterDemo /></div>
                   </Tile>
-                  <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
-                    <div className="c-plinth"><SearchDemo /></div>
+                  <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
+                    <div className="c-plinth is-loop"><LoopHero /></div>
                   </Tile>
                   <Tile span={4} title="Profile Card" meta="hadley.dev, drag the edge" color={C.purple}>
                     <div className="c-plinth is-wide"><div className="c-shrink"><ProfileDemo /></div></div>
@@ -420,11 +421,13 @@ export default function CraftHome() {
                   <Tile span={2} title="Posters" meta="Made outside any brief" color={C.yellow}>
                     <div className="c-plinth is-deck"><PosterDeck /></div>
                   </Tile>
-                  <Tile span={2} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
-                    <div className="c-plinth"><CharacterDemo /></div>
+                  <Tile span={4} title="Still" meta="Concept TV interface" color={C.orange}>
+                    <div className="c-still">
+                      <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
+                    </div>
                   </Tile>
-                  <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
-                    <div className="c-plinth is-loop"><LoopHero /></div>
+                  <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
+                    <div className="c-plinth"><SearchDemo /></div>
                   </Tile>
                 </div>
               )}
@@ -460,7 +463,7 @@ export default function CraftHome() {
         .c-main {
           width: min(1080px, 100% - 560px);
           margin: 0 auto;
-          padding: 112px 0 120px;
+          padding: 96px 0 120px;
         }
 
         .c-intro { max-width: 560px; font-size: 16px; line-height: 1.6; color: var(--muted); }
@@ -710,7 +713,9 @@ export default function CraftHome() {
           .c-shrink { transform: none; }
           .c-section { margin-top: 80px; }
           .c-section.is-first { margin-top: 72px; }
-          .c-band { margin-top: 48px; }
+          .c-band { margin: 40px -24px 0; }
+          .c-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+          .c-head p { text-align: left; }
         }
         @media (hover: none) {
           .c-tile:hover .c-tile-body { transform: none; outline-color: transparent; }

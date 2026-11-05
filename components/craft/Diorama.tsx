@@ -26,7 +26,9 @@ import type * as T from "three";
    in the pond, a bark from the dog, leaves from a tree, lights in the cabin,
    a leap from the deer, a dash from the rabbit. */
 
-const PX = 2;
+// Screen pixels per scene pixel: chunky on desktop; on phones the whole
+// island has to fit a narrow banner, so it uses a finer grid there.
+const pxFor = (width: number) => (width < 640 ? 2 : 3);
 
 const PALETTE = "172038 253a5e 3c5e8b 4f8fba 73bed3 a4dddb 19332d 25562e 468232 75a743 a8ca58 d0da91 4d2b32 7a4841 ad7757 c09473 d7b594 e7d5b3 341c27 602c2c 884b2b be772b de9e41 e8c170 241527 411d31 752438 a53030 cf573c da863e 1e1d39 402751 7a367b a23e8c c65197 df84a5 090a14 10141f 151d28 202e37 394a50 577277 819796 a8b5b2 c7cfcc ebede9".split(" ");
 
@@ -225,7 +227,6 @@ export default function Diorama({ height = 320 }: { height?: number }) {
             float l = dot(s, vec3(0.299, 0.587, 0.114));
             s = mix(s, s * vec3(0.8, 0.9, 1.22) + vec3(0.0, 0.0, 0.015), smoothstep(0.5, 0.06, l) * 0.6);
             s = mix(s, s * vec3(1.07, 1.02, 0.9), smoothstep(0.6, 0.95, l) * 0.45);
-            if (!isChar && !edge) s += (b4(gl_FragCoord.xy) - 0.47) * 0.02;
             // Snap to the palette.
             vec3 best = uPal[0]; float bd = 1e9;
             for (int i = 0; i < ${PALETTE.length}; i++) {
@@ -365,7 +366,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           const p = patch(cx, cz);
           k = cGrass[p < 0.4 ? 0 : p > 0.62 ? 2 : 1];
         }
-        kc.copy(k).multiplyScalar(Math.max(0.62, Math.min(1.06, 1 + cav * 0.55)));
+        // Only real creases darken, so open ground stays one flat tone.
+        kc.copy(k).multiplyScalar(cav < -0.06 ? Math.max(0.66, 1 + (cav + 0.06) * 0.6) : 1);
         for (const v of [a, b, c]) {
           pos.push(v.x, v.y, v.z);
           cols.push(kc.r, kc.g, kc.b);
@@ -494,7 +496,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         place(g, box(0.12, 0.12, 0.11, i ? "#ad7757" : "#25562e"), 0.13, 0.2);
         place(g, box(0.08, 0.04, 0.06, "#de9e41"), 0.22, 0.18);
         g.userData.tap = "duck";
-        g.scale.setScalar(1.6);
+        g.scale.setScalar(1.8);
         place(world, g, pond.x, -0.06, pond.z, false);
         return { g, a: i * 2.6, speed: i ? 0.22 : 0.17 };
       });
@@ -720,7 +722,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       place(arm, new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.08), toon("#e3b48c")), 0, -0.36);
       place(person, arm, -0.19, 0.68, 0);
       person.rotation.y = Math.PI - 0.8;
-      person.scale.setScalar(1.45);
+      person.scale.setScalar(1.7);
       person.userData.tap = "person";
       place(fire, person, -0.95, 0.12, 0.2);
       const dog = new THREE.Group();
@@ -734,7 +736,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       place(tail, box(0.05, 0.05, 0.2, "#7a4841"), 0, 0, -0.08);
       place(dog, tail, -0.24, 0.16, 0);
       dog.rotation.y = 2.9;
-      dog.scale.setScalar(1.6);
+      dog.scale.setScalar(1.8);
       dog.userData.tap = "dog";
       place(fire, dog, 1.05, 0, -0.05);
       fire.userData.tap = "fire";
@@ -795,7 +797,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       for (const s of [-1, 1]) place(neck, box(0.05, 0.14, 0.05, "#7a4841"), -0.02, 0.5, s * 0.07);
       place(deer, neck, 0.27, 0.62, 0);
       deer.rotation.y = 0.5;
-      deer.scale.setScalar(1.4);
+      deer.scale.setScalar(1.6);
       deer.userData.tap = "deer";
       const deerBase = groundAt(deerAt[0], deerAt[1]);
       place(world, deer, deerAt[0], deerBase, deerAt[1]);
@@ -808,7 +810,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       for (const s of [-1, 1]) place(rabbit, box(0.05, 0.18, 0.05, "#ad7757"), 0.14, 0.38, s * 0.04);
       place(rabbit, box(0.08, 0.08, 0.08, "#ebede9"), -0.17, 0.16);
       rabbit.userData.tap = "rabbit";
-      rabbit.scale.setScalar(1.7);
+      rabbit.scale.setScalar(2.0);
       // Object IDs for the outline pass; 8 and up are characters.
       person.userData.oid = 8;
       dog.userData.oid = 9;
@@ -832,7 +834,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       const tp: number[] = [], tc: number[] = [];
       for (const [ox, hh, lean] of [[-0.11, 0.8, -0.05], [0, 1, 0.02], [0.11, 0.7, 0.06]]) {
         tp.push(ox - 0.07, 0, 0, ox + 0.07, 0, 0, ox + lean, hh, 0);
-        tc.push(0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 1.05, 1.05, 1.05);
+        tc.push(0.84, 0.84, 0.84, 0.84, 0.84, 0.84, 1.16, 1.16, 1.16);
       }
       tuft.setAttribute("position", new THREE.Float32BufferAttribute(tp, 3));
       tuft.setAttribute("color", new THREE.Float32BufferAttribute(tc, 3));
@@ -851,7 +853,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
             float gust = smoothstep(0.3, 1.0, band);
             // Like hand-pixelled grass: tips lean by whole pixels only, so
             // wind reads as a slow wave instead of shimmering speckle.
-            transformed.x += floor((0.03 + gust * 0.13) * position.y / uPix + 0.5) * uPix;
+            float px = uPix / 1.5; // tufts are 1.5x wide, so one world pixel in their own units
+            transformed.x += floor((0.02 + gust * 0.09) * position.y / px + 0.5) * px;
             vGust = gust * position.y;`
           );
         shader.fragmentShader = shader.fragmentShader
@@ -859,7 +862,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           .replace("#include <color_fragment>", "#include <color_fragment>\ndiffuseColor.rgb *= 1.0 + vGust * 0.08;");
       };
       const tints = ["#4d8a30", "#579636", "#62a23b"].map(col);
-      const COUNT = 8000;
+      const COUNT = 4200;
       const grass = new THREE.InstancedMesh(tuft, grassMat, COUNT);
       grass.receiveShadow = true;
       const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), eul = new THREE.Euler(), v3 = new THREE.Vector3(), s3 = new THREE.Vector3(), tint = new THREE.Color();
@@ -874,7 +877,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         eul.set(0, (rnd() - 0.5) * 0.5, 0);
         q.setFromEuler(eul);
         const p = patch(x, z);
-        m4.compose(v3.set(x, h - 0.03, z), q, s3.set(1, 0.24 + p * 0.16 + rnd() * 0.06, 1));
+        // Fewer, bigger tufts that read as little sprites on flat ground.
+        m4.compose(v3.set(x, h - 0.03, z), q, s3.set(1.5, 0.36 + p * 0.16 + rnd() * 0.08, 1));
         grass.setMatrixAt(n, m4);
         grass.setColorAt(n, tint.copy(tints[p < 0.4 ? 0 : p > 0.62 ? 2 : 1]).multiplyScalar(aoAt(x, z)));
         n++;
@@ -1003,6 +1007,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
 
       // ---------- sizing ----------
       const fit = () => {
+        const PX = pxFor(host.clientWidth);
         const w = Math.max(1, Math.round(host.clientWidth / PX));
         const h = Math.max(1, Math.round(host.clientHeight / PX));
         renderer.setSize(w, h, false);
@@ -1480,6 +1485,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         ref={ref}
         role="img"
         aria-label="An animated pixel-art landscape: snowy mountains, a stream and pond with ducks and a dock, a log cabin, a deer, a rabbit, and someone by a campfire with their dog. Its light follows the time of day in Reno."
+        className="d-host"
         style={{ width: "100%", height }}
       />
       <div ref={bubbleRef} className="d-bubble" aria-hidden />
@@ -1494,6 +1500,8 @@ export default function Diorama({ height = 320 }: { height?: number }) {
         </p>
       )}
       <style>{`
+        /* Phones: the banner takes the island's own shape, so all of it fits. */
+        @media (max-width: 640px) { .d-host { height: auto !important; aspect-ratio: 2.9 / 1; } .d-clock { padding: 0 24px; } }
         .d-clock {
           display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px;
           margin: 10px 0 0; font-family: var(--font-geist-mono), monospace;
