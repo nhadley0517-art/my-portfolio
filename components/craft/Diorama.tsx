@@ -633,7 +633,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       const windowMat = glow("#ffd88a");
       place(cabin, box(0.6, 0.48, 0.08, "#3d2616"), -0.65, 0.95, CD / 2 + 0.12);
       place(cabin, new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.34, 0.06), windowMat), -0.65, 0.95, CD / 2 + 0.16, false);
-      for (let k = 0; k < 6; k++) place(cabin, box(0.42 - (k % 2) * 0.06, 0.2, 0.42, k % 2 ? "#8d8a84" : "#7a7771"), -0.95, wallTop + 0.4 + k * 0.2, -0.45);
+      for (let k = 0; k < 6; k++) place(cabin, box(0.42 - (k % 2) * 0.06, 0.2, 0.42, k % 2 ? "#8d8a84" : "#7a7771"), -1.15, wallTop + 0.4 + k * 0.2, -0.45);
       const lantern = new THREE.Group();
       place(lantern, box(0.14, 0.18, 0.14, "#2d2a26"));
       const lanternMat = glow("#ffcf6a");
@@ -653,7 +653,9 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       cabin.userData.tap = "cabin";
       const cabinAt = { x: 3.2, z: 0.6 };
       place(world, cabin, cabinAt.x, groundAt(cabinAt.x, cabinAt.z), cabinAt.z);
-      const chimneyTop = new THREE.Vector3(-0.95, wallTop + 1.6, -0.45).applyEuler(cabin.rotation).add(cabin.position);
+      // The chimney sits on the roof's left end, over the open gap between
+      // the peaks, so its smoke has clear sky to rise into.
+      const chimneyTop = new THREE.Vector3(-1.15, wallTop + 1.6, -0.45).applyEuler(cabin.rotation).add(cabin.position);
       occ.push({ x: cabinAt.x, z: cabinAt.z, r: 2.5, k: 0.4 });
 
       for (let i = 0; i < 6; i++) {
@@ -753,7 +755,7 @@ export default function Diorama({ height = 320 }: { height?: number }) {
       };
       const puffs = [
         ...Array.from({ length: 8 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), smokeMat()), 0, -9, 0, false), o: i / 8, from: new THREE.Vector3(fireAt.x, groundAt(fireAt.x, fireAt.z) + 0.9, fireAt.z), rate: 0.18, rise: 3.4, drift: 1.1, grow: 1.5, chimney: false })),
-        ...Array.from({ length: 24 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.2, 0), smokeMat()), 0, -9, 0, false), o: i / 24, from: chimneyTop, rate: 0.06, rise: 5.6, drift: -2.4, grow: 2.2, chimney: true })),
+        ...Array.from({ length: 24 }, (_, i) => ({ m: place(world, new THREE.Mesh(new THREE.IcosahedronGeometry(0.2, 0), smokeMat()), 0, -9, 0, false), o: i / 24, from: chimneyTop, rate: 0.06, rise: 5.3, drift: 3.0, grow: 2.2, chimney: true })),
       ];
 
       // ---------- wildlife ----------
@@ -1287,9 +1289,11 @@ export default function Diorama({ height = 320 }: { height?: number }) {
           const life = (t * rate + o) % 1;
           const up = 1 - Math.pow(1 - life, 1.6);
           if (chimney) {
-            // Leans left early into the gap between the peaks, then climbs
-            // in a lazy S-curve, clear of the mountains, into open sky.
-            const lean = drift * (1 - Math.pow(1 - Math.min(1, life * 1.6), 2));
+            // Climbs nearly straight up through the gap, then, once it's above
+            // the peaks, bends right with the same wind as the grass, the
+            // birds and the campfire smoke.
+            const k = Math.max(0, (life - 0.5) / 0.5);
+            const lean = drift * k * k;
             m.position.set(from.x + lean + Math.sin(life * 7.5 + t * 0.25) * 0.32 * life, from.y + up * rise, from.z - life * 0.3);
           } else m.position.set(from.x + Math.sin(life * 5 + o * 9) * 0.3 + life * life * drift, from.y + up * rise, from.z - life * 0.6);
           m.scale.setScalar(0.55 + life * grow);
