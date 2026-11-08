@@ -63,8 +63,8 @@ const ROLES: Role[] = [
     color: C.green,
     role: "Product Designer",
     dates: "Now",
-    blurb: "What I do on the team, who I do it with, and a library of the work.",
-    work: [{ slug: "hr-block", title: "H&R Block", line: "UX, the component library, A/B tests, handoff, and the people I make it with", thumb: "/craft/hrb-thumb.svg", color: C.green }],
+    blurb: "Leading design on pages across hrblock.com, from kickoff to AEM handoff.",
+    work: [{ slug: "hr-block", title: "H&R Block", line: "How I work, who I work with, and four recent projects", thumb: "/craft/hrb-thumb.svg", color: C.green }],
   },
   {
     company: "Independent",
@@ -384,7 +384,7 @@ export default function CraftHome() {
             >
               {view === "work" ? (
                 <div className="c-grid">
-                  <CaseTile slug="hr-block" title="H&R Block" kind="Product design · Now" line="What I do as a product designer on the team, who I do it with, and a library of the work." color={C.green} onOpen={openProject} register={register}>
+                  <CaseTile slug="hr-block" title="H&R Block" kind="Product design · Now" line="Leading design on pages across hrblock.com, from the kickoff brief to a locked file in AEM." color={C.green} onOpen={openProject} register={register}>
                     <div className="c-hrb">H&amp;R Block</div>
                   </CaseTile>
                   <CaseTile slug="no2" title="No. 2" kind="iOS app · 2026" line="A gut-health app I designed and shipped solo in two weeks, live on the App Store." color={C.yellow} onOpen={openProject} register={register}>
