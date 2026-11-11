@@ -3,374 +3,236 @@
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
-import MorphHero from "@/components/MorphHero";
 import CaseStudyNav from "@/components/CaseStudyNav";
-import { CaseStudyBottomNav, SectionLabel, type CaseStudyContentProps } from "@/components/CaseStudyShell";
-import { HRB, HRB_ACCENT, HRB_PRACTICES, HRB_PROCESS, HRB_PROJECTS, HRB_SECTIONS, type HrbDiagram } from "@/lib/hrBlockData";
+import { CaseStudyBottomNav, type CaseStudyContentProps } from "@/components/CaseStudyShell";
+import { HRB, HRB_ACCENT, HRB_PROCESS, HRB_SECTIONS, HRB_STORY } from "@/lib/hrBlockData";
 
-/** H&R Block is a picture of the job rather than one case study: how a
- *  project moves from kickoff to AEM, what I do along the way, and four
- *  recent projects as evidence. There are no screenshots to share, so each
- *  idea is drawn as a small diagram instead: abstract page blocks, never
- *  real copy or data. */
+/** H&R Block is a look into the role rather than one case study: what I own,
+ *  who I work with, what I've done there in my own words, and how a project
+ *  moves. It reads like a résumé, a quiet label column on the left and the
+ *  content on the right, with headlines in two tones. */
 
-/* ---------- diagrams ---------- */
+/** The H&R Block mark: the green square with the name knocked out. */
+const LOGO = "M0 0h56v56H0V0zm9.7 33.1H7.2v-3.5h-3v9.7h3v-3.5h2.5v3.5h3.1v-9.7H9.7v3.5zM22 37.3c.3-.6.4-1.3.4-1.9v-1.5h-2.1v1.4L18 32.8c-.2-.3-.4-.5-.4-.8 0-.4.3-.6.7-.6.4 0 .7.3.7.7v.5h2.3V32c0-1.5-1.3-2.5-3.1-2.5-1.9 0-3.2 1-3.2 2.5 0 .4.1 1.1.8 1.7-.9.4-1.8 1.3-1.8 2.7 0 1.9 1.5 3.2 4.2 3.2.9 0 1.8-.3 2.4-.7l.4.5h2.7L22 37.3zm-3.7.2c-.7 0-1.6-.4-1.6-1.3 0-.5.3-.9.7-1.1 0 0 1.6 1.8 1.9 2.1-.2.2-.6.3-1 .3zm9.3-.7h.9l1.5 2.5h3.5l-1.9-3.1c1-.6 1.7-1.7 1.7-3.1 0-2.1-1.3-3.6-3.8-3.6h-4.9v9.7h3v-2.4zm0-4.8h1.5c.7 0 1.1.5 1.1 1.2s-.4 1.2-1.1 1.2h-1.5V32zM10.8 46.7c.8-.4 1.3-1.2 1.3-2.2C12.1 43 11 42 9.2 42h-5v9.7h5.1c2.2 0 3.4-1.1 3.4-2.8 0-1.1-.7-1.9-1.9-2.2zm-3.7-2.4h1.4c.4 0 .7.3.7.7 0 .5-.3.8-.7.8H7.1v-1.5zm2 5.2h-2v-1.6h2c.5 0 .8.4.8.8s-.3.8-.8.8zM17 42h-3v9.7h6.9v-2.5H17V42zm9.4-.2c-3 0-4.6 1.8-4.6 4.4v1.2c0 2.6 1.6 4.4 4.6 4.4S31 50 31 47.4v-1.2c0-2.6-1.6-4.4-4.6-4.4zm1.6 5.9c0 1.1-.6 1.7-1.6 1.7s-1.6-.6-1.6-1.7v-1.6c0-1.1.6-1.7 1.6-1.7s1.6.6 1.6 1.7v1.6zm8.6-3.3c1.1 0 1.5.7 1.5 1.4H41c-.1-2.2-1.6-4-4.3-4-3.1 0-4.6 1.8-4.6 4.4v1.3c0 2.6 1.5 4.4 4.6 4.4 2.7 0 4.3-1.8 4.3-4h-2.9c-.1.7-.4 1.4-1.5 1.4-1 0-1.5-.7-1.5-1.7v-1.5c0-1.1.5-1.7 1.5-1.7zM51.3 42h-3.4l-2 3.4h-.2V42h-3v9.7h3v-4h.2l2 4h3.6l-2.8-5.3 2.6-4.4zm1.4.3h-.3v.7h.2v-.2l.1.2h.3l-.1-.2c0-.1.1-.2.1-.3 0-.2-.1-.2-.3-.2zm0 .3l-.1-.1.1.1c0-.1 0-.1 0 0zm-.1-.8c-.5 0-.8.4-.8.8s.3.8.8.8.8-.4.8-.8c.1-.4-.3-.8-.8-.8zm0 1.4c-.4 0-.6-.3-.6-.6 0-.4.2-.6.6-.6.4 0 .6.3.6.6.1.4-.2.6-.6.6z";
 
-/** A page drawn in blocks; `hot` blocks take the accent. */
-function Page({ rows, label }: { rows: { h: number; hot?: boolean; tag?: string; split?: number }[]; label?: string }) {
+/** The six steps on one line: squares where I lead, circles where I work
+ *  with others. */
+function Flow() {
   return (
-    <div className="hd-page-wrap">
-      <div className="hd-page">
-        {rows.map((r, i) => (
-          <div key={i} className={`hd-row${r.hot ? " is-hot" : ""}`} style={{ height: r.h }}>
-            {r.split ? Array.from({ length: r.split }, (_, k) => <i key={k} />) : null}
-            {r.tag && <span>{r.tag}</span>}
-          </div>
+    <div className="hd-flow">
+      <ol>
+        {HRB_PROCESS.map((s) => (
+          <li key={s.title} className={s.lead ? "is-lead" : undefined}>
+            <i />
+            <span>{s.title}</span>
+          </li>
         ))}
-      </div>
-      {label && <p className="hd-cap">{label}</p>}
+      </ol>
+      <p className="hd-legend">
+        <span>
+          <i className="hd-swatch is-tax" /> I lead
+        </span>
+        <span>
+          <i className="hd-ring" /> With others
+        </span>
+      </p>
     </div>
   );
 }
 
-function Seasons() {
-  const seasons = ["Fall", "Jan", "Mar", "Apr", "Summer"];
-  const lead = [2, 0, 0, 1, 2];
-  return (
-    <div className="hd hd-seasons">
-      {seasons.map((s, i) => (
-        <div key={s} className="hd-season">
-          <div className={`hd-hero lead-${lead[i]}`}>
-            <i />
-            <i />
-            <b />
-          </div>
-          <div className="hd-steady" />
-          <div className="hd-steady" />
-          <p className="hd-cap">{s}</p>
-        </div>
-      ))}
-      <p className="hd-note">The hero changes with the season. Everything under it stays put.</p>
-    </div>
-  );
-}
-
-function Hierarchy() {
-  return (
-    <div className="hd hd-pair">
-      <Page
-        label="Before"
-        rows={[
-          { h: 44, tag: "Hero", split: 2 },
-          { h: 12, hot: true, tag: "Most used" },
-          { h: 30 },
-          { h: 30 },
-          { h: 22, tag: "FAQs" },
-        ]}
-      />
-      <span className="hd-arrow" aria-hidden>→</span>
-      <Page
-        label="After"
-        rows={[
-          { h: 44, hot: true, tag: "Hero + main action" },
-          { h: 22, tag: "Answers" },
-          { h: 14, tag: "Pricing" },
-          { h: 30 },
-          { h: 22 },
-        ]}
-      />
-    </div>
-  );
-}
-
-function Assistant() {
-  return (
-    <div className="hd hd-chat">
-      <div className="hd-bubble is-you">Can I book a tax appointment?</div>
-      <div className="hd-bubble">Here are offices near you</div>
-      <div className="hd-cards">
-        <i className="is-hot" />
-        <i />
-        <i />
-      </div>
-      <div className="hd-done">Booked, with next steps</div>
-    </div>
-  );
-}
-
-function Campaign() {
-  return (
-    <div className="hd hd-pair">
-      <Page
-        label="Grant page"
-        rows={[
-          { h: 40, hot: true, tag: "Winners hero" },
-          { h: 30, hot: true, tag: "Winners", split: 4 },
-          { h: 22, tag: "What the grants include" },
-          { h: 22, tag: "Products" },
-        ]}
-      />
-      <div className="hd-recipient">
-        <div className="hd-avatar" />
-        <i />
-        <i />
-        <i className="short" />
-        <p className="hd-cap">New, reusable recipient component</p>
-      </div>
-    </div>
-  );
-}
-
-const DIAGRAMS: Record<HrbDiagram, () => React.ReactElement> = {
-  seasons: Seasons,
-  hierarchy: Hierarchy,
-  assistant: Assistant,
-  campaign: Campaign,
-};
+const pad = (n: number) => String(n).padStart(2, "0");
 
 /* ---------- page ---------- */
 
+function Row({ id, label, children }: { id?: string; label: string; children: React.ReactNode }) {
+  return (
+    <section id={id} className="hrb-sec px-6">
+      <div className="max-w-5xl mx-auto hrb-row">
+        <h2 className="hrb-side">{label}</h2>
+        <div className="hrb-main">{children}</div>
+      </div>
+    </section>
+  );
+}
+
 export default function HRBlockContent({ variant = "page", onClose }: CaseStudyContentProps) {
   const isOverlay = variant === "overlay";
-  const practiceTitle = (id: string) => HRB_PRACTICES.find((p) => p.id === id)?.title ?? id;
 
   const body = (
     <div className="hrb">
-      {/* ── Hero ── */}
-      <section className="pt-14 md:pt-20">
-        <div className="max-w-5xl mx-auto py-6">
-          <MorphHero slug={HRB.slug}>
-            <div className="hrb-hero" aria-hidden>
-              <div className="hrb-hero-page">
-                <div className="hrb-hero-top">
-                  <b />
-                  <i />
-                  <i />
-                </div>
-                <div className="hrb-hero-grid">
-                  <i />
-                  <i />
-                  <i />
-                </div>
-                <div className="hrb-hero-band" />
-              </div>
-              <span className="hrb-hero-mark">H&amp;R Block</span>
-            </div>
-          </MorphHero>
-        </div>
-        <div className="max-w-5xl mx-auto mt-16 md:mt-20">
-          <ScrollReveal delay={0.05}>
-            <h1 className="text-[clamp(40px,7vw,72px)] font-medium tracking-[-0.02em] leading-[1.1] text-[#13181B] mb-5">{HRB.title}</h1>
-          </ScrollReveal>
-          <ScrollReveal delay={0.1}>
-            <p className="text-lg font-medium max-w-2xl" style={{ color: "#8A8F98" }}>
-              {HRB.oneLiner}
+      {/* ── Hero: a small logo eyebrow, then the one line ── */}
+      <section className="hrb-sec is-hero px-6">
+        <div className="max-w-5xl mx-auto">
+          <ScrollReveal>
+            <p className="hrb-pill">
+              <svg viewBox="0 0 56 56" aria-hidden>
+                <path d={LOGO} />
+              </svg>
+              <strong>{HRB.role}</strong>
+              <span>Now</span>
             </p>
           </ScrollReveal>
-        </div>
-        <div className="max-w-5xl mx-auto mt-14 md:mt-16 mb-8 md:mb-14">
-          <ScrollReveal delay={0.15}>
-            <div className="grid grid-cols-2 md:grid-cols-4" style={{ columnGap: "32px", rowGap: "36px" }}>
-              {HRB.meta.map((m) => (
-                <div key={m.label}>
-                  <p className="hrb-label">{m.label}</p>
-                  <p className="hrb-meta">{m.value}</p>
-                </div>
-              ))}
-            </div>
+          <ScrollReveal delay={0.05}>
+            <h1 className="hrb-statement">
+              {HRB.title}. <span>{HRB.statement}</span>
+            </h1>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* ── Overview ── */}
-      <section id="overview" className="px-6 py-14 md:py-20">
-        <div className="max-w-5xl mx-auto">
-          <ScrollReveal>
-            <SectionLabel>01. Overview</SectionLabel>
-          </ScrollReveal>
-          {HRB.intro.map((p, i) => (
-            <ScrollReveal key={i} delay={0.05 + i * 0.05}>
-              <p className="hrb-prose">{p}</p>
+      {/* ── The role ── */}
+      <Row id="role" label="Role">
+        <ScrollReveal>
+          <p className="hrb-prose">{HRB.intro}</p>
+        </ScrollReveal>
+        <ScrollReveal delay={0.05}>
+          <div className="hrb-cols">
+            {HRB.columns.map((c) => (
+              <div key={c.label}>
+                <p className="hrb-label">{c.label}</p>
+                <ul>
+                  {c.items.map((it) => (
+                    <li key={it}>{it}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <div className="is-wide">
+              <p className="hrb-label">Shipped</p>
+              <ul>
+                {HRB.shipped.map((it) => (
+                  <li key={it}>{it}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </ScrollReveal>
+      </Row>
+
+      {/* ── The work: experience in my own words ── */}
+      <Row id="the-work" label="The work">
+        <div className="hrb-story">
+          {HRB_STORY.map((s, i) => (
+            <ScrollReveal key={s.lead} delay={i * 0.03}>
+              <p>
+                <strong>{s.lead}</strong> {s.body}
+              </p>
             </ScrollReveal>
           ))}
         </div>
-      </section>
+      </Row>
 
-      {/* ── How a project moves ── */}
-      <section id="process" className="px-6 py-14 md:py-20">
-        <div className="max-w-5xl mx-auto">
-          <ScrollReveal>
-            <SectionLabel>02. How a project moves</SectionLabel>
-          </ScrollReveal>
-          <div className="hrb-flow" role="list">
-            {HRB_PROCESS.map((s, i) => (
-              <ScrollReveal key={s.title} delay={i * 0.05}>
-                <div className="hrb-flow-step" role="listitem">
-                  <span className="hrb-step">{String(i + 1).padStart(2, "0")}</span>
-                  <strong>{s.title}</strong>
-                  <p>{s.body}</p>
-                  <ul className="hrb-with">
-                    {s.with.map((w) => (
-                      <li key={w} className={w === "Me" ? "is-me" : undefined}>
-                        {w}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+      {/* ── Process ── */}
+      <Row id="process" label="Process">
+        <ScrollReveal>
+          <h3 className="hrb-headline">
+            Six steps, every page. <span>I lead the design from kickoff to a locked file, and stay on call after it&apos;s built.</span>
+          </h3>
+        </ScrollReveal>
+        <ScrollReveal delay={0.05}>
+          <div className="hd-panel is-flow">
+            <Flow />
+          </div>
+        </ScrollReveal>
+        <ol className="hrb-steps">
+          {HRB_PROCESS.map((s, i) => (
+            <li key={s.title}>
+              <ScrollReveal delay={(i % 3) * 0.04}>
+                <span className="hrb-n">{pad(i + 1)}</span>
+                <strong>{s.title}</strong>
+                <p>{s.body}</p>
+                <p className="hrb-with">{s.with ? `With ${s.with}` : "Mine"}</p>
               </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── What I do ── */}
-      <section id="practice" className="px-6 py-14 md:py-20">
-        <div className="max-w-5xl mx-auto">
-          <ScrollReveal>
-            <SectionLabel>03. What I do</SectionLabel>
-          </ScrollReveal>
-          <div className="hrb-practices">
-            {HRB_PRACTICES.map((p, i) => (
-              <ScrollReveal key={p.id} delay={i * 0.04}>
-                <div className="hrb-practice">
-                  <strong>{p.title}</strong>
-                  <p>{p.body}</p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Recent work ── */}
-      <section id="work" className="px-6 py-14 md:py-20">
-        <div className="max-w-5xl mx-auto">
-          <ScrollReveal>
-            <SectionLabel>04. Recent work</SectionLabel>
-          </ScrollReveal>
-          <div className="hrb-projects">
-            {HRB_PROJECTS.map((p, i) => {
-              const Diagram = DIAGRAMS[p.diagram];
-              return (
-                <ScrollReveal key={p.title} delay={(i % 2) * 0.06}>
-                  <article className="hrb-project">
-                    <div className="hrb-diagram">
-                      <Diagram />
-                    </div>
-                    <div className="hrb-project-copy">
-                      <p className="hrb-kind">
-                        {p.title} · {p.kind}
-                        <span className="hrb-status">{p.status}</span>
-                      </p>
-                      <h3>{p.headline}</h3>
-                      <p>{p.body}</p>
-                      <ul className="hrb-tags">
-                        {p.practices.map((id) => (
-                          <li key={id}>{practiceTitle(id)}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </article>
-                </ScrollReveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+            </li>
+          ))}
+        </ol>
+      </Row>
 
       <CaseStudyBottomNav isOverlay={isOverlay} onClose={onClose} />
 
       <style>{`
-        .hrb { --accent: ${HRB_ACCENT}; --deep: #0B5132; --line: rgba(19,24,27,0.1); }
-        .hrb-label { font-size: 11px; font-weight: 500; color: #9CA3AF; margin: 0 0 14px; }
-        .hrb-meta { font-size: 15px; color: #13181B; line-height: 1.6; margin: 0; }
-        .hrb-prose { font-size: 15px; color: #4B5563; line-height: 1.85; max-width: 640px; margin: 0 0 16px; }
-
-        /* Hero: a page assembled from library modules, in brand green. */
-        .hrb-hero { position: relative; display: grid; place-items: center; aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; background: var(--deep); }
-        .hrb-hero-page { width: 62%; display: grid; gap: 4%; padding: 4%; border-radius: 6px; background: rgba(255,255,255,0.06); }
-        .hrb-hero-top { display: grid; grid-template-columns: 1.4fr 1fr; grid-template-rows: auto auto; gap: 6px 12px; padding: 5%; border-radius: 4px; background: var(--accent); }
-        .hrb-hero-top b { grid-row: span 2; aspect-ratio: 2.2; border-radius: 3px; background: rgba(255,255,255,0.9); }
-        .hrb-hero-top i { border-radius: 3px; background: rgba(255,255,255,0.35); }
-        .hrb-hero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .hrb-hero-grid i { aspect-ratio: 1.3; border-radius: 4px; background: rgba(255,255,255,0.14); }
-        .hrb-hero-band { height: 14%; min-height: 18px; border-radius: 4px; background: rgba(255,255,255,0.08); }
-        .hrb-hero-mark { position: absolute; left: 4%; bottom: 5%; color: #fff; font-size: clamp(14px, 1.8vw, 20px); font-weight: 600; letter-spacing: -0.01em; }
-
-        /* Process flow */
-        .hrb-flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; }
-        .hrb-flow-step { position: relative; display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 20px; border-radius: 6px; background: #fff; }
-        .hrb-step { font-family: var(--font-geist-mono), monospace; font-size: 11px; color: var(--accent); }
-        .hrb-flow strong { font-size: 15px; font-weight: 500; color: #13181B; }
-        .hrb-flow p { margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280; }
-        .hrb-with { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 6px 0 0; list-style: none; }
-        .hrb-with li { padding: 2px 8px; border-radius: 999px; background: #F2F2F3; color: #6B7280; font-size: 12px; }
-        .hrb-with li.is-me { background: var(--accent); color: #fff; }
-
-        /* Practices */
-        .hrb-practices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 32px; }
-        .hrb-practice strong { display: block; margin: 0 0 6px; padding-top: 12px; border-top: 2px solid var(--accent); font-size: 15px; font-weight: 500; color: #13181B; }
-        .hrb-practice p { margin: 0; font-size: 14px; line-height: 1.6; color: #6B7280; }
-
-        /* Projects */
-        .hrb-projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 16px; }
-        .hrb-diagram { display: grid; place-items: center; aspect-ratio: 16 / 10; padding: 6%; border-radius: 6px; background: #EBEBED; overflow: hidden; }
-        .hrb-project-copy { margin-top: 16px; }
-        .hrb-kind { display: flex; align-items: center; gap: 10px; margin: 0 0 6px; font-family: var(--font-geist-mono), monospace; font-size: 11.5px; color: #A8ABB2; }
-        .hrb-status { padding: 1px 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: #0B7A40; font-family: var(--font-geist-sans), sans-serif; font-size: 11px; }
-        .hrb-project-copy h3 { margin: 0 0 8px; font-size: 18px; font-weight: 500; letter-spacing: -0.01em; color: #13181B; }
-        .hrb-project-copy > p:not(.hrb-kind) { margin: 0; font-size: 14px; line-height: 1.65; color: #6B7280; }
-        .hrb-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; padding: 0; list-style: none; }
-        .hrb-tags li { padding: 2px 8px; border-radius: 4px; background: #fff; color: #6B7280; font-size: 12px; }
-
-        /* Diagram parts: abstract page blocks, never real copy or data. */
-        .hd { width: 100%; }
-        .hd-cap { margin: 8px 0 0; font-family: var(--font-geist-mono), monospace; font-size: 10.5px; color: #8A8F98; text-align: center; }
-        .hd-note { grid-column: 1 / -1; margin: 6px 0 0; font-size: 12px; color: #8A8F98; text-align: center; }
-
-        .hd-seasons { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; align-items: start; }
-        .hd-season { display: grid; gap: 5px; }
-        .hd-hero { display: grid; gap: 4px; padding: 8px; border-radius: 4px; aspect-ratio: 1; align-content: center; }
-        .hd-hero i { height: 5px; border-radius: 2px; background: rgba(255,255,255,0.75); }
-        .hd-hero i + i { width: 60%; opacity: 0.7; }
-        .hd-hero b { width: 55%; height: 9px; margin-top: 4px; border-radius: 999px; background: #fff; }
-        .hd-hero.lead-0 { background: var(--deep); }
-        .hd-hero.lead-1 { background: var(--accent); }
-        .hd-hero.lead-2 { background: #6FA287; }
-        .hd-steady { height: 14px; border-radius: 3px; background: #fff; }
-
-        .hd-pair { display: flex; align-items: center; justify-content: center; gap: 14px; }
-        .hd-page-wrap { width: 36%; max-width: 170px; }
-        .hd-page { display: grid; gap: 5px; padding: 7px; border-radius: 5px; background: #fff; }
-        .hd-row { position: relative; display: flex; gap: 4px; padding: 4px; border-radius: 3px; background: #E2E3E6; }
-        .hd-row i { flex: 1; border-radius: 2px; background: rgba(255,255,255,0.7); }
-        .hd-row span { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); font-size: 9.5px; line-height: 1; color: #6B7280; white-space: nowrap; }
-        .hd-row.is-hot { background: var(--accent); }
-        .hd-row.is-hot span { color: #fff; }
-        .hd-row.is-hot i { background: rgba(255,255,255,0.35); }
-        .hd-row:has(i) span { display: none; }
-        .hd-arrow { font-size: 18px; color: #8A8F98; }
-
-        .hd-chat { display: grid; gap: 7px; max-width: 280px; margin: 0 auto; }
-        .hd-bubble { justify-self: start; max-width: 80%; padding: 7px 10px; border-radius: 10px 10px 10px 3px; background: #fff; font-size: 11.5px; color: #4B5563; }
-        .hd-bubble.is-you { justify-self: end; border-radius: 10px 10px 3px 10px; background: var(--deep); color: #fff; }
-        .hd-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .hd-cards i { aspect-ratio: 1.1; border-radius: 6px; background: #fff; box-shadow: inset 0 -10px 0 #E2E3E6; }
-        .hd-cards i.is-hot { box-shadow: inset 0 -10px 0 var(--accent); }
-        .hd-done { justify-self: start; padding: 5px 10px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; }
-
-        .hd-recipient { display: grid; gap: 6px; width: 30%; max-width: 130px; padding: 10px; border-radius: 6px; background: #fff; outline: 2px solid var(--accent); outline-offset: 3px; }
-        .hd-recipient .hd-avatar { aspect-ratio: 1; border-radius: 4px; background: linear-gradient(160deg, #6FA287, var(--deep)); }
-        .hd-recipient > i { height: 5px; border-radius: 2px; background: #E2E3E6; }
-        .hd-recipient > i.short { width: 55%; }
-        .hd-recipient .hd-cap { margin-top: 6px; }
-
-        @media (max-width: 860px) {
-          .hrb-flow, .hrb-practices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-          .hrb-projects { grid-template-columns: minmax(0, 1fr); }
+        .hrb {
+          --accent: ${HRB_ACCENT};
+          --ink: #13181B;
+          --body: #4B5260;
+          --gray: #858B95;
+          --panel: rgba(19,24,27,0.05);
+          --block: #E6E7E9;
         }
-        @media (max-width: 560px) {
-          .hrb-flow, .hrb-practices { grid-template-columns: minmax(0, 1fr); }
+
+        /* Hero: a small eyebrow pill with the logo, then the one line. */
+        .hrb-sec.is-hero { padding-top: 112px; padding-bottom: 24px; }
+        .hrb-pill { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 28px; padding: 6px 12px 6px 6px; border-radius: 8px; background: #fff; font-size: 13px; }
+        .hrb-pill svg { width: 22px; height: 22px; fill: var(--accent); border-radius: 2px; }
+        .hrb-pill strong { font-weight: 500; color: var(--ink); }
+        .hrb-pill span { color: var(--gray); }
+
+        /* The résumé grid: a label column, then the content. */
+        .hrb-sec { padding-top: 56px; padding-bottom: 56px; }
+        .hrb-row { display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 56px; }
+        .hrb-side { position: sticky; top: 32px; align-self: start; margin: 0; font-size: 15px; font-weight: 500; color: var(--ink); }
+        .hrb-main { min-width: 0; }
+
+        .hrb-statement { margin: 0; font-size: clamp(28px, 3.4vw, 38px); font-weight: 500; line-height: 1.2; letter-spacing: -0.025em; color: var(--ink); }
+        .hrb-statement span, .hrb-headline span { color: var(--gray); }
+
+        .hrb-prose { margin: 0; max-width: 62ch; font-size: 16px; line-height: 1.7; color: var(--body); }
+        .hrb-label { margin: 0 0 12px; font-size: 13px; color: var(--gray); }
+        .hrb-n { font-variant-numeric: tabular-nums; color: var(--gray); }
+
+        /* Role: what I own, who I work with, tools, like a résumé's skills. */
+        .hrb-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin: 44px 0 0; }
+        .hrb-cols ul { margin: 0; padding: 0; list-style: none; }
+        .hrb-cols li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; line-height: 1.85; color: var(--ink); }
+        .hrb-cols li::before { content: ""; flex: none; width: 8px; height: 1px; background: var(--gray); }
+        .hrb-cols > .is-wide { grid-column: 1 / -1; }
+
+        /* The work: experience written as prose, each paragraph led by the
+           way I work in ink. */
+        .hrb-story { display: grid; gap: 22px; max-width: 64ch; }
+        .hrb-story p { margin: 0; font-size: 16px; line-height: 1.7; color: var(--body); }
+        .hrb-story strong { font-weight: 500; color: var(--ink); }
+        .hrb-headline { margin: 0 0 18px; max-width: 34ch; font-size: clamp(22px, 2.6vw, 28px); font-weight: 500; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); }
+
+        /* Process */
+        .hrb-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 32px; margin: 36px 0 0; padding: 0; list-style: none; }
+        .hrb-steps .hrb-n { display: block; margin-bottom: 10px; font-size: 13px; }
+        .hrb-steps strong { display: block; margin-bottom: 6px; font-size: 15px; font-weight: 500; color: var(--ink); }
+        .hrb-steps p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--body); }
+        .hrb-steps .hrb-with { margin-top: 10px; font-size: 13px; color: var(--gray); }
+
+        /* ---------- the process flow: plain geometry on a gray panel ---------- */
+        .hd-panel {
+          container-type: inline-size;
+          display: grid; place-items: center;
+          aspect-ratio: 16 / 9; padding: 6%;
+          border-radius: 6px; background: var(--panel); overflow: hidden;
+        }
+        .hd-swatch { display: inline-block; width: 18px; height: 6px; background: var(--ink); }
+        .hd-swatch.is-tax { background: var(--accent); }
+        .hd-ring { display: inline-block; width: 9px; height: 9px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink); }
+        .hd-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; margin: 22px 0 0; font-size: 12px; color: var(--body); }
+        .hd-legend span { display: inline-flex; align-items: center; gap: 7px; }
+        /* Process flow */
+        .hd-panel.is-flow { aspect-ratio: 16 / 5; }
+        .hd-flow { width: 100%; }
+        .hd-flow ol { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); margin: 0; padding: 0; list-style: none; }
+        .hd-flow ol::before { content: ""; position: absolute; left: 8.33%; right: 8.33%; top: 1.4cqw; height: 1px; background: var(--ink); opacity: 0.25; }
+        .hd-flow li { position: relative; display: grid; justify-items: center; gap: 2cqw; font-size: clamp(10px, 1.5cqw, 13px); color: var(--body); text-align: center; }
+        .hd-flow li i { width: 2.8cqw; height: 2.8cqw; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1.5px var(--ink); }
+        .hd-flow li.is-lead i { border-radius: 0; background: var(--accent); box-shadow: none; }
+        .hd-flow li.is-lead span { color: var(--ink); }
+        .hd-flow .hd-legend { margin-top: 4cqw; }
+
+        @media (max-width: 900px) {
+          .hrb-row { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+          .hrb-side { position: static; }
+          .hrb-sec { padding-top: 40px; padding-bottom: 40px; }
+          .hrb-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 640px) {
+          .hrb-cols, .hrb-steps { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+          .hd-panel.is-flow { aspect-ratio: 16 / 9; }
         }
       `}</style>
     </div>

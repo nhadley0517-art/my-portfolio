@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { SideNav } from "@/components/hadley/side-nav";
 
 interface Section {
   id: string;
@@ -10,29 +10,60 @@ interface Section {
 
 interface CaseStudyNavProps {
   sections: Section[];
+  /** Kept for callers; the nav is monochrome like the home page's. */
   accentColor?: string;
+  /** Kept for callers; every variant is now the same side nav. */
   card?: boolean;
-  /** Rendered inside CaseStudySidePanel, a standalone floating panel next
-   *  to (not inside) the overlay's content shell — so it never scrolls
-   *  itself, but still needs to track the *content* shell's own scroll
-   *  position to know which section is active. Styled to match the home
-   *  page's SideNav hover/active states exactly (no hover background, no
-   *  bolding on active, just a color step and the sliding pill). */
+  /** Inside the home page's case study overlay: tracks the overlay's own
+   *  scroll and sits beside it, instead of tracking the window. */
   inline?: boolean;
+  /** The overlay is fullscreen, so its top edge is the viewport's. */
+  fullscreen?: boolean;
 }
 
-export default function CaseStudyNav({ sections, accentColor, card = false, inline = false }: CaseStudyNavProps) {
-  const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? "");
-  const [hoverId, setHoverId] = useState<string | null>(null);
-  const accent = accentColor ?? "#FD8973";
+const KEY = "cs-nav-collapsed";
+/** Room the overlay gives up on each side for the nav: margin, nav, gap. */
+const SPACE = { open: 24 + 216 + 16, shut: 24 + 60 + 16 };
 
-  // In `inline` mode this panel sits beside the overlay's content shell,
-  // not inside it, so there's no ancestor relationship to search via
-  // `closest` — the actual scrollable element (.bento-overlay-scroll) has
-  // to be found by querying the document instead. The plain page still
-  // scrolls the window itself, so `card`/the default variant keep using that.
-  const getScroller = (): Window | Element =>
-    (inline && document.querySelector(".bento-overlay-scroll")) || window;
+/** A bullet stands in for each section's icon. */
+const Dot = () => <span className="block size-[5px] rounded-full bg-current" aria-hidden />;
+
+/** The home page's side nav, listing a case study's sections. Open, it shows
+ *  each section as a bulleted link; collapsed, just the bullets, with each
+ *  name on hover. The collapse control keeps its own icon. Pinned by CSS
+ *  alone: nothing is measured, so nothing can drift. */
+export default function CaseStudyNav({ sections, inline = false, fullscreen = false }: CaseStudyNavProps) {
+  const [activeId, setActiveId] = useState(sections[0]?.id ?? "");
+  const [shut, setShut] = useState(false);
+
+  // Remembered between case studies; on a first visit, open only where
+  // there's room beside the overlay for the full width.
+  useEffect(() => {
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem(KEY);
+    } catch {}
+    setShut(saved ? saved === "1" : window.innerWidth < 1600);
+  }, []);
+
+  const toggle = (next: boolean) => {
+    setShut(next);
+    try {
+      localStorage.setItem(KEY, next ? "1" : "0");
+    } catch {}
+  };
+
+  // The overlay reads this to leave the nav its room.
+  useEffect(() => {
+    if (!inline) return;
+    const root = document.documentElement;
+    root.style.setProperty("--cs-side", `${shut ? SPACE.shut : SPACE.open}px`);
+    return () => {
+      root.style.removeProperty("--cs-side");
+    };
+  }, [shut, inline]);
+
+  const getScroller = (): Window | Element => (inline && document.querySelector(".bento-overlay-scroll")) || window;
 
   useEffect(() => {
     const scroller = getScroller();
@@ -40,207 +71,61 @@ export default function CaseStudyNav({ sections, accentColor, card = false, inli
       let current = sections[0]?.id ?? "";
       for (const { id } of sections) {
         const el = document.getElementById(id);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top;
-        if (top <= 130) current = id;
+        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.4) current = id;
       }
-      // Same bottom-of-scroll-range fix as SideNav/Nav — the last section's
-      // top edge may never cross the threshold if there's no scroll room
-      // left below it, which would otherwise make it permanently unreachable.
-      const atBottom = scroller instanceof Element
-        ? scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2
-        : window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      const atBottom =
+        scroller instanceof Element
+          ? scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2
+          : window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
       if (atBottom) current = sections[sections.length - 1]?.id ?? current;
       setActiveId(current);
     };
-
+    // The overlay's content mounts a beat after this nav does.
+    const t = setTimeout(onScroll, 300);
     scroller.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => scroller.removeEventListener("scroll", onScroll);
+    return () => {
+      clearTimeout(t);
+      scroller.removeEventListener("scroll", onScroll);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sections, inline]);
 
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    // Set directly rather than waiting for the scroll-spy to catch up —
-    // browsers coalesce/throttle 'scroll' events heavily during a smooth
-    // animated scroll, and the last one to actually fire can land short of
-    // the real target on a long jump, which is what read as "clicking the
-    // 4th link down highlights the 3rd one instead." The user just told us
-    // exactly which section they meant; no need to infer it from scroll
-    // position at all.
+  const go = (label: string) => {
+    const id = sections.find((s) => s.label === label)?.id;
+    const el = id && document.getElementById(id);
+    if (!id || !el) return;
+    // Set straight away: smooth scrolling throttles scroll events, and the
+    // last one can land short of a long jump.
     setActiveId(id);
     const scroller = getScroller();
-    if (scroller instanceof Element) {
-      // Target getBoundingClientRect().top directly (viewport-relative),
-      // not offset from the scroll container's own top edge — the
-      // scroll-spy's threshold check above also reads getBoundingClientRect
-      // in viewport coordinates, and the container itself doesn't sit at
-      // viewport y:0 (it's vertically centered in the overlay backdrop).
-      // Subtracting the container's own top here under-scrolled by however
-      // far down the page the container happened to start, which is what
-      // read as "the auto-scroll doesn't go far enough" — the target's top
-      // was landing well past the threshold until the visitor nudged it
-      // those remaining pixels by hand.
-      scroller.scrollTo({ top: scroller.scrollTop + (el.getBoundingClientRect().top - 100), behavior: "smooth" });
-    } else {
-      const offsetTop = el.getBoundingClientRect().top + window.scrollY - 88;
-      window.scrollTo({ top: offsetTop, behavior: "smooth" });
-    }
+    if (scroller instanceof Element) scroller.scrollTo({ top: scroller.scrollTop + el.getBoundingClientRect().top - scroller.getBoundingClientRect().top, behavior: "smooth" });
+    else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 88, behavior: "smooth" });
   };
 
-  if (inline) {
-    return (
-      <nav
-        className="flex flex-col"
-        style={{ gap: "3px", width: "fit-content" }}
-        aria-label="Page sections"
-      >
-        {sections.map(({ id, label }) => {
-          const isActive = activeId === id;
-          const isHovered = hoverId === id;
-          return (
-            <div key={id} style={{ position: "relative", width: "fit-content" }}>
-              {/* Same shared sliding pill as the home page SideNav — same
-                  inset too, so it hugs just the label instead of the row. */}
-              {isActive && (
-                <motion.span
-                  layoutId="cs-nav-pill-inline"
-                  style={{ position: "absolute", inset: "-3px -8px", background: "rgba(19,24,27,0.07)", borderRadius: "4px" }}
-                  transition={{ type: "spring", stiffness: 520, damping: 40, mass: 0.9 }}
-                />
-              )}
-              <button
-                onClick={() => scrollTo(id)}
-                onMouseEnter={() => setHoverId(id)}
-                onMouseLeave={() => setHoverId(null)}
-                aria-label={`Go to ${label}`}
-                aria-current={isActive ? "true" : undefined}
-                style={{
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "4px 0",
-                  border: "none",
-                  background: "none",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  fontSize: "13.5px",
-                  fontWeight: 400,
-                  color: isActive ? "#13181B" : isHovered ? "#4B5563" : "#A8ABB2",
-                  transition: "color 0.22s ease",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <span style={{ width: "4px", height: "4px", borderRadius: "50%", flexShrink: 0, background: accent }} />
-                {label}
-              </button>
-            </div>
-          );
-        })}
-      </nav>
-    );
-  }
+  const items = sections.map((s) => ({ label: s.label, icon: <Dot /> }));
+  const active = sections.find((s) => s.id === activeId)?.label;
 
-  if (card) {
-    return (
-      <nav
-        className="hidden min-[1440px]:flex fixed left-6 z-40 flex-col"
-        style={{
-          top: "120px",
-          background: "#fff",
-          border: "1px solid rgba(0,0,0,0.07)",
-          borderRadius: "4px",
-          padding: "6px",
-          boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
-          minWidth: "152px",
-        }}
-        aria-label="Page sections"
-      >
-        {sections.map(({ id, label }) => {
-          const isActive = activeId === id;
-          const isHovered = hoverId === id;
-          return (
-            <div key={id} style={{ position: "relative" }}>
-              {/* Same shared sliding pill as the mobile menu — one element
-                  Framer physically animates between items via layoutId,
-                  instead of each item toggling its own tinted background. */}
-              {isActive && (
-                <motion.span
-                  layoutId="cs-nav-pill"
-                  style={{ position: "absolute", inset: 0, background: "rgba(19,24,27,0.07)", borderRadius: "4px" }}
-                  transition={{ type: "spring", stiffness: 520, damping: 40, mass: 0.9 }}
-                />
-              )}
-              <button
-                onClick={() => scrollTo(id)}
-                onMouseEnter={() => setHoverId(id)}
-                onMouseLeave={() => setHoverId(null)}
-                aria-label={`Go to ${label}`}
-                style={{
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  width: "100%",
-                  padding: "7px 10px",
-                  borderRadius: "4px",
-                  border: "none",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  fontSize: "13px",
-                  fontWeight: isActive ? 600 : 400,
-                  color: isActive ? "#13181B" : isHovered ? "#4B5563" : "#9CA3AF",
-                  background: isHovered && !isActive ? "rgba(0,0,0,0.03)" : "transparent",
-                  transition: "color 0.12s ease",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <span
-                  style={{
-                    width: "4px",
-                    height: "4px",
-                    borderRadius: "50%",
-                    flexShrink: 0,
-                    background: accent,
-                  }}
-                />
-                {label}
-              </button>
-            </div>
-          );
-        })}
-      </nav>
-    );
-  }
-
-  // Original floating style
   return (
-    <nav
-      className="hidden min-[1440px]:flex fixed left-6 z-40 flex-col gap-0.5"
-      style={{ top: "120px" }}
-      aria-label="Page sections"
-    >
-      {sections.map(({ id, label }) => {
-        const isActive = activeId === id;
-        return (
-          <button
-            key={id}
-            onClick={() => scrollTo(id)}
-            className={`flex items-center pl-3 py-1.5 text-left text-[13px] whitespace-nowrap transition-colors duration-150 border-l-2 ${
-              isActive
-                ? "text-[#13181B] font-bold"
-                : "border-transparent text-[#9CA3AF] font-normal hover:text-[#6B7280]"
-            }`}
-            style={isActive ? { borderColor: accent } : undefined}
-            aria-label={`Go to ${label}`}
-          >
-            {label}
-          </button>
-        );
-      })}
-    </nav>
+    <div className={`cs-sidenav${inline ? " is-overlay" : ""}${fullscreen ? " is-fullscreen" : ""}`}>
+      <SideNav title="Sections" items={items} active={active} onNavigate={go} collapsed={shut} onCollapsedChange={toggle} radius={12} />
+      <style>{`
+        .cs-sidenav { display: none; position: fixed; left: 24px; top: 96px; z-index: 40; }
+        /* Docked 16px off the centered shell's left edge, level with its
+           top: the shell is min(100vw - 2 * side, 1320px) wide, centered,
+           and as tall as its scroll area allows. Anchored by its right edge,
+           so collapsing folds it toward the shell. */
+        .cs-sidenav.is-overlay {
+          left: auto;
+          right: calc(50vw + min(50vw - var(--cs-side, 100px), 660px) + 16px);
+          top: calc((100vh - min(90vh, 900px)) / 2);
+          z-index: 301;
+          transition: right 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cs-sidenav.is-overlay.is-fullscreen { left: 24px; right: auto; top: 24px; }
+        @media (min-width: 1440px) { .cs-sidenav { display: block; } }
+        @media (min-width: 1024px) { .cs-sidenav.is-overlay { display: block; } }
+      `}</style>
+    </div>
   );
 }

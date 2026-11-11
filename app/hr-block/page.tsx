@@ -4,7 +4,7 @@ import { OverlayRedirect } from "@/components/CaseStudyShell";
 
 export const metadata: Metadata = {
   title: "H&R Block — Noah Hadley",
-  description: "What I do as a product designer at H&R Block, who I do it with, and a library of the work.",
+  description: "What I do as a UX designer at H&R Block, who I work with, and what I've shipped.",
 };
 
 export default function HRBlockPage() {

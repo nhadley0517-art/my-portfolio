@@ -15,6 +15,7 @@ const tones = {
     muted: "text-[#13181b]/40",
     rgb: "19,24,27",
     post: "bg-[#13181b] text-white",
+    postHover: "hover:bg-[#2c3439]",
     stroke: "shadow-[0_0_0_1px_rgb(19_24_27/0.1)]",
   },
   dark: {
@@ -24,6 +25,7 @@ const tones = {
     muted: "text-white/40",
     rgb: "255,255,255",
     post: "bg-white text-[#13181b]",
+    postHover: "hover:bg-white/85",
     stroke: "shadow-[inset_0_0_0_1px_rgb(255_255_255/0.12)]",
   },
 };
@@ -218,8 +220,10 @@ export function CharacterLimit({
             onClick={post}
             aria-disabled={!can}
             animate={{ opacity: can || phase !== "idle" ? 1 : 0.3 }}
+            whileHover={can && phase === "idle" ? { y: -1 } : undefined}
+            whileTap={can && phase === "idle" ? { scale: 0.96 } : undefined}
             transition={{ duration: 0.2 }}
-            className={`relative h-10 min-w-[96px] overflow-hidden rounded-full px-4 text-[13.5px] outline-none focus-visible:shadow-[0_0_0_2px_rgb(19_24_27/0.3)] ${t.post} ${can ? "" : "cursor-default"}`}
+            className={`relative h-10 min-w-[96px] overflow-hidden rounded-full px-4 text-[13.5px] outline-none transition-colors duration-150 focus-visible:shadow-[0_0_0_2px_rgb(19_24_27/0.3)] ${t.post} ${can ? `cursor-pointer ${t.postHover}` : "cursor-default"}`}
           >
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span

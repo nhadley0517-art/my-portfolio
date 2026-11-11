@@ -16,7 +16,6 @@ import Diorama from "@/components/craft/Diorama";
 const EMAIL = "nhadley0517@gmail.com";
 const LINKEDIN = "https://www.linkedin.com/in/noah-hadley/";
 const X_URL = "https://x.com/NoahUXUI";
-const HADLEY_DEV = "https://hadley.dev";
 const STILL_DEMO = "/tvos%20demo.mp4";
 
 /** Pops of color, turned up. Each project owns one, used for its hover. */
@@ -61,7 +60,7 @@ const ROLES: Role[] = [
   {
     company: "H&R Block",
     color: C.green,
-    role: "Product Designer",
+    role: "UX Designer",
     dates: "Now",
     blurb: "Leading design on pages across hrblock.com, from kickoff to AEM handoff.",
     work: [{ slug: "hr-block", title: "H&R Block", line: "How I work, who I work with, and four recent projects", thumb: "/craft/hrb-thumb.svg", color: C.green }],
@@ -72,8 +71,7 @@ const ROLES: Role[] = [
     role: "Designing and building my own work",
     dates: "",
     work: [
-      { slug: "no2", title: "No. 2", line: "An iOS app I designed and shipped solo in two weeks", thumb: "/no2-thumb.jpg", color: C.yellow },
-      { href: HADLEY_DEV, title: "hadley.dev", line: "My library of micro-interactions, installed through the shadcn CLI", thumb: "/craft/cover.jpg", color: C.blue },
+      { slug: "no2", title: "No. 2", line: "A gut-health iOS app I designed, built, and shipped solo", thumb: "/no2-thumb.jpg", color: C.yellow },
       { slug: "sales-dashboard", title: "Driveway Auto Spa", line: "A sales dashboard a detailing business runs on", thumb: "/dwautospademo.mp4", video: true, color: C.pink },
       { slug: "cove", title: "Cove", line: "A field service CRM, as founding designer", thumb: "/dashboard-demo.mp4", video: true, color: C.purple },
       { slug: "real", title: "Real", line: "A redesign I hand-coded and cold-messaged to the founder", thumb: "/real-thumb.jpg", color: C.orange },
@@ -100,6 +98,9 @@ const ROLES: Role[] = [
     work: [{ slug: "writing-process", title: "Writing Process", line: "A wall of text, rebuilt as an 8-stage guided tool", thumb: "/wp_thumb.png", color: C.purple }],
   },
 ];
+
+/** Case studies with no hero image for a thumbnail to fly into. */
+const NO_MORPH = new Set(["hr-block"]);
 
 const colorVar = (color: string) => ({ "--c": color }) as CSSProperties;
 
@@ -268,7 +269,9 @@ export default function CraftHome() {
     const r = thumbs.current.get(slug)?.getBoundingClientRect();
     const visible = !!r && r.bottom > 0 && r.top < window.innerHeight;
     bumpLaunch();
-    openSlug(slug, { morph: visible });
+    // H&R Block's page opens on a small logo eyebrow, not a hero for the
+    // thumbnail to land on, so it opens normally.
+    openSlug(slug, { morph: visible && !NO_MORPH.has(slug) });
   };
 
   // Above the fold the nav's top edge sits level with the hero; as the page
@@ -308,6 +311,11 @@ export default function CraftHome() {
     history.replaceState(null, "", next === "play" ? "#playground" : window.location.pathname + window.location.search);
   };
 
+  const openPlayground = () => {
+    showView("play");
+    document.getElementById("work")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const active = NAV.find((n) => n.id === section)!.label;
 
   // The nav only moves around the page; which view of the work is showing
@@ -341,12 +349,15 @@ export default function CraftHome() {
             <span>a product designer in Reno, NV</span>
           </h1>
           <p>
-            I&apos;m a designer at <span className="c-hl" style={colorVar(C.green)}>H&amp;R Block</span>. I care about how things feel to use, not just how they look, and I design end to end across web and mobile.
+            Right now I&apos;m designing for <span className="c-hl" style={colorVar(C.green)}>H&amp;R Block</span>. I care about how things feel to use, not just how they look, and I design end to end across web and mobile.
           </p>
           <p>
             Outside of work I build what I design.{" "}
-            <button type="button" className="c-hl" style={colorVar(C.yellow)} onClick={() => openProject("no2")}>No. 2</button> is an iOS app I designed and shipped solo, and{" "}
-            <a className="c-hl" style={colorVar(C.blue)} href={HADLEY_DEV} target="_blank" rel="noopener noreferrer">hadley.dev</a> is my library of micro-interactions, a few of which you can play with below.
+            <button type="button" className="c-hl" style={colorVar(C.yellow)} onClick={() => openProject("no2")}>No. 2</button> is a gut-health app I designed, coded, and put on the App Store on my own, backend included. It&apos;s live, and since launch I&apos;ve rebuilt onboarding and redesigned every screen around how people actually use it.
+          </p>
+          <p>
+            I&apos;m also building a set of micro-interaction components. They aren&apos;t public yet, but you can try a few in the{" "}
+            <button type="button" className="c-hl" style={colorVar(C.pink)} onClick={openPlayground}>playground</button> below.
           </p>
           <div className="c-social">
             {SOCIAL.map((s) => (
@@ -384,10 +395,11 @@ export default function CraftHome() {
             >
               {view === "work" ? (
                 <div className="c-grid">
-                  <CaseTile slug="hr-block" title="H&R Block" kind="Product design · Now" line="Leading design on pages across hrblock.com, from the kickoff brief to a locked file in AEM." color={C.green} onOpen={openProject} register={register}>
-                    <div className="c-hrb">H&amp;R Block</div>
+                  <CaseTile slug="hr-block" title="H&R Block" kind="UX design · Now" line="Leading design on pages across hrblock.com, from the kickoff brief to a locked file in AEM." color={C.green} onOpen={openProject} register={register}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="c-hrb" src="/craft/hrb-thumb.svg" alt="" />
                   </CaseTile>
-                  <CaseTile slug="no2" title="No. 2" kind="iOS app · 2026" line="A gut-health app I designed and shipped solo in two weeks, live on the App Store." color={C.yellow} onOpen={openProject} register={register}>
+                  <CaseTile slug="no2" title="No. 2" kind="iOS app · 2026" line="A gut-health app I designed, built, and shipped solo, live on the App Store." color={C.yellow} onOpen={openProject} register={register}>
                     <SharedPhoneSceneHost />
                     <PhoneSceneSlot />
                   </CaseTile>
@@ -400,13 +412,13 @@ export default function CraftHome() {
                 </div>
               ) : (
                 <div className="c-grid">
-                  <Tile span={2} title="Character Limit" meta="hadley.dev, 40 characters" color={C.orange}>
+                  <Tile span={2} title="Character Limit" meta="40 characters, try it" color={C.orange}>
                     <div className="c-plinth"><CharacterDemo /></div>
                   </Tile>
                   <Tile span={4} title="Loop" meta="Pixel art that plays as music, try it" color={C.pink}>
                     <div className="c-plinth is-loop"><LoopHero /></div>
                   </Tile>
-                  <Tile span={4} title="Profile Card" meta="hadley.dev, drag the edge" color={C.purple}>
+                  <Tile span={4} title="Profile Card" meta="Phone to desktop, drag the edge" color={C.purple}>
                     <div className="c-plinth is-wide"><div className="c-shrink"><ProfileDemo /></div></div>
                   </Tile>
                   <Tile span={2} title="Posters" meta="Made outside any brief" color={C.yellow}>
@@ -417,7 +429,7 @@ export default function CraftHome() {
                       <video src={STILL_DEMO} autoPlay muted loop playsInline poster="/craft/still-1.jpg" />
                     </div>
                   </Tile>
-                  <Tile span={2} title="Search Bar" meta="hadley.dev" color={C.blue}>
+                  <Tile span={2} title="Search Bar" meta="Type to filter" color={C.blue}>
                     <div className="c-plinth"><SearchDemo /></div>
                   </Tile>
                 </div>
@@ -523,7 +535,7 @@ export default function CraftHome() {
         .c-case-media { width: 100%; height: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: #E9E9EC; }
         .c-case-media > video { display: block; width: 100%; height: 100%; object-fit: cover; }
 
-        .c-hrb { display: grid; place-items: center; width: 100%; height: 100%; background: ${C.green}; color: #fff; font-size: clamp(22px, 3vw, 34px); font-weight: 600; letter-spacing: -0.02em; }
+        .c-hrb { display: block; width: 100%; height: 100%; object-fit: cover; background: #fff; }
         .c-still { height: 100%; aspect-ratio: 16 / 9; background: #000; }
         .c-still video { display: block; width: 100%; height: 100%; object-fit: cover; }
 

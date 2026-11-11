@@ -313,7 +313,7 @@ export function BentoOverlayProvider({
                 // playing its exit would otherwise revive that instance, stale
                 // morph state and all, instead of mounting a fresh one.
                 key={state.morphSlug ? `${state.key}-morph` : state.key}
-                className={`bento-overlay-backdrop is-${state.variant}${fullscreen ? " is-fullscreen" : ""}`}
+                className={`bento-overlay-backdrop is-${state.variant}${fullscreen ? " is-fullscreen" : ""}${state.sidePanel ? " has-side" : ""}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -447,6 +447,17 @@ export function BentoOverlayProvider({
         .bento-overlay-shell.wide.is-fullscreen .bento-overlay-scroll {
           max-height: 100dvh;
           height: 100%;
+        }
+
+        /* A case study with a section nav (CaseStudyNav): the shell stays
+           dead center and gives up the nav's room equally on both sides
+           (--cs-side, open or collapsed), and the nav docks to its left
+           edge. Fullscreen keeps the full width; the nav floats over it. */
+        @media (min-width: 1024px) {
+          .bento-overlay-backdrop.has-side:not(.is-fullscreen) .bento-overlay-shell.wide {
+            width: min(calc(100vw - 2 * var(--cs-side, 100px)), 1320px);
+            transition: width 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+          }
         }
 
         @media (max-width: 640px) {

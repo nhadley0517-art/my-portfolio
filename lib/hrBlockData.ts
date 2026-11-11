@@ -1,116 +1,84 @@
-/* H&R Block: not a single case study but a picture of the job. What I do,
- * how a project moves from kickoff to a live page, and four recent projects
- * as evidence.
+/* H&R Block: not a traditional case study but a look into the role. What I
+ * own, who I work with, what I've done there in my own words, and how
+ * a project moves.
  *
- * Kept deliberately general: no internal numbers, test results, unapproved
- * claims, file names or unreleased detail. Each project is described by the
- * problem and the design move, with a diagram instead of screenshots. */
+ * Built from the project kickoff decks, kept to what's safe to show: no
+ * internal metrics, test results, audience sizes, file names or unreleased
+ * detail. Research is described in words, never in numbers. */
 
-export const HRB_ACCENT = "#00B85C";
+/** The green of the logo itself. */
+export const HRB_ACCENT = "#14AA40";
 
 export const HRB = {
   slug: "hr-block",
   title: "H&R Block",
-  oneLiner: "I lead design on pages across hrblock.com, from the kickoff brief to a locked file in AEM, and stay with them after they ship.",
-  meta: [
-    { label: "Role", value: "Product Designer" },
-    { label: "Works with", value: "Senior designer, UX manager, content writers, PMs, AEM authors" },
-    { label: "Tools", value: "Figma, the H&R Block component library, AEM" },
-    { label: "Recent work", value: "Four pages led and shipped" },
+  role: "UX Designer",
+  statement: "UX design across hrblock.com.",
+  intro:
+    "I take pages from the kickoff brief to a locked file in AEM: the small business front door, product pages, campaign launches, and a new way to reach H&R Block from inside AI assistants. Every page has to hold up through tax season and the rest of the year.",
+  columns: [
+    {
+      label: "What I own",
+      items: ["Page design, kickoff to handoff", "Marquee systems", "Component library work", "Designing for A/B tests", "File lockdown and AEM handoff", "Mobile and desktop"],
+    },
+    {
+      label: "Who I work with",
+      items: ["Product managers", "Senior designer", "UX manager", "Content writers", "AEM authors"],
+    },
+    {
+      label: "Tools",
+      items: ["Figma", "H&R Block's component library", "AEM", "Analytics and heatmaps"],
+    },
   ],
-  intro: [
-    "Most of my work is modernizing pages that already do real business: a small business hub, product pages, campaign launches, and new ways for people to reach H&R Block. The job is to make each one clearer and more useful, and to keep it easy to update through tax season and the rest of the year.",
-    "I take a project from kickoff and lead the design. I work inside the company's component library, and I know when to step outside it: sometimes I detach a component to get a layout right, while keeping everything buildable by the authors who assemble pages in AEM.",
+  shipped: [
+    "Small business services marquee library",
+    "Tax Identity Shield page refresh",
+    "ChatGPT and Gemini landing pages",
+    "Fund Her Future winners announcement",
   ],
 };
+
+/** What I've done there, written as experience rather than as projects:
+ *  each paragraph is a way I work, with the page that shows it. */
+export const HRB_STORY: { lead: string; body: string }[] = [
+  {
+    lead: "Pages that change with the tax year.",
+    body: "Small business owners need different things in January than in July. On the small business services page, H&R Block's front door for business owners, I mapped the year into five moments, each with its own deadline, audience, and message, and designed a library of marquees so the page always leads with the right one. Everything under the marquee stays put, which keeps the page strong for search and clean for testing.",
+  },
+  {
+    lead: "Hierarchy set by behavior.",
+    body: "Before I move anything, I look at how a page is actually used. On the page for Tax Identity Shield, H&R Block's identity protection service, the action people used most sat below the marquee while the marquee's own buttons went untouched. I moved it up, brought answers out of the FAQs and onto the page, and added clear pricing in wording legal approved.",
+  },
+  {
+    lead: "Built to be reused.",
+    body: "Writers own the copy and authors assemble pages in AEM, so I design inside the component library and add to it when a page needs something new. For Fund Her Future, H&R Block's grant program for women-owned businesses, I announced this year's winners on a new recipient component, built so next year's class drops straight in.",
+  },
+  {
+    lead: "Explaining new things plainly.",
+    body: "H&R Block now answers inside ChatGPT and Gemini through an MCP server, a way for AI assistants to use its tools. Almost nobody knows what that is, so I designed the landing pages that explain it in plain language and walk people through connecting, step by step.",
+  },
+];
 
 export interface HrbStep {
   title: string;
   body: string;
-  with: string[];
+  /** Who else is in the room. Empty when it's mine alone. */
+  with: string;
+  /** Steps I lead, which the flow diagram fills in. */
+  lead: boolean;
 }
 
-/** How a project moves. "Me" is highlighted in the diagram. */
 export const HRB_PROCESS: HrbStep[] = [
-  { title: "Kickoff", body: "The PM brings the brief: the goal, the audience, and the search and business context behind the page.", with: ["PM"] },
-  { title: "Design", body: "I lead the design in Figma, built from the component library, detaching only where the layout needs it.", with: ["Me"] },
-  { title: "Review", body: "I tag my senior designer and UX manager in the file and explain the reasoning behind each decision, then refine on their feedback.", with: ["Senior designer", "UX manager"] },
-  { title: "Content and sign-off", body: "A content writer owns the copy. The PM takes the page through stakeholders and legal, and I fold their changes back in.", with: ["Content writer", "PM", "Legal"] },
-  { title: "Lockdown", body: "I lock the file, load every creative asset into AEM, and let the authors know it's ready to build.", with: ["Me", "Authors"] },
-  { title: "Build and beyond", body: "Authors build the page and I stay on call for anything they need. Once it's live, testing tells us what to change next.", with: ["Authors", "PM"] },
-];
-
-export interface HrbPractice {
-  id: string;
-  title: string;
-  body: string;
-}
-
-export const HRB_PRACTICES: HrbPractice[] = [
-  { id: "ux", title: "UX and interaction design", body: "Hierarchy, flows and calls to action set by what people actually do on a page, not by what's loudest." },
-  { id: "library", title: "Component library", body: "I design inside H&R Block's library and detach a component only when a layout calls for it, always within what authors can build." },
-  { id: "ab", title: "Designing for testing", body: "Pages built with a steady structure and swappable pieces, so variants can run cleanly and the winner can become the default." },
-  { id: "lockdown", title: "File lockdowns and handoff", body: "Clean, locked files with every asset in AEM and the authors told it's ready, then I stay on call while they build." },
-  { id: "authors", title: "Writers and authors", body: "Copy comes from a content writer and pages are built by authors, so I design for both: room for real copy, and modules authors can assemble." },
-  { id: "pm", title: "PMs, stakeholders, legal", body: "PMs carry the work to stakeholders and legal. I give them the reasoning behind every decision, so the design holds up in those rooms." },
-];
-
-export type HrbDiagram = "seasons" | "hierarchy" | "assistant" | "campaign";
-
-export interface HrbProject {
-  title: string;
-  kind: string;
-  /** The one-line idea of the project. */
-  headline: string;
-  body: string;
-  practices: string[];
-  diagram: HrbDiagram;
-  status: string;
-}
-
-/** Strongest first. */
-export const HRB_PROJECTS: HrbProject[] = [
-  {
-    title: "Small business hub",
-    kind: "Hero system",
-    headline: "One page, two jobs",
-    body: "The small business services page had to win seasonal tax intent and also show everything H&R Block does for a business all year. I designed a hero system instead of a single hero: a library of seasonal heroes on a shared message framework, so the page leads with the right thing in January and in July. The rest of the page stays steady, which keeps it strong for search and clean for testing.",
-    practices: ["ux", "library", "ab"],
-    diagram: "seasons",
-    status: "Shipped",
-  },
-  {
-    title: "Product page refresh",
-    kind: "Live page redesign",
-    headline: "Let behavior set the hierarchy",
-    body: "A protection product's page had its most-used action sitting below the hero, while the buttons in the hero went mostly untouched, and people kept digging for answers in the FAQs. I moved that action into the hero, brought answers up the page, and added clear, legal-approved pricing language, designed equally for mobile and desktop.",
-    practices: ["ux", "pm"],
-    diagram: "hierarchy",
-    status: "Live",
-  },
-  {
-    title: "A new front door",
-    kind: "AI assistants",
-    headline: "Meeting people where they start",
-    body: "More people now start a tax question inside an AI assistant instead of on a website. I designed landing experiences for that path, so people can get help, find a pro, or move toward filing in a few steps, without ever needing to start from the homepage.",
-    practices: ["ux", "pm"],
-    diagram: "assistant",
-    status: "Shipped",
-  },
-  {
-    title: "Grant winners",
-    kind: "Campaign update",
-    headline: "Celebrate the winners, keep the page working",
-    body: "For a small business grant program, I announced this year's winners: a refreshed hero, a new winners section, and a reordered page, plus a new recipient component built so future classes drop straight in.",
-    practices: ["library", "authors", "lockdown"],
-    diagram: "campaign",
-    status: "Shipped",
-  },
+  { title: "Kickoff", body: "The PM brings the brief: the goal, the audience, and the search and business context. I turn it into what the page has to do.", with: "PM", lead: false },
+  { title: "Design", body: "I lead the design in Figma from the component library, detaching a component only where the layout needs it.", with: "", lead: true },
+  { title: "Review", body: "I walk my senior designer and UX manager through the reasoning behind each decision, then refine.", with: "Senior designer, UX manager", lead: false },
+  { title: "Sign-off", body: "A writer owns the copy and the PM takes the page through stakeholders and legal. I fold their changes back in.", with: "Writer, PM, legal", lead: false },
+  { title: "Lockdown", body: "I lock the file, load every asset into AEM, and tell the authors it's ready to build.", with: "", lead: true },
+  { title: "Build and test", body: "Authors build while I stay on call. Once it's live, testing decides what changes next.", with: "Authors, PM", lead: false },
 ];
 
 export const HRB_SECTIONS = [
-  { id: "overview", label: "Overview" },
-  { id: "process", label: "How a project moves" },
-  { id: "practice", label: "What I do" },
-  { id: "work", label: "Recent work" },
+  { id: "role", label: "Role" },
+  { id: "the-work", label: "The work" },
+  { id: "process", label: "Process" },
 ];
